@@ -38,7 +38,7 @@ public class RepositoryUI extends JMDialog {
         btAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                //TODO: add repository btn
             }
         });
         pnTitle.add(btAdd);
