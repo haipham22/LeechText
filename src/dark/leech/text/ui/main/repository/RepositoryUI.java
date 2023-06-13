@@ -1,8 +1,6 @@
 package dark.leech.text.ui.main.repository;
 
-import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.enities.RepositoryEntity;
-import dark.leech.text.plugin.PluginManager;
 import dark.leech.text.repository.RepositoryManager;
 import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.CircleButton;
