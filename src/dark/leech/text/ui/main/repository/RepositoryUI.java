@@ -6,6 +6,8 @@ import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.CircleButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMScrollPane;
+import dark.leech.text.util.AppUtils;
+import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.StringUtils;
 
 import javax.swing.*;
@@ -49,7 +51,10 @@ public class RepositoryUI extends JMDialog {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-
+                        FileUtils.string2file(
+                                RepositoryManager.getManager().getRepositoryList().toString(),
+                                AppUtils.curDir  + "/tools/repository.json"
+                            );
                     }
                 }).start();
 
