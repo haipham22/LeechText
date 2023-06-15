@@ -1,19 +1,32 @@
 package dark.leech.text.ui.main.repository;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import dark.leech.text.action.Log;
 import dark.leech.text.enities.RepositoryEntity;
+import dark.leech.text.lua.api.Json;
 import dark.leech.text.repository.RepositoryManager;
 import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.CircleButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMScrollPane;
+import dark.leech.text.ui.notification.Alert;
+import dark.leech.text.ui.notification.Toast;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
+import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class RepositoryUI extends JMDialog {
     private PanelTitle pnTitle;
@@ -51,10 +64,25 @@ public class RepositoryUI extends JMDialog {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        FileUtils.string2file(
-                                RepositoryManager.getManager().getRepositoryList().toString(),
-                                AppUtils.curDir  + "/tools/repository.json"
+                        try {
+                            Set<RepositoryEntity> repositoryList = RepositoryManager.getManager().getRepositoryList();
+                            JSONArray json = new JSONArray();
+                            Gson gson = new Gson();
+
+                            for (RepositoryEntity repository : repositoryList) {
+                                //TODO: get repository item and save json
+                                json.put(gson.toJson(repository, RepositoryEntity.class));
+                            }
+
+                            FileUtils.string2file(
+                                    json.toString(),
+                                    AppUtils.curDir  + "/tools/repository.json"
                             );
+                        } catch (Exception err) {
+                            Log.add(err);
+                            Alert.show("Có lỗi xảy ra, vui lòng báo lỗi tại github")
+                                    .open();
+                        }
                     }
                 }).start();
 

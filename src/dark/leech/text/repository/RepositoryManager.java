@@ -18,16 +18,9 @@ public class RepositoryManager {
     private static final String URL = "https://raw.githubusercontent.com/Darkrai9x/vbook-extensions/master/repository.json";
 
     private static RepositoryManager manager;
-    private static Set<RepositoryEntity> repositoryList;
+    private static Set<RepositoryEntity> repositoryList = new HashSet<>();;
 
     private RepositoryManager() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                repositoryList = new HashSet<>();
-
-            }
-        }).start();
     }
 
     public static RepositoryManager getManager() {
@@ -45,13 +38,16 @@ public class RepositoryManager {
             Set<RepositoryEntity> repositoryEntities = RepositoryManager.getManager().getRepositoryList();
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                RepositoryEntity entity = new Gson().fromJson(jsonArray.getJSONObject(i).toString(), RepositoryEntity.class);
-                if (repositoryEntities.contains(entity)) {
-                    repositoryEntities.add(entity);
-                }
+                RepositoryEntity entity = new Gson().fromJson(jsonArray.get(i).toString(), RepositoryEntity.class);
                 repositoryEntities.add(entity);
             }
+
+            setRepositoryList(repositoryEntities);
         }
+    }
+
+    private static void setRepositoryList(Set<RepositoryEntity> repositoryEntities) {
+        repositoryList.addAll(repositoryEntities);
     }
 
     private static void doDefault() {

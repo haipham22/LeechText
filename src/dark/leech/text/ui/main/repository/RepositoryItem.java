@@ -59,5 +59,7 @@ public class RepositoryItem extends JMPanel {
 
     }
 
-
+    public RepositoryEntity getRepository() {
+        return repository;
+    }
 }
