@@ -3,7 +3,6 @@ package dark.leech.text.models;
  * Code by Darkrai on 8/21/2016.
  */
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Properties {

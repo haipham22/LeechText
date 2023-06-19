@@ -1,7 +1,6 @@
 package dark.leech.text.ui.material;
 
 import dark.leech.text.models.Chapter;
-import dark.leech.text.util.FontUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

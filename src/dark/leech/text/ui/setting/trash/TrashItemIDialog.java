@@ -1,6 +1,5 @@
 package dark.leech.text.ui.setting.trash;
 
-import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.models.Trash;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;

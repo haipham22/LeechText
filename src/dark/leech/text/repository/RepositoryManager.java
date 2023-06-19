@@ -6,11 +6,9 @@ import dark.leech.text.enities.RepositoryEntity;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.Http;
-import dark.leech.text.util.SyntaxUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 

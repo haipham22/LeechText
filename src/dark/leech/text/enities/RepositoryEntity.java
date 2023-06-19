@@ -1,7 +1,6 @@
 package dark.leech.text.enities;
 
 import com.google.gson.annotations.SerializedName;
-import dark.leech.text.util.SyntaxUtils;
 
 import java.util.Objects;
 

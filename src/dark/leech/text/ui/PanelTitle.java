@@ -1,8 +1,8 @@
 package dark.leech.text.ui;
 
+import dark.leech.text.ui.button.CloseButton;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-import dark.leech.text.ui.button.CloseButton;
 
 import javax.swing.*;
 import java.awt.*;
