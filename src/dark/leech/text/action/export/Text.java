@@ -7,7 +7,6 @@ import dark.leech.text.models.Properties;
 import dark.leech.text.models.Trash;
 import dark.leech.text.util.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

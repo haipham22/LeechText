@@ -3,25 +3,17 @@ package dark.leech.text.ui.material;
 /**
  * Created by Dark on 2/11/2017.
  */
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
+
+import javax.swing.*;
+import javax.swing.border.AbstractBorder;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.UIManager;
-import javax.swing.border.AbstractBorder;
-import javax.swing.border.Border;
 
 /**
  * Implements a DropShadow for components. In general, the DropShadowBorder will

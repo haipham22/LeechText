@@ -9,6 +9,7 @@ import dark.leech.text.ui.button.CloseButton;
 import dark.leech.text.ui.download.AddURL;
 import dark.leech.text.ui.download.DownloadUI;
 import dark.leech.text.ui.main.plugin.PluginUI;
+import dark.leech.text.ui.main.repository.RepositoryUI;
 import dark.leech.text.ui.material.JMMenuItem;
 import dark.leech.text.ui.material.JMPopupMenu;
 import dark.leech.text.util.*;
@@ -42,6 +43,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
     private JMMenuItem pnSetting;
     private JMenuItem pnHelp;
     private JMMenuItem pnPlugin;
+    private JMMenuItem pnRepository;
 
     //
     private CloseButton btExit;
@@ -203,23 +205,34 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
                 if (e.getSource() == pnSetting) {
                     Animation.go(downloadUI, setting);
                     setting.load();
-                }
-                if (e.getSource() == pnHelp)
+                } else if (e.getSource() == pnHelp) {
                     new HelpUI().open();
-                if (e.getSource() == pnPlugin)
+                } else if (e.getSource() == pnPlugin) {
                     new PluginUI().open();
+                } else if (e.getSource() == pnRepository) {
+                    new RepositoryUI().open();
+                }
             }
         };
         menu = new JMPopupMenu();
+
         pnSetting = new JMMenuItem("Cài đặt");
         pnSetting.addActionListener(actionListener);
-        menu.add(pnSetting);
+
         pnPlugin = new JMMenuItem("Plugins");
         pnPlugin.addActionListener(actionListener);
-        menu.add(pnPlugin);
+
+        pnRepository = new JMMenuItem("Repository");
+        pnRepository.addActionListener(actionListener);
+
         pnHelp = new JMMenuItem("Thông tin");
         pnHelp.addActionListener(actionListener);
+
+        menu.add(pnSetting);
+        menu.add(pnPlugin);
+        menu.add(pnRepository);
         menu.add(pnHelp);
+
         container.add(menu);
     }
 
@@ -248,9 +261,8 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
             }
         });
         time.start();
-
         PluginManager.getManager();
-        UpdateUI.checkUpdate();
+//        UpdateUI.checkUpdate();
         time.stop();
         timer.start();
     }

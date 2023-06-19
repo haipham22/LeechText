@@ -1,6 +1,5 @@
 package dark.leech.text.get;
 
-import dark.leech.text.action.Log;
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.lua.loader.TextLoader;

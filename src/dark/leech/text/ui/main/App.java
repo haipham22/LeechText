@@ -1,5 +1,6 @@
 package dark.leech.text.ui.main;
 
+import dark.leech.text.repository.RepositoryManager;
 import dark.leech.text.ui.Animation;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
@@ -26,6 +27,7 @@ public class App {
                 AppUtils.doLoad();
                 FileUtils.init();
                 SettingUtils.doLoad();
+                RepositoryManager.getManager().doLoad();
                 mainFrame = new MainUI();
                 Animation.fadeIn(mainFrame);
                 mainFrame.setVisible(true);

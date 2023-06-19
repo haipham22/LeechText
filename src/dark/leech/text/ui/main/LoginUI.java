@@ -1,14 +1,10 @@
 package dark.leech.text.ui.main;
 
 
-import dark.leech.text.enities.PluginEntity;
-import dark.leech.text.get.LoginGetter;
-import dark.leech.text.plugin.PluginManager;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMCheckBox;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMTextField;
-import dark.leech.text.ui.notification.Toast;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 

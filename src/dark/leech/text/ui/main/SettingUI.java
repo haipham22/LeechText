@@ -1,8 +1,8 @@
 package dark.leech.text.ui.main;
 
-import dark.leech.text.ui.notification.Toast;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMScrollPane;
+import dark.leech.text.ui.notification.Toast;
 import dark.leech.text.ui.setting.ItemConn;
 import dark.leech.text.ui.setting.ItemStyle;
 import dark.leech.text.ui.setting.Theme;

@@ -1,8 +1,8 @@
 package dark.leech.text.ui.setting;
 
+import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.StringUtils;
 
 import javax.swing.*;

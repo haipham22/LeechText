@@ -2,7 +2,6 @@ package dark.leech.text.action;
 
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Properties;
-import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;

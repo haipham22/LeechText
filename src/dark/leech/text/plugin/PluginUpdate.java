@@ -3,6 +3,8 @@ package dark.leech.text.plugin;
 import com.google.gson.Gson;
 import dark.leech.text.action.Log;
 import dark.leech.text.enities.PluginEntity;
+import dark.leech.text.enities.RepositoryEntity;
+import dark.leech.text.repository.RepositoryManager;
 import dark.leech.text.ui.notification.Toast;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
@@ -10,11 +12,14 @@ import dark.leech.text.util.Http;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
+import java.util.UUID;
+
 /**
  * Created by Dark on 2/24/2017.
  */
 public class PluginUpdate {
-    private static final String URL = "https://dl.dropboxusercontent.com/s/nfsg7x1f1hvdzjb/plugins.json?dl=1";
     private static PluginUpdate pluginUpdate;
 
     private PluginUpdate() {
@@ -29,47 +34,61 @@ public class PluginUpdate {
 
     public void checkUpdate() {
         try {
-            String js = Http.request(URL).string();
-            JSONArray objArr = new JSONArray(js);
-            for (int i = 0; i < objArr.length(); i++) {
-                JSONObject obj = objArr.getJSONObject(i);
-                boolean have = false;
-                for (PluginEntity pluginGetter : PluginManager.getManager().list()) {
-                    if (obj.getString("uuid").equals(pluginGetter.getUuid())) {
-                        have = true;
-                        if (obj.getDouble("version") > pluginGetter.getVersion()) {
-                            String path = AppUtils.curDir
-                                    + "/tools/plugins/"
-                                    + pluginGetter.getUuid()
-                                    + ".plugin";
-                            String json = Http.request(obj.getString("url")).string();
+            Set<RepositoryEntity> repositoryList = RepositoryManager.getManager().getRepositoryList();
+            for (RepositoryEntity repo : repositoryList) {
+                String js = Http.request(repo.getLink()).string();
+                JSONObject jsonObject = new JSONObject(js);
+                JSONArray objArr = jsonObject.getJSONArray("data");
+                for (int i = 0; i < objArr.length(); i++) {
+                    JSONObject obj = objArr.getJSONObject(i);
+                    String strUuid = obj.getString("path")
+                            + obj.getString("author")
+                            + obj.getString("type");
+                    UUID uuid = UUID.nameUUIDFromBytes(strUuid.getBytes(StandardCharsets.UTF_8));
+                    boolean have = false;
+                    for (PluginEntity pluginGetter : PluginManager.getManager().list()) {
+                        if (uuid.toString().equals(pluginGetter.getUuid())) {
+                            have = true;
+                            if (obj.getDouble("version") > pluginGetter.getVersion()) {
+                                String path = AppUtils.curDir
+                                        + "/tools/plugins/"
+                                        + pluginGetter.getUuid()
+                                        + ".plugin";
+                                String json = Http.request(obj.getString("path")).string();
 
-                            PluginEntity entity = new Gson().fromJson(json, PluginEntity.class);
-                            entity.setChecked(true);
-                            FileUtils.string2file(new Gson().toJson(entity), path);
-                            pluginGetter.apply(entity);
-                            Toast.Build()
-                                    .content("Đã update plugin " + pluginGetter.getName() + " v" + pluginGetter.getVersion())
-                                    .time(3000)
-                                    .open();
+                                FileUtils.url2file(obj.getString("path"), path);
+
+                                PluginEntity entity = new Gson().fromJson(FileUtils.file2string(path), PluginEntity.class);
+                                entity.setChecked(true);
+                                pluginGetter.apply(entity);
+                                Toast.Build()
+                                        .content("Đã update plugin " + pluginGetter.getName() + " v" + pluginGetter.getVersion())
+                                        .time(3000)
+                                        .open();
+                            }
                         }
                     }
-                }
-                if (have == false) {
-                    String path = AppUtils.curDir
-                            + "/tools/plugins/"
-                            + obj.getString("uuid")
-                            + ".plugin";
-                    String json = Http.request(obj.getString("url")).string();
+                    if (Boolean.FALSE.equals(have)) {
+                        String path = AppUtils.curDir
+                                + "/tools/plugins/"
+                                + uuid.toString()
+                                + ".plugin";
+                        String json = Http.request(obj.getString("path")).string();
 
-                    PluginEntity entity = new Gson().fromJson(json, PluginEntity.class);
-                    entity.setChecked(true);
-                    FileUtils.string2file(new Gson().toJson(entity), path);
-                    PluginManager.getManager().add(path);
-                    Toast.Build()
-                            .content("Đã tải xuống plugin " + obj.getString("name"))
-                            .time(3000)
-                            .open();
+                        FileUtils.url2file(obj.getString("path"), path);
+
+                        PluginEntity entity = new Gson().fromJson(FileUtils.file2string(path), PluginEntity.class);
+
+//                        PluginEntity entity = new Gson().fromJson(obj.toString(), PluginEntity.class);
+                        entity.setChecked(true);
+                        entity.setUuid(uuid.toString());
+                        FileUtils.string2file(new Gson().toJson(json), path);
+                        PluginManager.getManager().add(path);
+                        Toast.Build()
+                                .content("Đã tải xuống plugin " + obj.getString("name"))
+                                .time(3000)
+                                .open();
+                    }
                 }
             }
         } catch (Exception e) {
