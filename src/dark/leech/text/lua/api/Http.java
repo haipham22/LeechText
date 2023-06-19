@@ -10,6 +10,8 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Http {
 
@@ -19,6 +21,8 @@ public class Http {
     private boolean skipCookie = false;
     private Connection connection;
     private Connection.Response response;
+    private static List<CacheResponse> cache = new ArrayList<>();
+    private static List<String> cacheUrl = new ArrayList<>();
 
     private static CookieManager cookieManager;
 
@@ -120,17 +124,21 @@ public class Http {
         try {
             return CoerceJavaToLua.coerce(call().parse());
         } catch (Exception e) {
+            e.printStackTrace();
             return LuaValue.NIL;
         }
     }
 
     private Connection.Response call() {
+        int index = cacheUrl.indexOf(this.url);
+        if (index != -1)
+            return cache.get(index);
         try {
-            if (!skipCookie) {
-                if (cookieManager != null) {
-                    String cookie = cookieManager.getCookie(url);
-                    if (cookie != null)
-                        connection.header("Cookie", cookie);
+            if (!skipCookie &&
+                    cookieManager != null) {
+                String cookie = cookieManager.getCookie(url);
+                if (cookie != null) {
+                    connection.header("Cookie", cookie);
                 }
             }
             response = connection.execute();
@@ -140,8 +148,19 @@ public class Http {
                 if (cookieManager != null && !TextUtils.isEmpty(cookie))
                     cookieManager.setCookie(url, cookie);
             }
+            synchronized (Http.class) {
+                if (cache.size() > 5) {
+                    cacheUrl.remove(0);
+                    cache.remove(0);
+                }
+                if (response.statusCode() == 200 && response.method() == Connection.Method.GET) {
+                    cacheUrl.add(url);
+                    cache.add(new CacheResponse(response));
+                }
+            }
             return response;
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -149,10 +168,15 @@ public class Http {
     public LuaValue string() {
         try {
             String htm = call().body();
-            if (htm.charAt(0) == '\uFEFF')
-                htm = htm.substring(1);
+            if (!TextUtils.isEmpty(htm)) {
+                if (htm.charAt(0) == '\uFEFF')
+                    htm = htm.substring(1);
+            } else {
+                return LuaValue.NIL;
+            }
             return LuaValue.valueOf(htm);
         } catch (Exception e) {
+            e.printStackTrace();
             return LuaValue.NIL;
         }
 

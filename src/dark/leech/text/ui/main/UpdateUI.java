@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by Dark on 2/25/2017.
@@ -28,7 +29,7 @@ public class UpdateUI extends JMDialog {
         try {
             String update = new String(Http.connect(URL)
                     .execute()
-                    .bodyAsBytes(), "UTF-8");
+                    .bodyAsBytes(), StandardCharsets.UTF_8);
             JSONObject obj = new JSONObject(update);
             int version = Integer.parseInt(obj.getString("version").replace(".", ""));
             int time = Integer.parseInt(obj.getString("time").replace(":", ""));

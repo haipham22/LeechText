@@ -31,6 +31,9 @@ public class TextLoader {
             try {
                 LuaValue result = chuck.call(LuaValue.valueOf(url));
                 if (result != null && !result.isnil()) {
+                    if (result instanceof org.luaj.vm2.LuaTable) {
+                        return result.get("content").tojstring();
+                    }
                     return result.tojstring();
                 }
             } catch (LuaError error) {

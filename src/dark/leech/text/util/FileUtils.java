@@ -1,6 +1,7 @@
 package dark.leech.text.util;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 /**
@@ -197,5 +198,27 @@ public class FileUtils {
 
     public static synchronized String validate(String path) {
         return path.replace("/", AppUtils.SEPARATOR);
+    }
+
+    public static String input2string(InputStream inputStream) {
+        String result = null;
+        ByteArrayOutputStream baos = null;
+        try {
+            baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            for (int length; (length = inputStream.read(buffer)) != -1; ) {
+                baos.write(buffer, 0, length);
+            }
+            // StandardCharsets.UTF_8.name() > JDK 7
+            result = baos.toString(StandardCharsets.UTF_8.toString());
+        } catch (Exception ignore) {
+
+        } finally {
+            try {
+                if (baos != null) baos.close();
+            } catch (Exception e) {
+            }
+        }
+        return result;
     }
 }

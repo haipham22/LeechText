@@ -75,7 +75,7 @@ public class SettingUtils {
         if (WORKPATH.length() == 0) WORKPATH = AppUtils.curDir;
         CALIBRE = other.getString("calibre");
         KINDLEGEN = other.getString("kindlegen");
-        List<Trash> trash = new ArrayList<Trash>();
+        List<Trash> trash = new ArrayList<>();
         JSONArray trashArr = other.getJSONArray("trash");
         for (int i = 0; i < trashArr.length(); i++) {
             JSONObject obj = trashArr.getJSONObject(i);
@@ -135,7 +135,7 @@ public class SettingUtils {
 
     private static JSONObject getObject(boolean b, String value) {
         JSONObject object = new JSONObject();
-        object.put("checked", new Boolean(b));
+        object.put("checked", Boolean.valueOf(b));
         object.put("value", value);
         return object;
     }

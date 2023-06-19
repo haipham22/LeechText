@@ -1,14 +1,13 @@
 package dark.leech.text.lua.api;
 
 import org.luaj.vm2.LuaBoolean;
-import org.luaj.vm2.LuaInteger;
+import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
 public class Text {
-
     public static LuaValue index_of(Object str, Object s) {
-        return index_of(str, s, 0);
+        return index_of(str, s, Integer.valueOf(0));
     }
 
     public static LuaValue last_index_of(Object str, Object s) {
@@ -18,26 +17,27 @@ public class Text {
     public static LuaValue index_of(Object str, Object s, Object start) {
         if (str == null) return LuaValue.NIL;
         int index = 0;
-        if (start instanceof Integer) {
-            index = (int) start;
-        } else if (start instanceof LuaInteger) {
-            index = ((LuaInteger) start).toint();
+        if (start instanceof Number) {
+            index = ((Number) start).intValue();
+        } else if (start instanceof LuaNumber) {
+            index = ((LuaNumber) start).toint();
         } else {
             try {
                 index = str.toString().indexOf(start.toString());
-            } catch (Exception ignored) {
+            } catch (Exception exception) {
             }
         }
+
         return LuaValue.valueOf(str.toString().indexOf(s.toString(), index));
     }
 
     public static LuaValue last_index_of(Object str, Object s, Object start) {
         if (str == null) return LuaValue.NIL;
         int index = 0;
-        if (start instanceof Integer) {
-            index = (int) start;
-        } else if (start instanceof LuaInteger) {
-            index = ((LuaInteger) start).toint();
+        if (start instanceof Number) {
+            index = ((Number) start).intValue();
+        } else if (start instanceof LuaNumber) {
+            index = ((LuaNumber) start).toint();
         } else {
             try {
                 index = str.toString().indexOf(start.toString());
@@ -48,7 +48,6 @@ public class Text {
     }
 
     public static LuaValue sub(Object str, Object s, Object e) {
-
         String source = str.toString();
         int start = Num.to_int(s, 0).toint();
         int end = Num.to_int(e, 0).toint();
@@ -96,7 +95,6 @@ public class Text {
                     return LuaValue.valueOf(source.substring(index1, index2));
                 }
             }
-
         }
         return LuaValue.NIL;
     }
@@ -128,6 +126,7 @@ public class Text {
     public static LuaValue contains(Object obj, Object value) {
         return LuaValue.valueOf(obj.toString().contains(value.toString()));
     }
+
     public static LuaValue replace(Object str, Object regex, Object e) {
         if (str != null)
             return LuaValue.valueOf(str.toString().replaceAll(regex.toString(), e.toString()));
@@ -135,13 +134,14 @@ public class Text {
     }
 
     public static LuaValue remove(Object str, Object replace) {
-        return remove(str, replace, true);
+        return remove(str, replace, Boolean.TRUE);
     }
+
     public static LuaValue remove(Object str, Object replace, Object regex) {
         String text = str.toString();
         boolean usingRegex = true;
         if (regex instanceof Boolean) {
-            usingRegex = (boolean) regex;
+            usingRegex = ((Boolean) regex).booleanValue();
         } else if (regex instanceof LuaBoolean) {
             usingRegex = ((LuaBoolean) regex).booleanValue();
         }
@@ -150,16 +150,28 @@ public class Text {
             LuaTable table = (LuaTable) replace;
             LuaValue[] keys = table.keys();
             for (LuaValue value : keys) {
-                if (usingRegex)
+                if (usingRegex) {
                     text = text.replaceAll(table.get(value).tojstring(), "");
-                else text = text.replace(table.get(value).tojstring(), "");
+                } else {
+                    text = text.replace(table.get(value).tojstring(), "");
+                }
+
             }
+        } else if (usingRegex) {
+            text = text.replaceAll(replace.toString(), "");
         } else {
-            if (usingRegex)
-                text = text.replaceAll(replace.toString(), "");
-            else text = text.replace(replace.toString(), "");
+            text = text.replace(replace.toString(), "");
         }
         return LuaValue.valueOf(text);
     }
 
+    public static LuaValue json_table(Object object) {
+        if (object instanceof LuaTable) {
+            return (LuaValue) object;
+        }
+        return Json.to_table(object);
+    }
 }
+
+
+

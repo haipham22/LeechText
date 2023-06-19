@@ -42,7 +42,7 @@ public class PluginUI extends JMDialog {
                         for (PluginEntity pl : PluginManager.getManager().list()) {
                             String path = AppUtils.curDir
                                     + "/tools/plugins/"
-                                    + pl.getUuid()
+                                    + pl.getPathName()
                                     + ".plugin";
                             FileUtils.string2file(new Gson().toJson(pl), path);
 

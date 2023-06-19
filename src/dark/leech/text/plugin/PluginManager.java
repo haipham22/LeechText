@@ -7,20 +7,22 @@ import dark.leech.text.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Long on 1/11/2017.
  */
 public class PluginManager {
     private static PluginManager manager;
-    private static ArrayList<PluginEntity> pluginList;
+    private static Set<PluginEntity> pluginList;
 
     private PluginManager() {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                pluginList = new ArrayList<>();
+                pluginList = new HashSet<>();
                 File[] files = new File(FileUtils.validate(AppUtils.curDir + "/tools/plugins")).listFiles();
                 if (files == null) return;
                 for (File f : files) {
@@ -58,7 +60,7 @@ public class PluginManager {
         return null;
     }
 
-    public ArrayList<PluginEntity> list() {
+    public Set<PluginEntity> list() {
         return pluginList;
     }
 

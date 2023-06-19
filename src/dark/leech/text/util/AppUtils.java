@@ -9,10 +9,7 @@ import java.awt.*;
  * Created by Long on 1/5/2017.
  */
 public class AppUtils {
-    private AppUtils() {
-    }
-
-    public static final String VERSION = "2019.03.30";
+    public static final String VERSION = "2019.07.22";
     public static final String TIME = "00:00";
     public static String curDir = System.getProperty("user.dir");
     public static String cacheDir = curDir;
@@ -39,8 +36,7 @@ public class AppUtils {
             }
             SyntaxUtils.REPLACE_FROM = REPLACE_FROM;
             SyntaxUtils.REPLACE_TO = REPLACE_TO;
-
-        } catch (Exception e) {
+        } catch (Exception ignore) {
         }
     }
 
@@ -59,7 +55,7 @@ public class AppUtils {
     public static void pause(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignore) {
         }
     }
 

@@ -1,32 +1,34 @@
 package dark.leech.text.enities;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class PluginEntity {
 
-    @SerializedName("uuid")
-    private String uuid = "";
     @SerializedName("name")
     private String name; //Tên
-    @SerializedName("version")
-    private double version; //Phiên bản
-    @SerializedName("url")
-    private String url; //Link plugin
-    @SerializedName("language")
-    private String language; //Ngôn ngữ (code: vi, en)
-    @SerializedName("icon")
-    private String icon; //Icon, base64
-    @SerializedName("source")
-    private String source; //Trang nguồn
-    @SerializedName("regex")
-    private String regex; //Chuỗi khớp Http
     @SerializedName("author")
     private String author; //Tác giả
-    @SerializedName("describe")
-    private String describe; //Mô tả
-    @SerializedName("group")
-    private String group; //Nhóm: dich, convert, truyentranh
+    @SerializedName("path")
+    private String path; //Link plugin
+    @SerializedName("version")
+    private double version; //Phiên bản
+    @SerializedName("source")
+    private String source; //Trang nguồn
+    @SerializedName("icon")
+    private String icon; //Icon, base64
+    @SerializedName("description")
+    private String description; //Mô tả
+    @SerializedName("locale")
+    private String locale;
+    @SerializedName("regexp")
+    private String regex; //Chuỗi khớp Http
+    @SerializedName("language")
+    private String language; //Ngôn ngữ (code: vi, en)
+
+    private String pathName;
+
+    @SerializedName("type")
+    private String type; //Nhóm: dich, convert, truyentranh
     @SerializedName("data")
     private String data; //Base64
     private boolean supportUpdate;
@@ -55,12 +57,12 @@ public class PluginEntity {
     private boolean checked;
 
 
-    public String getUuid() {
-        return uuid;
+    public String getPathName() {
+        return pathName;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setPathName(String pathName) {
+        this.pathName = pathName;
     }
 
     public String getName() {
@@ -79,20 +81,20 @@ public class PluginEntity {
         this.version = version;
     }
 
-    public String getUrl() {
-        return url;
+    public String getPath() {
+        return path;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setPath(String url) {
+        this.path = url;
     }
 
-    public String getLanguage() {
-        return language;
+    public String getLocale() {
+        return locale;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 
     public String getIcon() {
@@ -127,20 +129,20 @@ public class PluginEntity {
         this.author = author;
     }
 
-    public String getDescribe() {
-        return describe;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescribe(String describe) {
-        this.describe = describe;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getGroup() {
-        return group;
+    public String getType() {
+        return type;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getChapGetter() {
@@ -200,17 +202,17 @@ public class PluginEntity {
     }
 
     public void apply(PluginEntity entity) {
-        this.uuid = entity.uuid;
+        this.pathName = entity.pathName;
         this.name = entity.name;
         this.version = entity.version;
-        this.url = entity.url;
-        this.language = entity.language;
+        this.path = entity.path;
+        this.locale = entity.locale;
         this.icon = entity.icon;
         this.source = entity.source;
         this.regex = entity.regex;
         this.author = entity.author;
-        this.describe = entity.describe;
-        this.group = entity.group;
+        this.description = entity.description;
+        this.type = entity.type;
         this.supportUpdate = entity.supportUpdate;
         this.chapGetter = entity.chapGetter;
         this.tocGetter = entity.tocGetter;

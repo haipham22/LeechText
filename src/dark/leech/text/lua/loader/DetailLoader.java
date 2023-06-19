@@ -41,10 +41,11 @@ public class DetailLoader {
             if (value == null || value.isnil()) return null;
             if (!value.get("name").isnil())
                 entity.setName(value.get("name").tojstring());
-            if (!value.get("url").isnil() && !TextUtils.isEmpty(value.get("url").tojstring()))
+            if (!value.get("url").isnil() && !TextUtils.isEmpty(value.get("url").tojstring())) {
                 entity.setUrl(value.get("url").tojstring());
-            else
+            } else {
                 entity.setUrl(url);
+            }
             if (!value.get("detail").isnil()) {
                 String html = value.get("detail").tojstring();
                 entity.setDetail(html.trim().replaceAll("\n+", "\n"));
@@ -55,7 +56,7 @@ public class DetailLoader {
                 entity.setCover(value.get("cover").tojstring());
             if (!value.get("author").isnil())
                 entity.setAuthor(value.get("author").tojstring());
-            entity.setWebSource(plugin.getName());
+            entity.setWebSource(this.plugin.getName());
             return entity;
         }
         return null;

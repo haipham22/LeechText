@@ -5,6 +5,7 @@ import org.luaj.vm2.LuaValue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 public class Core {
@@ -16,14 +17,14 @@ public class Core {
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
             int res = 0;
-            byte buf[] = new byte[1024];
+            byte[] buf = new byte[1024];
             while (res >= 0) {
                 res = gzIn.read(buf, 0, buf.length);
                 if (res > 0) {
                     byteOut.write(buf, 0, res);
                 }
             }
-            return LuaValue.valueOf(new String(byteOut.toByteArray(), "UTF-8"));
+            return LuaValue.valueOf(new String(byteOut.toByteArray(), StandardCharsets.UTF_8));
         } catch (Exception e) {
             return LuaValue.valueOf("");
         }
@@ -72,19 +73,19 @@ public class Core {
     }
 
     public static LuaValue create_login(Object url) {
-        return LuaValue.valueOf(0+ "0#" + url);
+        return LuaValue.valueOf(0 + "0#" + url);
 
     }
 
     public static LuaValue create_confirm(Object url) {
-        return LuaValue.valueOf( "1#" + url.toString());
+        return LuaValue.valueOf("1#" + url.toString());
     }
 
     public static LuaValue create_capcha(Object url) {
-        return LuaValue.valueOf( "2#" + url.toString());
+        return LuaValue.valueOf("2#" + url.toString());
     }
 
     public static LuaValue create_purchase(Object url) {
-        return LuaValue.valueOf( "3#" + url.toString());
+        return LuaValue.valueOf("3#" + url.toString());
     }
 }
