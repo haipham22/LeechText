@@ -1,13 +1,11 @@
 package dark.leech.text.models;
 
-/**
- * Created by Dark on 2/16/2017.
- */
+/** Created by Dark on 2/16/2017. */
 public class Post {
     private String partName; // Tên quyển
     private String chapName; // Tên chương
     private boolean error; // Lỗi
-    private boolean empty; //Chương trống
+    private boolean empty; // Chương trống
     private boolean imageChapter;
     private String text;
 

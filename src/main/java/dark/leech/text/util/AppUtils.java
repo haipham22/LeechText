@@ -1,32 +1,29 @@
 package dark.leech.text.util;
 
+import java.awt.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.awt.*;
-
-/**
- * Created by Long on 1/5/2017.
- */
+/** Created by Long on 1/5/2017. */
 public class AppUtils {
-    private AppUtils() {
-    }
-
     public static final String VERSION = "2019.03.30";
     public static final String TIME = "00:00";
-    public static String curDir = System.getProperty("user.dir");
-    public static String cacheDir = curDir;
     public static final String SEPARATOR = System.getProperty("file.separator");
-    public static Point LOCATION = new Point();
-    private static final GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    private static final GraphicsDevice gd =
+            GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     public static final int width = gd.getDisplayMode().getWidth();
     public static final int height = gd.getDisplayMode().getHeight();
+    public static String curDir = System.getProperty("user.dir");
+    public static String cacheDir = curDir;
+    public static Point LOCATION = new Point();
 
+    private AppUtils() {}
 
     public static void doLoad() {
         try {
             if (curDir.endsWith(SEPARATOR)) curDir = curDir.substring(0, curDir.length() - 1);
-            JSONObject json = new JSONObject(FileUtils.stream2string("/dark/leech/res/syntax.json"));
+            JSONObject json =
+                    new JSONObject(FileUtils.stream2string("/dark/leech/res/syntax.json"));
             JSONObject find = json.getJSONObject("find");
             SyntaxUtils.CHAP_NAME = find.getString("chap");
             SyntaxUtils.PART_NAME = find.getString("part");
@@ -62,6 +59,4 @@ public class AppUtils {
         } catch (InterruptedException e) {
         }
     }
-
-
 }

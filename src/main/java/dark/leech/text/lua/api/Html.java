@@ -1,14 +1,13 @@
 package dark.leech.text.lua.api;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 public class Html {
 
@@ -34,7 +33,6 @@ public class Html {
         }
     }
 
-
     public LuaValue parse(Object object) {
         return CoerceJavaToLua.coerce(Jsoup.parse(object.toString()));
     }
@@ -42,5 +40,4 @@ public class Html {
     public LuaValue url_encode(Object url) {
         return url_encode(url, "UTF-8");
     }
-
 }

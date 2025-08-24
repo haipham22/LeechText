@@ -1,8 +1,6 @@
 package dark.leech.text.models;
 
-/**
- * Code by Darkrai on 8/21/2016.
- */
+/** Code by Darkrai on 8/21/2016. */
 public class Trash {
     private String src;
     private String to;

@@ -1,11 +1,8 @@
 package dark.leech.text.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Long on 9/15/2016.
- */
+/** Created by Long on 9/15/2016. */
 public class Pager {
     private String url;
     private String name;
@@ -15,7 +12,7 @@ public class Pager {
 
     public Pager(String url, int id) {
         this.url = url;
-        this.id = "Q" + Integer.toString(id);
+        this.id = "Q" + id;
     }
 
     public Pager(String url) {
@@ -47,7 +44,7 @@ public class Pager {
     }
 
     public void setId(int id) {
-        this.id = "P" + Integer.toString(id);
+        this.id = "P" + id;
     }
 
     public String getName() {

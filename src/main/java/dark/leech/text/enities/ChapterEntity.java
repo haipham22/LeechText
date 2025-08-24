@@ -5,8 +5,10 @@ import com.google.gson.annotations.SerializedName;
 public class ChapterEntity {
     @SerializedName("id")
     private int id;
+
     @SerializedName("chapter_name")
     private String name;
+
     @SerializedName("chapter_url")
     private String url;
 
@@ -33,5 +35,4 @@ public class ChapterEntity {
     public void setUrl(String url) {
         this.url = url;
     }
-
 }

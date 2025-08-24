@@ -5,24 +5,23 @@ import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.lua.api.Lua;
 import dark.leech.text.lua.api.LuaScriptEngine;
 import dark.leech.text.util.TextUtils;
+import java.util.ArrayList;
+import java.util.List;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TocLoader {
-    private PluginEntity plugin;
+    private final PluginEntity plugin;
     private Listener callback;
-
-    public static TocLoader with(PluginEntity plugin) {
-        return new TocLoader(plugin);
-    }
 
     private TocLoader(PluginEntity plugin) {
         this.plugin = plugin;
+    }
+
+    public static TocLoader with(PluginEntity plugin) {
+        return new TocLoader(plugin);
     }
 
     public List<ChapterEntity> load(String url) {
@@ -65,12 +64,14 @@ public class TocLoader {
             LuaValue result = chuck.call(LuaValue.valueOf(url));
             if (result instanceof LuaTable) {
                 final List<String> urlList = new ArrayList<>();
-                Lua.forEach((LuaTable) result, new Lua.TableAction() {
-                    @Override
-                    public void action(String key, LuaValue value) {
-                        urlList.add(value.tojstring());
-                    }
-                });
+                Lua.forEach(
+                        (LuaTable) result,
+                        new Lua.TableAction() {
+                            @Override
+                            public void action(String key, LuaValue value) {
+                                urlList.add(value.tojstring());
+                            }
+                        });
                 return urlList;
             }
         } else {
@@ -94,20 +95,20 @@ public class TocLoader {
                 }
                 LuaValue result = chuck.call(LuaValue.valueOf(url));
                 if (result instanceof LuaTable) {
-                    Lua.forEach((LuaTable) result, new Lua.TableAction() {
-                        @Override
-                        public void action(String key, LuaValue value) {
-                            ChapterEntity chapter = new ChapterEntity();
-                            chapter.setName(value.get("name").tojstring());
-                            chapter.setUrl(value.get("url").tojstring());
-                            list.add(chapter);
-                        }
-                    });
-
+                    Lua.forEach(
+                            (LuaTable) result,
+                            new Lua.TableAction() {
+                                @Override
+                                public void action(String key, LuaValue value) {
+                                    ChapterEntity chapter = new ChapterEntity();
+                                    chapter.setName(value.get("name").tojstring());
+                                    chapter.setUrl(value.get("url").tojstring());
+                                    list.add(chapter);
+                                }
+                            });
                 }
 
-                if (list.size() > 0)
-                    return list;
+                if (list.size() > 0) return list;
             }
         }
         return null;
@@ -121,6 +122,4 @@ public class TocLoader {
     public interface Listener {
         void onUpdate(List<ChapterEntity> chapterList, float percent);
     }
-
-
 }

@@ -1,8 +1,6 @@
 package dark.leech.text.util;
 
-/**
- * Created by Long on 11/3/2016.
- */
+/** Created by Long on 11/3/2016. */
 public interface StringUtils {
     String CLOSE = "\uE5CD";
     String BACK = "\ue5c4";
@@ -22,5 +20,4 @@ public interface StringUtils {
     String MORE = "\uE5D4";
     String MENU = "\uE5D2";
     String LOOK = "\uE897";
-
 }

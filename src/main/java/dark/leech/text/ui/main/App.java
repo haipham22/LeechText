@@ -4,9 +4,8 @@ import dark.leech.text.ui.Animation;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.SettingUtils;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class App {
 
@@ -16,27 +15,31 @@ public class App {
 
     public static void main(String[] args) {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-                } catch (Exception ex) {
-                }
-                AppUtils.doLoad();
-                FileUtils.init();
-                SettingUtils.doLoad();
-                mainFrame = new MainUI();
-                Animation.fadeIn(mainFrame);
-                mainFrame.setVisible(true);
-                AppUtils.LOCATION = new Point(mainFrame.getLocation().x, mainFrame.getLocation().y + 20);
-            }
-        }).start();
+        new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    UIManager.setLookAndFeel(
+                                            "javax.swing.plaf.metal.MetalLookAndFeel");
+                                } catch (Exception ex) {
+                                }
+                                AppUtils.doLoad();
+                                FileUtils.init();
+                                SettingUtils.doLoad();
+                                mainFrame = new MainUI();
+                                Animation.fadeIn(mainFrame);
+                                mainFrame.setVisible(true);
+                                AppUtils.LOCATION =
+                                        new Point(
+                                                mainFrame.getLocation().x,
+                                                mainFrame.getLocation().y + 20);
+                            }
+                        })
+                .start();
     }
 
     public static MainUI getMain() {
         return mainFrame;
     }
-
-
 }

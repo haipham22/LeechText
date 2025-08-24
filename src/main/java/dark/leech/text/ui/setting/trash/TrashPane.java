@@ -7,19 +7,17 @@ import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
 
 public class TrashPane extends JMPanel {
 
     private static final long serialVersionUID = 1L;
     private List<Trash> trash;
-    private CircleButton buttonEdit;
+    private final CircleButton buttonEdit;
 
     public TrashPane() {
         this(null);
@@ -43,12 +41,13 @@ public class TrashPane extends JMPanel {
 
         buttonEdit = new CircleButton(StringUtils.EDIT);
         buttonEdit.setForeground(ColorUtils.THEME_COLOR);
-        buttonEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                actionEdit();
-            }
-        });
+        buttonEdit.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        actionEdit();
+                    }
+                });
         add(buttonEdit);
         buttonEdit.setBounds(335, 15, 30, 30);
         setBackground(Color.white);
@@ -66,14 +65,13 @@ public class TrashPane extends JMPanel {
 
     private void actionEdit() {
         final TrashUI trashUI = new TrashUI(trash);
-        trashUI.setChangeListener(new ChangeListener() {
-            @Override
-            public void doChanger() {
-                trash = trashUI.getTrash();
-            }
-        });
+        trashUI.setChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void doChanger() {
+                        trash = trashUI.getTrash();
+                    }
+                });
         trashUI.open();
     }
-
 }
-

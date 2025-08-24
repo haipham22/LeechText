@@ -1,9 +1,7 @@
 package dark.leech.text.enities;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
-
 
 public class BookEntity implements Serializable {
 
@@ -30,7 +28,6 @@ public class BookEntity implements Serializable {
 
     @SerializedName("detail")
     private String detail;
-
 
     public String getName() {
         return name;
@@ -95,5 +92,4 @@ public class BookEntity implements Serializable {
     public void setDetail(String detail) {
         this.detail = detail;
     }
-
 }

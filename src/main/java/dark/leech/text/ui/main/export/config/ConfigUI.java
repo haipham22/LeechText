@@ -9,19 +9,16 @@ import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.util.FontUtils;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
 
-/**
- * Created by Long on 9/10/2016.
- */
+/** Created by Long on 9/10/2016. */
 public class ConfigUI extends JMDialog implements ChangeListener {
 
     public static final int NAME = 0, IMG = 1, ERROR = 2, OPTIMIZE = 3;
+    protected Properties properties;
     private PanelTitle pnTitle;
     private BasicButton btOk;
     private JLabel lbName;
@@ -31,8 +28,7 @@ public class ConfigUI extends JMDialog implements ChangeListener {
     private BasicButton btError;
     private BasicButton btImg;
     private BasicButton btList;
-    protected Properties properties;
-    private List<Chapter> chapList;
+    private final List<Chapter> chapList;
     private Config config;
     private List<Chapter> nameList;
     private List<Chapter> imgList;
@@ -42,14 +38,14 @@ public class ConfigUI extends JMDialog implements ChangeListener {
         this.properties = properties;
         this.chapList = properties.getChapList();
         setSize(295, 260);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                onCreate();
-                loadErr();
-            }
-        });
-
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        onCreate();
+                        loadErr();
+                    }
+                });
     }
 
     @Override
@@ -65,109 +61,109 @@ public class ConfigUI extends JMDialog implements ChangeListener {
         btImg = new BasicButton();
         btList = new BasicButton();
 
-
-        //======== pnTitle ========
+        // ======== pnTitle ========
 
         pnTitle.setText("Hiệu Chỉnh");
-        pnTitle.addCloseListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        pnTitle.addCloseListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        close();
+                    }
+                });
         container.add(pnTitle);
         pnTitle.setBounds(0, 0, 295, 45);
 
-        //---- btOk ----
+        // ---- btOk ----
         btOk.setText("Hoàn Tất");
-        btOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveProperties();
-                close();
-            }
-        });
+        btOk.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        saveProperties();
+                        close();
+                    }
+                });
         container.add(btOk);
         btOk.setBounds(170, 210, 100, 35);
 
         //
         btList.setText("Xem DS");
-        btList.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Optimize();
-            }
-        });
+        btList.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Optimize();
+                    }
+                });
         container.add(btList);
         btList.setBounds(10, 210, 100, 35);
-        //---- lbName ----
+        // ---- lbName ----
 
         lbName.setFont(FontUtils.TEXT_NORMAL);
         container.add(lbName);
         lbName.setBounds(10, 60, 175, 35);
 
-        //---- lbImg ----
+        // ---- lbImg ----
         lbImg.setFont(FontUtils.TEXT_NORMAL);
         container.add(lbImg);
         lbImg.setBounds(10, 105, 175, 35);
 
-        //---- lbError ----
+        // ---- lbError ----
         lbError.setFont(FontUtils.TEXT_NORMAL);
         container.add(lbError);
         lbError.setBounds(10, 150, 175, 35);
 
-        //---- btName ----
+        // ---- btName ----
         btName.setText("H.Chỉnh");
-        btName.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editName();
-            }
-        });
+        btName.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        editName();
+                    }
+                });
         container.add(btName);
         btName.setBounds(185, 60, 95, 35);
 
-        //---- btError ----
+        // ---- btError ----
         btError.setText("H.Chỉnh");
-        btError.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editError();
-            }
-        });
+        btError.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        editError();
+                    }
+                });
         container.add(btError);
         btError.setBounds(185, 150, 95, 35);
 
-        //---- btImg ----
+        // ---- btImg ----
         btImg.setText("H.Chỉnh");
-        btImg.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editImg();
-            }
-        });
+        btImg.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        editImg();
+                    }
+                });
         container.add(btImg);
         btImg.setBounds(185, 105, 95, 35);
-
-
     }
 
     private void loadErr() {
         config = new Config(chapList);
         nameList = config.checkName();
-        lbName.setText("Tên chương: " + Integer.toString(nameList.size()) + " không hợp lệ");
-        if (nameList.size() == 0)
-            btName.setVisible(false);
+        lbName.setText("Tên chương: " + nameList.size() + " không hợp lệ");
+        if (nameList.size() == 0) btName.setVisible(false);
 
         imgList = config.checkImg();
-        lbImg.setText("Chương ảnh: " + Integer.toString(imgList.size()) + " chương");
-        if (imgList.size() == 0)
-            btImg.setVisible(false);
+        lbImg.setText("Chương ảnh: " + imgList.size() + " chương");
+        if (imgList.size() == 0) btImg.setVisible(false);
 
         errorList = config.checkError();
-        lbError.setText("Chương lỗi: " + Integer.toString(errorList.size()) + " chương");
-        if (errorList.size() == 0)
-            btError.setVisible(false);
+        lbError.setText("Chương lỗi: " + errorList.size() + " chương");
+        if (errorList.size() == 0) btError.setVisible(false);
     }
 
     private void editName() {
@@ -209,4 +205,3 @@ public class ConfigUI extends JMDialog implements ChangeListener {
         repaint();
     }
 }
-

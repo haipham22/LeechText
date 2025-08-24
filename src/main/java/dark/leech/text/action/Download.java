@@ -1,29 +1,32 @@
 package dark.leech.text.action;
 
+import static dark.leech.text.util.SettingUtils.MAX_CONN;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.get.ChapExecute;
-import dark.leech.text.get.PageExecute;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.listeners.DownloadListener;
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Pager;
 import dark.leech.text.models.Properties;
 import dark.leech.text.plugin.PluginManager;
-
 import java.util.List;
 
-import static dark.leech.text.util.SettingUtils.MAX_CONN;
-
 public class Download implements ChangeListener {
-    public static final int DOWNLOADING = 0, PAUSE = 1, COMPLETED = 2, CHECKING = 3, CANCEL = 4, ERROR = 5;
+    public static final int DOWNLOADING = 0,
+            PAUSE = 1,
+            COMPLETED = 2,
+            CHECKING = 3,
+            CANCEL = 4,
+            ERROR = 5;
     private DownloadListener downloadListener;
-    private List<Chapter> chapList;
-    private List<Pager> pageList;
-    private PluginEntity pluginGetter;
-    private Properties properties;
+    private final List<Chapter> chapList;
+    private final List<Pager> pageList;
+    private final PluginEntity pluginGetter;
+    private final Properties properties;
     private int downloaded;
     private int status;
-    private int size;
+    private final int size;
     private int next;
 
     public Download(Properties properties) {
@@ -62,26 +65,21 @@ public class Download implements ChangeListener {
         next = next + MAX_CONN - 1;
         update();
         for (int i = 0; i < MAX_CONN; i++)
-            if (properties.isForum())
-                forum(downloaded + i);
-            else
-                web(downloaded + i);
-
+            if (properties.isForum()) forum(downloaded + i);
+            else web(downloaded + i);
     }
-
 
     private void forum(final int index) {
         if (index >= size) {
             update();
-            return;
         }
-//        new PageExecute()
-//                .clazz(pluginGetter)
-//                .listener(this)
-//                .charset(properties.getCharset())
-//                .path(properties.getSavePath())
-//                .applyTo(pageList.get(index))
-//                .execute();
+        //        new PageExecute()
+        //                .clazz(pluginGetter)
+        //                .listener(this)
+        //                .charset(properties.getCharset())
+        //                .path(properties.getSavePath())
+        //                .applyTo(pageList.get(index))
+        //                .execute();
     }
 
     private void web(final int index) {
@@ -107,16 +105,12 @@ public class Download implements ChangeListener {
         downloadListener.updateDownload(downloaded, status);
     }
 
-
     private void check() {
         downloadListener.updateDownload(downloaded, status);
         for (int i = 0; i < size; i++) {
             if (properties.isForum())
-                if (!pageList.get(i).isCompleted())
-                    forum(i);
-                else if (!chapList.get(i).isCompleted())
-                    web(i);
-
+                if (!pageList.get(i).isCompleted()) forum(i);
+                else if (!chapList.get(i).isCompleted()) web(i);
         }
         status = COMPLETED;
     }
@@ -130,12 +124,9 @@ public class Download implements ChangeListener {
         if (status == DOWNLOADING) {
             update();
             if (next < size) {
-                if (properties.isForum())
-                    forum(next);
-                else
-                    web(next);
+                if (properties.isForum()) forum(next);
+                else web(next);
             }
         }
     }
 }
-

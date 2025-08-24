@@ -1,17 +1,13 @@
 package dark.leech.text.ui.material;
 
 import dark.leech.text.models.Chapter;
-import dark.leech.text.util.FontUtils;
-
+import java.awt.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
-import java.util.List;
 
-/**
- * Created by Long on 9/10/2016.
- */
+/** Created by Long on 9/10/2016. */
 public class JMTable extends JTable {
 
     public JMTable(List<Chapter> chapter) {
@@ -23,22 +19,22 @@ public class JMTable extends JTable {
             data[i][2] = chapter.get(i).getChapName();
         }
         Object[] head = {"", "", ""};
-        setModel(new DefaultTableModel(data, head) {
-            Class<?>[] columnTypes = new Class<?>[]{String.class, String.class, String.class};
-            boolean[] columnEditable = new boolean[]{
-                    false, true, true
-            };
+        setModel(
+                new DefaultTableModel(data, head) {
+                    final Class<?>[] columnTypes =
+                            new Class<?>[] {String.class, String.class, String.class};
+                    final boolean[] columnEditable = new boolean[] {false, true, true};
 
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return columnTypes[columnIndex];
-            }
+                    @Override
+                    public Class<?> getColumnClass(int columnIndex) {
+                        return columnTypes[columnIndex];
+                    }
 
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return columnEditable[columnIndex];
-            }
-        });
+                    @Override
+                    public boolean isCellEditable(int rowIndex, int columnIndex) {
+                        return columnEditable[columnIndex];
+                    }
+                });
         {
             TableColumnModel cm = getColumnModel();
             cm.getColumn(0).setMaxWidth(40);

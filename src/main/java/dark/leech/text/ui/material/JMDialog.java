@@ -7,23 +7,21 @@ import dark.leech.text.ui.Animation;
 import dark.leech.text.ui.main.App;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.GraphicsUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
+import javax.swing.*;
 
 public abstract class JMDialog extends JDialog implements BlurListener {
+    protected Container container;
     private Point pointLocation;
     private BlurListener blurListener;
-    protected Container container;
     private BufferedImage blurBuffer;
     private BufferedImage backBuffer;
-    private float alpha = 1.0f;
+    private final float alpha = 1.0f;
     private ChangeListener changeListener;
     private Color borderColor;
-
 
     public JMDialog() {
         super(App.getMain());
@@ -42,34 +40,41 @@ public abstract class JMDialog extends JDialog implements BlurListener {
         setModal(true);
         setResizable(false);
         setUndecorated(true);
-        if (GraphicsUtils.TRANSLUCENT_SUPPORT)
-            setOpacity(0.0f);
+        if (GraphicsUtils.TRANSLUCENT_SUPPORT) setOpacity(0.0f);
         setTitle("LeechText");
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/dark/leech/res/icon.png")));
-
+        setIconImage(
+                Toolkit.getDefaultToolkit()
+                        .getImage(getClass().getResource("/dark/leech/res/icon.png")));
     }
 
-
     public void open() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                blurListener.setBlur(true);
-                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 5, 5));
-                pointLocation = AppUtils.getLocation();
-                int X = pointLocation.x + 390 / 2 - getWidth() / 2;
-                X = X < 10 ? 10 : X;
-                X = (X + getWidth() > AppUtils.width) ? AppUtils.width - getWidth() - 10 : X;
-                int Y = pointLocation.y + 600 / 2 - getHeight() / 2;
-                Y = (Y + getHeight() > AppUtils.height) ? AppUtils.height - getHeight() - 10 : Y;
-                Y = Y < 10 ? 10 : Y;
-                setLocation(X, Y);
-                Animation.fadeIn(JMDialog.this);
-                setVisible(true);
-            }
-        }).start();
-
-
+        new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                blurListener.setBlur(true);
+                                setShape(
+                                        new RoundRectangle2D.Double(
+                                                0, 0, getWidth(), getHeight(), 5, 5));
+                                pointLocation = AppUtils.getLocation();
+                                int X = pointLocation.x + 390 / 2 - getWidth() / 2;
+                                X = X < 10 ? 10 : X;
+                                X =
+                                        (X + getWidth() > AppUtils.width)
+                                                ? AppUtils.width - getWidth() - 10
+                                                : X;
+                                int Y = pointLocation.y + 600 / 2 - getHeight() / 2;
+                                Y =
+                                        (Y + getHeight() > AppUtils.height)
+                                                ? AppUtils.height - getHeight() - 10
+                                                : Y;
+                                Y = Y < 10 ? 10 : Y;
+                                setLocation(X, Y);
+                                Animation.fadeIn(JMDialog.this);
+                                setVisible(true);
+                            }
+                        })
+                .start();
     }
 
     protected void runOnUiThread(Runnable runnable) {
@@ -119,7 +124,8 @@ public abstract class JMDialog extends JDialog implements BlurListener {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g.create();
         if (isVisible() && blurBuffer != null) {
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.setRenderingHint(
+                    RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g2.drawImage(backBuffer, 0, 0, null);
             g2.setComposite(AlphaComposite.SrcOver.derive(alpha));
             g2.drawImage(blurBuffer, 0, 0, getWidth(), getHeight(), null);
@@ -129,6 +135,5 @@ public abstract class JMDialog extends JDialog implements BlurListener {
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 5, 5);
         }
         g2.dispose();
-
     }
 }

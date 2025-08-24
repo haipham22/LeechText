@@ -1,6 +1,5 @@
 package dark.leech.text.get;
 
-import dark.leech.text.action.Log;
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.lua.loader.TextLoader;
@@ -9,12 +8,9 @@ import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.SettingUtils;
 import dark.leech.text.util.SyntaxUtils;
-
 import javax.swing.*;
 
-/**
- * Created by Dark on 1/18/2017.
- */
+/** Created by Dark on 1/18/2017. */
 public class ChapExecute extends SwingWorker<String, Void> {
     private TextLoader chapGetter;
     private Chapter chapter;
@@ -35,20 +31,16 @@ public class ChapExecute extends SwingWorker<String, Void> {
             text = get();
             chapter.setError(false);
             chapter.setEmpty(false);
-            if (text == null || text.length() == 0)
-                chapter.setError(true);
+            if (text == null || text.length() == 0) chapter.setError(true);
             else if (text.length() < 1000)
-                if (text.split("<img ").length > 1)
-                    chapter.setImageChapter(true);
+                if (text.split("<img ").length > 1) chapter.setImageChapter(true);
                 else chapter.setEmpty(true);
             chapter.setCompleted(true);
-            if (!(chapter.isEmpty() && chapter.isError()))
-                write();
+            if (!(chapter.isEmpty() && chapter.isError())) write();
         } catch (Exception e) {
             chapter.setError(true);
         }
         changeListener.doChanger();
-
     }
 
     public ChapExecute plugin(PluginEntity pluginEntity) {
@@ -79,7 +71,6 @@ public class ChapExecute extends SwingWorker<String, Void> {
     private void write() {
         FileUtils.string2file(Optimize(text), savepath + "/raw/" + chapter.getId() + ".txt", chset);
     }
-
 
     private String Optimize(String src) {
         if (SyntaxUtils.REPLACE_FROM != null)

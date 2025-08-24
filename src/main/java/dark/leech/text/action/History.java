@@ -2,19 +2,16 @@ package dark.leech.text.action;
 
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Properties;
-import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class History {
 
-    private History() {
-    }
+    private History() {}
 
     public static History getHistory() {
         return new History();
@@ -35,8 +32,7 @@ public class History {
             properties.setGioiThieu(metadata.getString("gioithieu"));
             JSONArray array = obj.getJSONArray("list");
             List<Chapter> list = new ArrayList<Chapter>();
-            for (int i = 0; i < array.length(); i++)
-                list.add(getChapter(array.getJSONObject(i)));
+            for (int i = 0; i < array.length(); i++) list.add(getChapter(array.getJSONObject(i)));
             properties.setChapList(list);
         } catch (Exception e) {
             Log.add(e);
@@ -58,8 +54,7 @@ public class History {
         JSONArray list = new JSONArray();
 
         // danh sách chương
-        for (Chapter c : properties.getChapList())
-            list.put(getObjectList(c));
+        for (Chapter c : properties.getChapList()) list.put(getObjectList(c));
         his.put("list", list);
 
         FileUtils.string2file(his.toString(), properties.getSavePath() + "/properties.json");
@@ -86,5 +81,3 @@ public class History {
         return chapter;
     }
 }
-
-

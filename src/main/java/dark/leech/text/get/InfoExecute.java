@@ -6,12 +6,9 @@ import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.lua.loader.DetailLoader;
 import dark.leech.text.models.Properties;
 import dark.leech.text.util.SyntaxUtils;
-
 import javax.swing.*;
 
-/**
- * Created by Dark on 1/18/2017.
- */
+/** Created by Dark on 1/18/2017. */
 public class InfoExecute extends SwingWorker {
     private DetailLoader loader;
     private ChangeListener changeListener;
@@ -23,7 +20,6 @@ public class InfoExecute extends SwingWorker {
         return this;
     }
 
-
     public InfoExecute listener(ChangeListener changeListener) {
         this.changeListener = changeListener;
         return this;
@@ -33,7 +29,6 @@ public class InfoExecute extends SwingWorker {
         this.properties = properties;
         return this;
     }
-
 
     @Override
     protected Void doInBackground() {
@@ -56,7 +51,11 @@ public class InfoExecute extends SwingWorker {
     protected void done() {
         if (success)
             if (properties.getGioiThieu() != null)
-                properties.setGioiThieu("<p>" + SyntaxUtils.Optimize(properties.getGioiThieu()).replace("\n", "</p>\n<p>") + "</p>");
+                properties.setGioiThieu(
+                        "<p>"
+                                + SyntaxUtils.Optimize(properties.getGioiThieu())
+                                        .replace("\n", "</p>\n<p>")
+                                + "</p>");
         changeListener.doChanger();
     }
 }

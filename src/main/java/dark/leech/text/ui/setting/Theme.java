@@ -4,15 +4,12 @@ import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.FontUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.*;
 
-/**
- * Created by Long on 10/7/2016.
- */
+/** Created by Long on 10/7/2016. */
 public class Theme extends JMPanel {
     private Color color;
     private JPanel colorPn;
@@ -32,12 +29,13 @@ public class Theme extends JMPanel {
         colorPn = new JPanel();
         colorPn.setBackground(color);
         colorPn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        colorPn.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                clickChooserColor();
-            }
-        });
+        colorPn.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        clickChooserColor();
+                    }
+                });
         add(colorPn);
         colorPn.setBounds(335, 5, 30, 30);
         setPreferredSize(new Dimension(370, 40));
@@ -46,15 +44,15 @@ public class Theme extends JMPanel {
     private void clickChooserColor() {
         final ChooserColor chooserColor = new ChooserColor(color);
 
-        chooserColor.setChangeListener(new ChangeListener() {
-            @Override
-            public void doChanger() {
-                color = chooserColor.getChooserColor();
-                colorPn.setBackground(color);
-            }
-        });
+        chooserColor.setChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void doChanger() {
+                        color = chooserColor.getChooserColor();
+                        colorPn.setBackground(color);
+                    }
+                });
         chooserColor.open();
-
     }
 
     public void setThemeColor(Color color) {
@@ -107,12 +105,13 @@ class ChooserColor extends JMDialog {
     public class ColorPane extends JPanel {
         public ColorPane(Color color) {
             setPreferredSize(new Dimension(45, 45));
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    choose();
-                }
-            });
+            addMouseListener(
+                    new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            choose();
+                        }
+                    });
             setBackground(color);
         }
 

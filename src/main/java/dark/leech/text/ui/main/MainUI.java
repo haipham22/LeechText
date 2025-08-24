@@ -11,17 +11,24 @@ import dark.leech.text.ui.download.DownloadUI;
 import dark.leech.text.ui.main.plugin.PluginUI;
 import dark.leech.text.ui.material.JMMenuItem;
 import dark.leech.text.ui.material.JMPopupMenu;
-import dark.leech.text.util.*;
-
-import javax.swing.*;
-import javax.swing.border.LineBorder;
+import dark.leech.text.util.AppUtils;
+import dark.leech.text.util.ColorUtils;
+import dark.leech.text.util.FontUtils;
+import dark.leech.text.util.GraphicsUtils;
+import dark.leech.text.util.StringUtils;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 public class MainUI extends JFrame implements BlurListener, ActionListener {
 
@@ -60,14 +67,17 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         getRootPane().setBorder(new LineBorder(Color.LIGHT_GRAY, 1));
         setUndecorated(true);
         setTitle("LeechText");
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/dark/leech/res/icon.png")));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                onCreate();
-            }
-        }).start();
-
+        setIconImage(
+                Toolkit.getDefaultToolkit()
+                        .getImage(getClass().getResource("/dark/leech/res/icon.png")));
+        new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                onCreate();
+                            }
+                        })
+                .start();
     }
 
     private void onCreate() {
@@ -101,7 +111,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         addURL.open();
     }
 
-    //Thanh tiêu đề
+    // Thanh tiêu đề
     private void onCreateStatusBar() {
         statusBar = new JPanel();
         statusBar.setBackground(ColorUtils.STATUS_BAR);
@@ -120,31 +130,36 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         lbStatus.setFont(FontUtils.textFont(13f, Font.PLAIN));
         statusBar.add(lbStatus);
         lbStatus.setBounds(5, 0, 315, 20);
-        timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-                Date date = new Date();
-                lbStatus.setText(dateFormat.format(date));
-            }
-        });
+        timer =
+                new Timer(
+                        1000,
+                        new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+                                Date date = new Date();
+                                lbStatus.setText(dateFormat.format(date));
+                            }
+                        });
         container.add(statusBar);
         statusBar.setBounds(0, 0, 390, 20);
-        statusBar.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                initialClick = e.getPoint();
-                getComponentAt(initialClick);
-            }
-        });
-        statusBar.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                movieWindows(e);
-            }
-        });
+        statusBar.addMouseListener(
+                new MouseAdapter() {
+                    public void mousePressed(MouseEvent e) {
+                        initialClick = e.getPoint();
+                        getComponentAt(initialClick);
+                    }
+                });
+        statusBar.addMouseMotionListener(
+                new MouseMotionAdapter() {
+                    @Override
+                    public void mouseDragged(MouseEvent e) {
+                        movieWindows(e);
+                    }
+                });
     }
 
-    //Thanh Title
+    // Thanh Title
     private void onCreateAppBar() {
 
         appBar = new JPanel();
@@ -169,7 +184,6 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         btMenu.addActionListener(this);
         appBar.add(btMenu);
         btMenu.setBounds(355, 5, 30, 45);
-
     }
 
     private void createPanelHeaderUI() {
@@ -197,19 +211,18 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
     }
 
     private void createPopupMenu() {
-        ActionListener actionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == pnSetting) {
-                    Animation.go(downloadUI, setting);
-                    setting.load();
-                }
-                if (e.getSource() == pnHelp)
-                    new HelpUI().open();
-                if (e.getSource() == pnPlugin)
-                    new PluginUI().open();
-            }
-        };
+        ActionListener actionListener =
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (e.getSource() == pnSetting) {
+                            Animation.go(downloadUI, setting);
+                            setting.load();
+                        }
+                        if (e.getSource() == pnHelp) new HelpUI().open();
+                        if (e.getSource() == pnPlugin) new PluginUI().open();
+                    }
+                };
         menu = new JMPopupMenu();
         pnSetting = new JMMenuItem("Cài đặt");
         pnSetting.addActionListener(actionListener);
@@ -240,13 +253,16 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
 
     private void checkUpdate() {
         i = 0;
-        final String[] s = new String[]{".", "..", "...", "...."};
-        Timer time = new Timer(200, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                lbStatus.setText("Đang kiểm tra cập nhật" + s[i = (i + 1) % 4]);
-            }
-        });
+        final String[] s = new String[] {".", "..", "...", "...."};
+        Timer time =
+                new Timer(
+                        200,
+                        new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                lbStatus.setText("Đang kiểm tra cập nhật" + s[i = (i + 1) % 4]);
+                            }
+                        });
         time.start();
 
         PluginManager.getManager();
@@ -254,7 +270,6 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         time.stop();
         timer.start();
     }
-
 
     private void createBlur() {
         Component root = getRootPane();
@@ -272,20 +287,18 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
 
     @Override
     public void setBlur(boolean blur) {
-        if (blur)
-            createBlur();
-        else
-            blurBuffer = null;
+        if (blur) createBlur();
+        else blurBuffer = null;
         repaint();
     }
-
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         if (isVisible() && blurBuffer != null) {
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.setRenderingHint(
+                    RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g2.drawImage(backBuffer, 0, 0, null);
             g2.setComposite(AlphaComposite.SrcOver.derive(0.9f));
             g2.drawImage(blurBuffer, 0, 0, getWidth(), getHeight(), null);
@@ -298,8 +311,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         if (e.getSource() == btMenu) {
             menu.show(btMenu, btMenu.getWidth() / 2 - 70, btMenu.getHeight() / 2 - 20);
         }
-        if (e.getSource() == btExit)
-            actionExit();
+        if (e.getSource() == btExit) actionExit();
 
         if (e.getSource() == btAdd) {
             actionAdd();

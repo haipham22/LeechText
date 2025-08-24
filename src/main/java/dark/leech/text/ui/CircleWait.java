@@ -1,20 +1,17 @@
 package dark.leech.text.ui;
 
 import dark.leech.text.util.ColorUtils;
-
-import javax.swing.*;
-import javax.swing.plaf.LayerUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
+import javax.swing.*;
+import javax.swing.plaf.LayerUI;
 
-/**
- * Created by Long on 10/9/2016.
- */
+/** Created by Long on 10/9/2016. */
 public class CircleWait {
-    private JLayer<JPanel> jlayer;
     WaitLayerUI layerUI = new WaitLayerUI();
+    private final JLayer<JPanel> jlayer;
 
     public CircleWait(Dimension dimension) {
         JPanel pn = new JPanel();
@@ -43,7 +40,7 @@ class WaitLayerUI extends LayerUI<JPanel> implements ActionListener {
 
     private int mAngle;
     private int mFadeCount;
-    private int mFadeLimit = 15;
+    private final int mFadeLimit = 15;
 
     @Override
     public void paint(Graphics g, JComponent c) {
@@ -63,8 +60,9 @@ class WaitLayerUI extends LayerUI<JPanel> implements ActionListener {
         // Gray it out.
         Composite urComposite = g2.getComposite();
 
-        g2.setComposite(AlphaComposite.getInstance(
-                AlphaComposite.SRC_OVER, .5f * fade < 0 ? 0 : .5f * fade));
+        g2.setComposite(
+                AlphaComposite.getInstance(
+                        AlphaComposite.SRC_OVER, .5f * fade < 0 ? 0 : .5f * fade));
         g2.setColor(new Color(0, 0, 0, 30));
         g2.fillRect(0, 0, w, h);
         g2.setComposite(urComposite);
@@ -73,18 +71,17 @@ class WaitLayerUI extends LayerUI<JPanel> implements ActionListener {
         int s = Math.min(w, h) / 5;
         int cx = w / 2;
         int cy = h / 2;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setStroke(
-                new BasicStroke(s / 4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setStroke(new BasicStroke(s / 4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2.setPaint(ColorUtils.THEME_COLOR);
         g2.rotate(Math.PI * mAngle / 180, cx, cy);
         for (int i = 0; i < 12; i++) {
             float scale = (11.0f - (float) i) / 11.0f;
             g2.drawLine(cx + s, cy, cx + s * 2, cy);
             g2.rotate(-Math.PI / 6, cx, cy);
-            g2.setComposite(AlphaComposite.getInstance(
-                    AlphaComposite.SRC_OVER, scale * fade < 0 ? 0 : scale * fade));
+            g2.setComposite(
+                    AlphaComposite.getInstance(
+                            AlphaComposite.SRC_OVER, scale * fade < 0 ? 0 : scale * fade));
         }
 
         g2.dispose();

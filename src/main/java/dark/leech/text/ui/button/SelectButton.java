@@ -4,15 +4,12 @@ import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
-/**
- * Created by Long on 10/20/2016.
- */
+/** Created by Long on 10/20/2016. */
 public class SelectButton extends JButton {
     private boolean selected;
     private ChangeListener changeListener;
@@ -25,22 +22,23 @@ public class SelectButton extends JButton {
         setHorizontalAlignment(SwingConstants.CENTER);
         setVerticalAlignment(SwingConstants.CENTER);
         setFocusable(false);
-        addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setSelected(!selected);
-            }
-        });
+        addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        setSelected(!selected);
+                    }
+                });
+    }
+
+    public boolean isSelected() {
+        return selected;
     }
 
     public void setSelected(boolean selected) {
         setText(selected ? StringUtils.CHECK_BOX : StringUtils.CHECK_BOX_OUTLINE);
         this.selected = selected;
         if (changeListener != null) changeListener.doChanger();
-    }
-
-    public boolean isSelected() {
-        return selected;
     }
 
     public void setChangeListener(ChangeListener changeListener) {

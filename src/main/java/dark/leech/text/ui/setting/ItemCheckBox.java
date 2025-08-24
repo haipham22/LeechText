@@ -1,26 +1,24 @@
 package dark.leech.text.ui.setting;
 
+import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.StringUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.*;
 
 public class ItemCheckBox extends JMPanel {
     private JLabel lbName;
     private JLabel lbSelect;
     private boolean selected;
-    private String name;
+    private final String name;
 
     public ItemCheckBox(String name) {
         this.name = name;
         onCreate();
         setSelected(false);
-
     }
 
     public boolean isSelected() {
@@ -34,12 +32,13 @@ public class ItemCheckBox extends JMPanel {
 
     private void onCreate() {
         this.setBackground(Color.white);
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                setSelected(!selected);
-            }
-        });
+        this.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        setSelected(!selected);
+                    }
+                });
         this.setLayout(null);
         lbName = new JLabel(name);
         lbSelect = new JLabel();

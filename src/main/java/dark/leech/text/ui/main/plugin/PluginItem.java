@@ -8,23 +8,20 @@ import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.Base64;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.SettingUtils;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-/**
- * Created by Long on 1/11/2017.
- */
+/** Created by Long on 1/11/2017. */
 public class PluginItem extends JMPanel {
     private ImageLabel pnIcon;
     private JLabel lbName;
     private JLabel lbInfo;
     private SelectButton btCheckBox;
-    private PluginEntity pluginGetter;
+    private final PluginEntity pluginGetter;
 
     public PluginItem(PluginEntity pluginGetter) {
         this.pluginGetter = pluginGetter;
@@ -36,7 +33,7 @@ public class PluginItem extends JMPanel {
         lbName = new JLabel();
         lbInfo = new JLabel();
         btCheckBox = new SelectButton();
-        //---- pnIcon ----
+        // ---- pnIcon ----
         add(pnIcon);
         pnIcon.setBounds(10, 5, 55, 55);
         if (pluginGetter.getIcon() == null) {
@@ -47,33 +44,31 @@ public class PluginItem extends JMPanel {
             pnIcon.input(in).load();
         }
 
-        //---- lbName ----
+        // ---- lbName ----
         lbName.setText(pluginGetter.getName() + " - v" + pluginGetter.getVersion());
         lbName.setFont(FontUtils.TEXT_NORMAL);
         add(lbName);
         lbName.setBounds(70, 5, 220, 25);
 
-        //---- lbInfo ----
+        // ---- lbInfo ----
         lbInfo.setText(pluginGetter.getSource());
         lbInfo.setFont(FontUtils.TEXT_THIN);
         add(lbInfo);
         lbInfo.setBounds(70, 35, 295, 25);
 
-        //---- btCheckBox ----
+        // ---- btCheckBox ----
         btCheckBox.setSelected(pluginGetter.isChecked());
-        btCheckBox.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                pluginGetter.setChecked(btCheckBox.isSelected());
-            }
-        });
+        btCheckBox.addChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        pluginGetter.setChecked(btCheckBox.isSelected());
+                    }
+                });
         add(btCheckBox);
         btCheckBox.setBounds(340, 5, 30, 30);
 
         setBorder(new DropShadowBorder(SettingUtils.THEME_COLOR, 5, 3));
         setPreferredSize(new Dimension(375, 70));
-
     }
-
-
 }

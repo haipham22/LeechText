@@ -5,25 +5,24 @@ import dark.leech.text.listeners.ProgressListener;
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Properties;
 import dark.leech.text.models.Trash;
-import dark.leech.text.util.*;
-
-import java.util.ArrayList;
+import dark.leech.text.util.FileUtils;
+import dark.leech.text.util.RegexUtils;
+import dark.leech.text.util.SettingUtils;
+import dark.leech.text.util.SyntaxUtils;
+import dark.leech.text.util.TypeUtils;
 import java.util.List;
 
-/**
- * Created by Long on 9/17/2016.
- */
+/** Created by Long on 9/17/2016. */
 public class Text {
-    private Properties properties;
-    private int type;
-    private boolean makeToc;
-    private boolean includeCss;
-    private int tach;
+    private final Properties properties;
+    private final int type;
+    private final boolean makeToc;
+    private final boolean includeCss;
+    private final int tach;
     private ProgressListener progressListener;
     private String syntax;
-    private String charset;
+    private final String charset;
     private List<Chapter> chapList;
-
 
     public Text(Properties properties, int type, boolean makeToc, boolean includeCss, int tach) {
         this.properties = properties;
@@ -32,7 +31,6 @@ public class Text {
         this.includeCss = includeCss;
         this.tach = tach;
         this.charset = properties.getCharset();
-
     }
 
     public void export() {
@@ -43,22 +41,26 @@ public class Text {
             syntax = SettingUtils.TXT_SYNTAX;
             exportTach(".txt");
         }
-
-
     }
 
     public void exportTach(String duoi) {
         chapList = properties.getChapList();
         StringBuffer gop = new StringBuffer();
-        //Tạo file gộp tach == 1
+        // Tạo file gộp tach == 1
 
         if (tach == 1) {
             if (type == TypeUtils.HTML) {
                 String head = syntax;
-                head = head.replaceAll("<title>.*?</title>", "<title>" + properties.getName() + "</title>");
+                head =
+                        head.replaceAll(
+                                "<title>.*?</title>",
+                                "<title>" + properties.getName() + "</title>");
                 head = head.replaceAll("(?s)(.*?<body.*?>).*", "$1");
                 if (includeCss)
-                    head = head.replace("</head>", "<style>\n" + SettingUtils.CSS_SYNTAX + "\n</style>\n</head>");
+                    head =
+                            head.replace(
+                                    "</head>",
+                                    "<style>\n" + SettingUtils.CSS_SYNTAX + "\n</style>\n</head>");
                 gop.append(head);
             }
         }
@@ -82,35 +84,52 @@ public class Text {
                 gop.append(text);
             }
         }
-        //Tạo mục lục
+        // Tạo mục lục
         if (makeToc && type == TypeUtils.HTML) {
             String toc = "\n<h4>Mục lục</h4>\n";
             if (tach == 0) {
                 if (properties.isAddGt())
-                    toc += "<div class=\"lv2\"><a href=\"../Text/gioithieu.html\">Giới Thiệu</a></div>\n";
+                    toc +=
+                            "<div class=\"lv2\"><a href=\"../Text/gioithieu.html\">Giới"
+                                    + " Thiệu</a></div>\n";
                 for (Chapter ch : chapList)
-                    toc += "<div class=\"lv2\"><a href=\"../Text/"
-                            + ch.getId() + ".html\">"
-                            + (ch.getPartName().length() == 0 ? "" : ch.getPartName()
-                            + " - ")
-                            + ch.getChapName()
-                            + "</a></div>\n";
+                    toc +=
+                            "<div class=\"lv2\"><a href=\"../Text/"
+                                    + ch.getId()
+                                    + ".html\">"
+                                    + (ch.getPartName().length() == 0
+                                            ? ""
+                                            : ch.getPartName() + " - ")
+                                    + ch.getChapName()
+                                    + "</a></div>\n";
                 String head = syntax;
-                head = head.replaceAll("<title>.*?</title>", "<title>" + properties.getName() + "</title>");
+                head =
+                        head.replaceAll(
+                                "<title>.*?</title>",
+                                "<title>" + properties.getName() + "</title>");
                 head = head.replaceAll("(?s)(.*?<body.*?>).*", "$1");
                 toc = head + toc + "</body>\n</html>";
-                FileUtils.string2file(toc, properties.getSavePath() + "/data/Text/mucluc.html", charset);
+                FileUtils.string2file(
+                        toc, properties.getSavePath() + "/data/Text/mucluc.html", charset);
 
             } else {
                 if (properties.isAddGt())
                     toc += "<div class=\"lv2\"><a href=\"#gioithieu\">Giới Thiệu</a></div>\n";
                 for (Chapter ch : chapList) {
-                    toc += "<div class=\"lv2\"><a href=\"#" + ch.getId() + "\">" + (ch.getPartName().length() == 0 ? "" : ch.getPartName() + " - ") + ch.getChapName() + "</a></div>\n";
+                    toc +=
+                            "<div class=\"lv2\"><a href=\"#"
+                                    + ch.getId()
+                                    + "\">"
+                                    + (ch.getPartName().length() == 0
+                                            ? ""
+                                            : ch.getPartName() + " - ")
+                                    + ch.getChapName()
+                                    + "</a></div>\n";
                 }
                 gop.append(toc);
             }
         }
-        //Thay thế text
+        // Thay thế text
         int value = 0;
 
         for (Chapter ch : chapList) {
@@ -131,28 +150,24 @@ public class Text {
                 }
                 value++;
                 if (progressListener != null)
-                    progressListener.setProgress(value * 100 / properties.getSize(), "[2/3]Xuất text...");
+                    progressListener.setProgress(
+                            value * 100 / properties.getSize(), "[2/3]Xuất text...");
             }
         }
         if (tach == 1) {
-            if (type == TypeUtils.HTML)
-                gop.append("</body>\n</html>");
-            FileUtils.string2file(gop.toString(), properties.getSavePath() + "/out/text" + duoi, charset);
+            if (type == TypeUtils.HTML) gop.append("</body>\n</html>");
+            FileUtils.string2file(
+                    gop.toString(), properties.getSavePath() + "/out/text" + duoi, charset);
         }
-
     }
 
     private String clearText(String text) {
         for (Trash tr : SettingUtils.TRASH)
             if (tr.isReplace()) {
-                String src = tr.getSrc()
-                        .replace("\\n", "\n")
-                        .replace("\\r", "\r")
-                        .replace("\\t", "\t");
-                String to = tr.getTo()
-                        .replace("\\n", "\n")
-                        .replace("\\r", "\r")
-                        .replace("\\t", "\t");
+                String src =
+                        tr.getSrc().replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t");
+                String to =
+                        tr.getTo().replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t");
                 text = text.replaceAll(src, to);
             }
         return SyntaxUtils.covertString(text);
@@ -163,7 +178,9 @@ public class Text {
     }
 
     private String chapterReplace(Chapter chapter, boolean pp) throws Exception {
-        String nd = FileUtils.file2string(properties.getSavePath() + "/raw/" + chapter.getId() + ".txt", charset);
+        String nd =
+                FileUtils.file2string(
+                        properties.getSavePath() + "/raw/" + chapter.getId() + ".txt", charset);
         nd = clearText(nd);
         String text = syntax;
         //
@@ -172,7 +189,7 @@ public class Text {
         text = replaceString(text, chapter.getPartName(), "\\[3\\]", "NAME_PART");
         text = replaceString(text, chapter.getChapName(), "\\[4\\]", "NAME_CHAP");
         text = text.replace("[ID]", chapter.getId());
-        //replace paragraph
+        // replace paragraph
         String firstTag = RegexUtils.find(syntax, "\\[5\\](.*)\\[PARAGRAPH\\](.*)\\[5\\]", 1);
         String lastTag = RegexUtils.find(syntax, "\\[5\\](.*)\\[PARAGRAPH\\](.*)\\[5\\]", 2);
         nd = replaceDrop(nd);
@@ -188,8 +205,9 @@ public class Text {
     private String replaceString(String src, String replace, String tag, String key) {
         if (replace == null || replace.length() < 2)
             return src.replaceAll("\\s*" + tag + ".*?" + tag, "");
-        src = src.replaceAll(tag + "(.*?" + "\\[" + key + "\\]" + ".*?)" + tag, "$1")
-                .replace("[" + key + "]", replace);
+        src =
+                src.replaceAll(tag + "(.*?" + "\\[" + key + "\\]" + ".*?)" + tag, "$1")
+                        .replace("[" + key + "]", replace);
         return src;
     }
 
@@ -208,5 +226,4 @@ public class Text {
     public void addProgressListener(ProgressListener progressListener) {
         this.progressListener = progressListener;
     }
-
 }

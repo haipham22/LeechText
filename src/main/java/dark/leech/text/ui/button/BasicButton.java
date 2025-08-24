@@ -2,13 +2,10 @@ package dark.leech.text.ui.button;
 
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
-/**
- * Created by Long on 9/30/2016.
- */
+/** Created by Long on 9/30/2016. */
 public class BasicButton extends JButton {
     public BasicButton() {
         setFont(FontUtils.TEXT_BOLD);
@@ -17,9 +14,7 @@ public class BasicButton extends JButton {
         setBackground(Color.WHITE);
         setForeground(ColorUtils.BUTTON_TEXT);
         setFocusable(false);
-
     }
-
 
     public void setBounds(int x, int y, int width, int height) {
         super.setBounds(x, y, width, height);
@@ -27,6 +22,4 @@ public class BasicButton extends JButton {
         btUi.setRolloverBackground(new Color(235, 235, 235));
         setUI(btUi);
     }
-
-
 }

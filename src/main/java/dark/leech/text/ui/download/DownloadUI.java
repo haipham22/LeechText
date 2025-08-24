@@ -6,17 +6,19 @@ import dark.leech.text.listeners.RemoveListener;
 import dark.leech.text.models.Properties;
 import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.ui.material.JMScrollPane;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.dnd.*;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.io.File;
+import javax.swing.*;
 
-/**
- * Created by Dark on 1/14/2017.
- */
+/** Created by Dark on 1/14/2017. */
 public class DownloadUI extends JPanel implements AddListener, RemoveListener, DropTargetListener {
     private JMPanel download;
     private JMScrollPane scrollPane;
@@ -36,7 +38,7 @@ public class DownloadUI extends JPanel implements AddListener, RemoveListener, D
         scrollPane = new JMScrollPane(download);
 
         JPanel demo = new JPanel();
-        demo.setBackground(new Color(0,0,0,0));
+        demo.setBackground(new Color(0, 0, 0, 0));
         download.add(demo, gbc);
 
         add(scrollPane);
@@ -73,7 +75,9 @@ public class DownloadUI extends JPanel implements AddListener, RemoveListener, D
         for (DataFlavor flavor : flavors) {
             try {
                 if (flavor.isFlavorJavaFileListType()) {
-                    java.util.List<File> files = (java.util.List) transferable.getTransferData(flavor);
+                    @SuppressWarnings("unchecked")
+                    java.util.List<File> files =
+                            (java.util.List<File>) transferable.getTransferData(flavor);
                     for (File file : files) {
                         String path = file.getPath();
                         AddDialog dialog = new AddDialog(History.getHistory().load(path));
@@ -88,27 +92,19 @@ public class DownloadUI extends JPanel implements AddListener, RemoveListener, D
     }
 
     @Override
-    public void dragEnter(DropTargetDragEvent dtde) {
-
-    }
+    public void dragEnter(DropTargetDragEvent dtde) {}
 
     @Override
-    public void dragOver(DropTargetDragEvent dtde) {
-    }
+    public void dragOver(DropTargetDragEvent dtde) {}
 
     @Override
-    public void dropActionChanged(DropTargetDragEvent dtde) {
-    }
+    public void dropActionChanged(DropTargetDragEvent dtde) {}
 
     @Override
-    public void dragExit(DropTargetEvent dte) {
-
-    }
+    public void dragExit(DropTargetEvent dte) {}
 
     @Override
     public void addDownload(Properties properties, boolean imp) {
         actionAdd(properties, imp);
     }
-
-
 }

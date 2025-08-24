@@ -7,24 +7,19 @@ import dark.leech.text.models.Pager;
 import dark.leech.text.models.Post;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.SyntaxUtils;
-
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
 
-/**
- * Created by Dark on 1/21/2017.
- */
+/** Created by Dark on 1/21/2017. */
 public class PageExecute extends SwingWorker<ArrayList<Post>, Void> {
     private PageGetter pageGetter;
     private ChangeListener changeListener;
     private Pager pager;
     private String chset = "utf-8";
-    ;
     private String savepath;
 
-    public PageExecute() {
-    }
+    public PageExecute() {}
 
     @Override
     protected ArrayList<Post> doInBackground() throws Exception {
@@ -33,10 +28,12 @@ public class PageExecute extends SwingWorker<ArrayList<Post>, Void> {
 
     public PageExecute clazz(Class cl) {
         try {
-            pageGetter = (PageGetter) cl.newInstance();
+            pageGetter = (PageGetter) cl.getDeclaredConstructor().newInstance();
         } catch (InstantiationException e) {
             Log.add(e);
         } catch (IllegalAccessException e) {
+            Log.add(e);
+        } catch (Exception e) {
             Log.add(e);
         }
         return this;
@@ -75,12 +72,11 @@ public class PageExecute extends SwingWorker<ArrayList<Post>, Void> {
                 Chapter chapter = new Chapter();
                 Post post = posts.get(i);
                 String text = post.getText();
-                String id = pager.getId() + "C" + Integer.toString(i);
+                String id = pager.getId() + "C" + i;
                 if (text == null) {
                     chapter.setError(true);
                 } else if (text.length() < 1000) {
-                    if (text.split("<img ").length > 0)
-                        chapter.setImageChapter(true);
+                    if (text.split("<img ").length > 0) chapter.setImageChapter(true);
                     else chapter.setEmpty(true);
                 }
                 chapter.setUrl(pager.getUrl());
@@ -100,7 +96,6 @@ public class PageExecute extends SwingWorker<ArrayList<Post>, Void> {
         }
         changeListener.doChanger();
     }
-
 
     private String Optimize(String src) {
         if (SyntaxUtils.REPLACE_FROM != null)

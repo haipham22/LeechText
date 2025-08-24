@@ -76,12 +76,11 @@ public class Text {
         int index = Num.to_int(i, 0).toint();
         if (!is_empty(source)) {
             if (index != -1 && index < source.length()) {
-                return LuaValue.valueOf(source.substring(index, source.length()));
+                return LuaValue.valueOf(source.substring(index));
             }
         }
         return LuaValue.NIL;
     }
-
 
     public static LuaValue sub_between(Object str, Object och1, Object och2) {
         String source = str.toString();
@@ -96,7 +95,6 @@ public class Text {
                     return LuaValue.valueOf(source.substring(index1, index2));
                 }
             }
-
         }
         return LuaValue.NIL;
     }
@@ -118,9 +116,9 @@ public class Text {
     }
 
     public static boolean is_empty(Object source) {
-        if(source == null) return true;
+        if (source == null) return true;
         if (source instanceof LuaValue) {
-            if(((LuaValue) source).isnil()) return true;
+            if (((LuaValue) source).isnil()) return true;
         }
         return source.toString().length() == 0;
     }
@@ -128,6 +126,7 @@ public class Text {
     public static LuaValue contains(Object obj, Object value) {
         return LuaValue.valueOf(obj.toString().contains(value.toString()));
     }
+
     public static LuaValue replace(Object str, Object regex, Object e) {
         if (str != null)
             return LuaValue.valueOf(str.toString().replaceAll(regex.toString(), e.toString()));
@@ -137,6 +136,7 @@ public class Text {
     public static LuaValue remove(Object str, Object replace) {
         return remove(str, replace, true);
     }
+
     public static LuaValue remove(Object str, Object replace, Object regex) {
         String text = str.toString();
         boolean usingRegex = true;
@@ -146,20 +146,16 @@ public class Text {
             usingRegex = ((LuaBoolean) regex).booleanValue();
         }
 
-        if (replace instanceof LuaTable) {
-            LuaTable table = (LuaTable) replace;
+        if (replace instanceof LuaTable table) {
             LuaValue[] keys = table.keys();
             for (LuaValue value : keys) {
-                if (usingRegex)
-                    text = text.replaceAll(table.get(value).tojstring(), "");
+                if (usingRegex) text = text.replaceAll(table.get(value).tojstring(), "");
                 else text = text.replace(table.get(value).tojstring(), "");
             }
         } else {
-            if (usingRegex)
-                text = text.replaceAll(replace.toString(), "");
+            if (usingRegex) text = text.replaceAll(replace.toString(), "");
             else text = text.replace(replace.toString(), "");
         }
         return LuaValue.valueOf(text);
     }
-
 }

@@ -7,21 +7,17 @@ import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
-/**
- * Code by Darkrai on 8/23/2016.
- */
+/** Code by Darkrai on 8/23/2016. */
 public class ToolPane extends JMPanel {
-    private JLabel lbPath;
+    private final JLabel lbPath;
     private boolean selectDirectory = false;
 
-
-    public ToolPane(String name,final String path,final int type) {
+    public ToolPane(String name, final String path, final int type) {
         JLabel lbName = new JLabel();
         lbPath = new JLabel();
 
@@ -38,22 +34,21 @@ public class ToolPane extends JMPanel {
 
         CircleButton btEdit = new CircleButton(StringUtils.EDIT, 23f);
         btEdit.setForeground(ColorUtils.THEME_COLOR);
-        btEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FileDialog f = new FileDialog(App.getMain(), "Chọn đường dẫn", type);
-                if (type == FileDialog.SAVE)
-                    f.setFile("LeechText");
-                f.setModal(true);
-                if (getPath().equals("Chưa đặt"))
-                    f.setDirectory(System.getProperty("user.dir"));
-                else
-                    f.setDirectory(getPath());
-                f.setVisible(true);
-                if (f.getDirectory() != null)
-                    setPath(f.getDirectory() + ((selectDirectory) ? "" : f.getFile()));
-            }
-        });
+        btEdit.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        FileDialog f = new FileDialog(App.getMain(), "Chọn đường dẫn", type);
+                        if (type == FileDialog.SAVE) f.setFile("LeechText");
+                        f.setModal(true);
+                        if (getPath().equals("Chưa đặt"))
+                            f.setDirectory(System.getProperty("user.dir"));
+                        else f.setDirectory(getPath());
+                        f.setVisible(true);
+                        if (f.getDirectory() != null)
+                            setPath(f.getDirectory() + ((selectDirectory) ? "" : f.getFile()));
+                    }
+                });
         add(btEdit);
         btEdit.setBounds(335, 15, 30, 30);
         setBackground(Color.white);
@@ -75,6 +70,4 @@ public class ToolPane extends JMPanel {
                 path = path.substring(0, path.length() - 1);
         lbPath.setText(path);
     }
-
 }
-

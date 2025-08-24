@@ -4,21 +4,19 @@ import dark.leech.text.listeners.BlurListener;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
 
 public class SelectBox extends JMPanel {
     private int selectIndex;
     private String[] list;
-    private JLabel labelName;
+    private final JLabel labelName;
     private BlurListener blurListener;
     private ChangeListener changeListener;
-
 
     public SelectBox(String name, String[] list, int selectIndex) {
         setLayout(new BorderLayout());
@@ -36,12 +34,13 @@ public class SelectBox extends JMPanel {
         labelName.setHorizontalAlignment(SwingConstants.RIGHT);
         labelName.setFont(FontUtils.TEXT_NORMAL);
         panelChooser.add(labelName, BorderLayout.WEST);
-        panelChooser.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                doClick();
-            }
-        });
+        panelChooser.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        doClick();
+                    }
+                });
 
         JLabel label = new JLabel(StringUtils.EXPAND);
         label.setFont(FontUtils.ICON_NORMAL);
@@ -67,17 +66,16 @@ public class SelectBox extends JMPanel {
     private void doClick() {
         final JMDialogChooser dc = new JMDialogChooser(list, selectIndex);
         dc.setBlurListener(blurListener);
-        dc.setChangeListener(new ChangeListener() {
-            @Override
-            public void doChanger() {
-                selectIndex = dc.getSelectIndex();
-                labelName.setText(list[selectIndex]);
-                if (changeListener != null)
-                    changeListener.doChanger();
-            }
-        });
+        dc.setChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void doChanger() {
+                        selectIndex = dc.getSelectIndex();
+                        labelName.setText(list[selectIndex]);
+                        if (changeListener != null) changeListener.doChanger();
+                    }
+                });
         dc.open();
-
     }
 
     public int getSelectIndex() {
@@ -92,19 +90,16 @@ public class SelectBox extends JMPanel {
 class JMDialogChooser extends JMDialog {
     private List<ChooserItem> listItem;
     private int selectIndex;
-    private String[] list;
-    private MouseAdapter mo = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent arg0) {
-            for (int i = 0; i < listItem.size(); i++)
-                if (arg0.getSource() == listItem.get(i))
-                    selectIndex = i;
-            close();
-        }
-
-
-    };
-
+    private final String[] list;
+    private final MouseAdapter mo =
+            new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent arg0) {
+                    for (int i = 0; i < listItem.size(); i++)
+                        if (arg0.getSource() == listItem.get(i)) selectIndex = i;
+                    close();
+                }
+            };
 
     public JMDialogChooser(String[] list, int selectIndex) {
         this.selectIndex = selectIndex;
@@ -138,8 +133,8 @@ class JMDialogChooser extends JMDialog {
 }
 
 class ChooserItem extends JMPanel {
-    private JLabel labelName;
-    private JLabel labelSelect;
+    private final JLabel labelName;
+    private final JLabel labelSelect;
     private boolean selected;
 
     public ChooserItem(String name) {
@@ -166,5 +161,4 @@ class ChooserItem extends JMPanel {
         this.selected = selected;
         labelSelect.setText(selected ? StringUtils.CHECK : "");
     }
-
 }

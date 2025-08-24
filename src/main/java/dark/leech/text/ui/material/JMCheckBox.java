@@ -3,16 +3,13 @@ package dark.leech.text.ui.material;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.ui.button.SelectButton;
 import dark.leech.text.util.FontUtils;
-
 import javax.swing.*;
 
-/**
- * Created by Long on 9/10/2016.
- */
+/** Created by Long on 9/10/2016. */
 public class JMCheckBox extends JMPanel {
     private boolean TEXT_ON_RIGHT;
     private JLabel lbName;
-    private String name;
+    private final String name;
     private SelectButton checkbox;
 
     public JMCheckBox(String name) {

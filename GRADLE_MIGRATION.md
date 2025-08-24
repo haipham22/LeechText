@@ -8,7 +8,7 @@ This project has been successfully migrated from a manual Java build system to G
 
 1. **Gradle Configuration**
    - Created `build.gradle` with project dependencies
-   - Created `gradle.properties` for build configuration 
+   - Created `gradle.properties` for build configuration
    - Created `settings.gradle` for project settings
    - Initialized Gradle wrapper (v8.4)
 
@@ -106,7 +106,7 @@ leechtext-java/
 
 Core dependencies are managed in `build.gradle`. The project uses:
 - Web scraping: JSoup
-- JSON processing: org.json + Gson  
+- JSON processing: org.json + Gson
 - Scripting: LuaJ
 - Archive handling: zip4j
 - UI components: RSyntaxTextArea
@@ -124,7 +124,7 @@ Core dependencies are managed in `build.gradle`. The project uses:
 
 For full compilation success, consider:
 
-1. **Replace Animation Framework**: 
+1. **Replace Animation Framework**:
    - Remove animation dependencies entirely, or
    - Find modern alternatives, or
    - Implement simple fade/animation effects using Swing Timer

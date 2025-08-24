@@ -1,25 +1,18 @@
 package dark.leech.text.util;
 
 import dark.leech.text.action.Log;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.model.enums.CompressionLevel;
 import net.lingala.zip4j.model.enums.CompressionMethod;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-
-/**
- * Created by Long on 10/1/2016.
- * Updated to use zip4j library
- */
+/** Created by Long on 10/1/2016. Updated to use zip4j library */
 public class ZipUtils {
     private static CompressionLevel defaultCompressionLevel = CompressionLevel.NORMAL;
-    
-    private ZipUtils() {
-    }
+
+    private ZipUtils() {}
 
     public static void addFile(String zip, String file) {
         addFile(new File(FileUtils.validate(zip)), new File(FileUtils.validate(file)));
@@ -36,14 +29,14 @@ public class ZipUtils {
             ZipParameters parameters = new ZipParameters();
             parameters.setCompressionMethod(CompressionMethod.DEFLATE);
             parameters.setCompressionLevel(defaultCompressionLevel);
-            
+
             if (path.length() > 0) {
                 parameters.setRootFolderNameInZip(path);
             }
-            
+
             zipFile.addFile(file, parameters);
         } catch (Exception e) {
-            Log.add("Error adding file to zip: " + e.toString());
+            Log.add("Error adding file to zip: " + e);
         }
     }
 
@@ -65,14 +58,14 @@ public class ZipUtils {
             ZipParameters parameters = new ZipParameters();
             parameters.setCompressionMethod(CompressionMethod.DEFLATE);
             parameters.setCompressionLevel(defaultCompressionLevel);
-            
+
             if (path.length() > 0) {
                 parameters.setRootFolderNameInZip(path);
             }
-            
+
             zipFile.addFolder(dir, parameters);
         } catch (Exception e) {
-            Log.add("Error adding folder to zip: " + e.toString());
+            Log.add("Error adding folder to zip: " + e);
         }
     }
 
@@ -81,20 +74,15 @@ public class ZipUtils {
             ZipFile zipFile = new ZipFile(zipfile);
             return zipFile.getInputStream(zipFile.getFileHeader(filepath)).readAllBytes();
         } catch (Exception e) {
-            Log.add("Error reading from zip: " + e.toString());
+            Log.add("Error reading from zip: " + e);
             return new byte[0];
         }
     }
 
     public static String readInZipAsString(File zipfile, String filepath) {
-        try {
-            return new String(readInZipAsByte(zipfile, filepath), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            Log.add(e.toString());
-            return "";
-        }
+        return new String(readInZipAsByte(zipfile, filepath), StandardCharsets.UTF_8);
     }
-    
+
     public static void setDefaultCompressionLevel(int level) {
         switch (level) {
             case 0:
@@ -114,4 +102,3 @@ public class ZipUtils {
         }
     }
 }
-

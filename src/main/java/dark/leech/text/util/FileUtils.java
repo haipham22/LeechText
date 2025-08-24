@@ -1,34 +1,32 @@
 package dark.leech.text.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-/**
- * Created by Long on 1/10/2017.
- */
+/** Created by Long on 1/10/2017. */
 public class FileUtils {
-    private FileUtils() {
-    }
+    private FileUtils() {}
 
     public static void init() {
         mkdir(validate(AppUtils.curDir + "/tools/plugins"));
     }
 
-    //Tao thu muc
+    // Tao thu muc
     public static void mkdir(String dir) {
         File file = new File(validate(dir));
-        if (file.exists())
-            if (file.isDirectory())
-                return;
+        if (file.exists()) if (file.isDirectory()) return;
         String[] path = dir.split(Pattern.quote(AppUtils.SEPARATOR));
-        if (path.length == 1)
-            return;
+        if (path.length == 1) return;
         dir = path[0];
         for (int i = 1; i < path.length; i++) {
             dir += AppUtils.SEPARATOR + path[i];
             file = new File(dir);
-            if (!file.exists())
-                file.mkdir();
+            if (!file.exists()) file.mkdir();
         }
     }
 
@@ -54,8 +52,7 @@ public class FileUtils {
             return null;
         } finally {
             try {
-                if (in != null)
-                    in.close();
+                if (in != null) in.close();
             } catch (IOException e) {
             }
         }
@@ -67,14 +64,13 @@ public class FileUtils {
             in = FileUtils.class.getResourceAsStream(path);
             byte[] bytes = new byte[in.available()];
             in.read(bytes);
-            return new String(bytes, "UTF-8");
+            return new String(bytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
             return "";
         } finally {
             try {
-                if (in != null)
-                    in.close();
+                if (in != null) in.close();
             } catch (IOException e) {
             }
         }
@@ -83,8 +79,7 @@ public class FileUtils {
     public static byte[] file2byte(File file) {
         FileInputStream fi = null;
         try {
-            if (!file.exists())
-                return null;
+            if (!file.exists()) return null;
             fi = new FileInputStream(file);
             byte[] b = new byte[(int) file.length()];
             fi.read(b);
@@ -119,8 +114,7 @@ public class FileUtils {
         FileOutputStream fo = null;
         try {
             File f = new File(validate(savepath));
-            if (!f.exists())
-                f.createNewFile();
+            if (!f.exists()) f.createNewFile();
             fo = new FileOutputStream(f);
             fo.write(source);
         } catch (Exception e) {
@@ -179,9 +173,7 @@ public class FileUtils {
 
     public static void url2file(String url, String savePath) {
         try {
-            byte2file(Http.connect(url)
-                    .execute()
-                    .bodyAsBytes(), savePath);
+            byte2file(Http.connect(url).execute().bodyAsBytes(), savePath);
         } catch (IOException e) {
         }
     }
@@ -189,8 +181,7 @@ public class FileUtils {
     public static void deleteFile(String path) {
         try {
             File f = new File(validate(path));
-            if (f.exists())
-                f.delete();
+            if (f.exists()) f.delete();
         } catch (Exception e) {
         }
     }

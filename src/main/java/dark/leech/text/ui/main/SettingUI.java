@@ -1,8 +1,29 @@
 package dark.leech.text.ui.main;
 
-import dark.leech.text.ui.notification.Toast;
+import static dark.leech.text.util.SettingUtils.CALIBRE;
+import static dark.leech.text.util.SettingUtils.CSS_SYNTAX;
+import static dark.leech.text.util.SettingUtils.DELAY;
+import static dark.leech.text.util.SettingUtils.DROP_SYNTAX;
+import static dark.leech.text.util.SettingUtils.HTML_SYNTAX;
+import static dark.leech.text.util.SettingUtils.IS_CSS_SELECTED;
+import static dark.leech.text.util.SettingUtils.IS_DROP_SELECTED;
+import static dark.leech.text.util.SettingUtils.IS_HTML_SELECTED;
+import static dark.leech.text.util.SettingUtils.IS_TXT_SELECTED;
+import static dark.leech.text.util.SettingUtils.KINDLEGEN;
+import static dark.leech.text.util.SettingUtils.MAX_CONN;
+import static dark.leech.text.util.SettingUtils.RE_CONN;
+import static dark.leech.text.util.SettingUtils.THEME_COLOR;
+import static dark.leech.text.util.SettingUtils.TIMEOUT;
+import static dark.leech.text.util.SettingUtils.TRASH;
+import static dark.leech.text.util.SettingUtils.TXT_SYNTAX;
+import static dark.leech.text.util.SettingUtils.USER_AGENT;
+import static dark.leech.text.util.SettingUtils.WORKPATH;
+import static dark.leech.text.util.SettingUtils.doDefault;
+import static dark.leech.text.util.SettingUtils.doSave;
+
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMScrollPane;
+import dark.leech.text.ui.notification.Toast;
 import dark.leech.text.ui.setting.ItemConn;
 import dark.leech.text.ui.setting.ItemStyle;
 import dark.leech.text.ui.setting.Theme;
@@ -10,14 +31,11 @@ import dark.leech.text.ui.setting.ToolPane;
 import dark.leech.text.ui.setting.trash.TrashPane;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import static dark.leech.text.util.SettingUtils.*;
+import javax.swing.*;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 public class SettingUI extends JPanel {
     private JPanel body;
@@ -44,21 +62,24 @@ public class SettingUI extends JPanel {
 
     public SettingUI() {
         setLayout(null);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                onCreate();
-            }
-        });
+        SwingUtilities.invokeLater(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        onCreate();
+                    }
+                });
     }
 
     public void load() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                updateStatus();
-            }
-        }).start();
+        new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                updateStatus();
+                            }
+                        })
+                .start();
     }
 
     private void onCreate() {
@@ -88,12 +109,14 @@ public class SettingUI extends JPanel {
         delayConn = new ItemConn("Thời gian chờ giữa các kết nối", "100");
         userAgent = new ItemConn("User Agent", "");
 
-        htmlStyle = new ItemStyle("Tùy chỉnh HTML SYNTAX", "Tùy chỉnh cấu trúc HTML khi lưu", false);
+        htmlStyle =
+                new ItemStyle("Tùy chỉnh HTML SYNTAX", "Tùy chỉnh cấu trúc HTML khi lưu", false);
         htmlStyle.setStyle(SyntaxConstants.SYNTAX_STYLE_HTML);
         txtStyle = new ItemStyle("Tùy chỉnh TXT SYNTAX", "Tùy chỉnh cấu trúc TXT khi lưu", false);
         cssStyle = new ItemStyle("Tùy chỉnh CSS SYNTAX", "Tùy chỉnh cấu trúc CSS khi lưu", false);
         cssStyle.setStyle(SyntaxConstants.SYNTAX_STYLE_CSS);
-        dropStyle = new ItemStyle("Tùy chỉnh DropCaps", "Tùy chỉnh cấu trúc DropCaps khi lưu", false);
+        dropStyle =
+                new ItemStyle("Tùy chỉnh DropCaps", "Tùy chỉnh cấu trúc DropCaps khi lưu", false);
         dropStyle.setStyle(SyntaxConstants.SYNTAX_STYLE_HTML);
 
         trash = new TrashPane(TRASH);
@@ -124,17 +147,18 @@ public class SettingUI extends JPanel {
         //
         defaultButton = new BasicButton();
         defaultButton.setText("Khôi phục mặc định");
-        defaultButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                doDefault();
-                updateStatus();
-                Toast.Build()
-                        .font(FontUtils.TITLE_NORMAL)
-                        .content("Đã khôi phục mặc định!")
-                        .open();
-            }
-        });
+        defaultButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        doDefault();
+                        updateStatus();
+                        Toast.Build()
+                                .font(FontUtils.TITLE_NORMAL)
+                                .content("Đã khôi phục mặc định!")
+                                .open();
+                    }
+                });
         add(defaultButton);
         defaultButton.setBounds(0, 495, 390, 35);
         // repaint();
@@ -176,14 +200,12 @@ public class SettingUI extends JPanel {
         theme.setThemeColor(THEME_COLOR);
     }
 
-
     public void save() {
         MAX_CONN = toInt(maxConn.getText());
         RE_CONN = toInt(reConn.getText());
         TIMEOUT = toInt(timeConn.getText());
         DELAY = toInt(delayConn.getText());
         USER_AGENT = userAgent.getText();
-
 
         IS_DROP_SELECTED = dropStyle.isSelected();
         IS_HTML_SELECTED = htmlStyle.isSelected();

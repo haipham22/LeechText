@@ -8,18 +8,17 @@ import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class ItemStyle extends JMPanel {
     private JLabel labelTitle;
     private JLabel labelInfo;
     private SelectButton btSelect;
     private CircleButton btEdit;
-    private String name;
+    private final String name;
     private String style;
     private String text;
 
@@ -42,7 +41,6 @@ public class ItemStyle extends JMPanel {
     public void setSelected(boolean selected) {
         btSelect.setSelected(selected);
         btEdit.setVisible(selected);
-
     }
 
     public void setStyle(String style) {
@@ -75,35 +73,36 @@ public class ItemStyle extends JMPanel {
 
         // ---- labelSelected ----
         add(btSelect);
-        btSelect.setChangeListener(new ChangeListener() {
-            @Override
-            public void doChanger() {
-                btEdit.setVisible(btSelect.isSelected());
-            }
-        });
+        btSelect.setChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void doChanger() {
+                        btEdit.setVisible(btSelect.isSelected());
+                    }
+                });
         btSelect.setBounds(335, 15, 30, 30);
 
         // ---- labelEdit ----
         btEdit = new CircleButton(StringUtils.EDIT);
         btEdit.setForeground(ColorUtils.THEME_COLOR);
-        btEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final SyntaxDialog edit = new SyntaxDialog(name, text, style);
-                edit.setChangeListener(new ChangeListener() {
+        btEdit.addActionListener(
+                new ActionListener() {
                     @Override
-                    public void doChanger() {
-                        text = edit.getText();
+                    public void actionPerformed(ActionEvent e) {
+                        final SyntaxDialog edit = new SyntaxDialog(name, text, style);
+                        edit.setChangeListener(
+                                new ChangeListener() {
+                                    @Override
+                                    public void doChanger() {
+                                        text = edit.getText();
+                                    }
+                                });
+                        edit.open();
                     }
                 });
-                edit.open();
-
-            }
-        });
         btEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         add(btEdit);
         btEdit.setBounds(300, 15, 30, 30);
         setPreferredSize(new Dimension(370, 60));
     }
-
 }

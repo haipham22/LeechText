@@ -1,0 +1,29 @@
+repos:
+- repo: "https://github.com/pre-commit/pre-commit-hooks"
+  rev: "v4.5.0"
+  hooks:
+  - id: "trailing-whitespace"
+  - id: "end-of-file-fixer"
+  - id: "check-yaml"
+  - id: "check-json"
+  - id: "check-merge-conflict"
+  - id: "check-case-conflict"
+  - id: "check-added-large-files"
+    args:
+    - "--maxkb=1000"
+  - id: "check-executables-have-shebangs"
+  - id: "mixed-line-ending"
+- repo: "local"
+  hooks:
+  - id: "gradle-compile"
+    name: "Gradle Compile Check"
+    entry: "gradle compileJava"
+    language: "system"
+    files: "\\.java$"
+    pass_filenames: false
+  - id: "gradle-spotless"
+    name: "Gradle Spotless Format Check"
+    entry: "gradle spotlessCheck"
+    language: "system"
+    files: "\\.java$"
+    pass_filenames: false

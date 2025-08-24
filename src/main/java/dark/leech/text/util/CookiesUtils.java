@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CookiesUtils {
-    private static Map<String, String> COOKIES = new HashMap<>();
-
+    private static final Map<String, String> COOKIES = new HashMap<>();
 
     public static String getCookies(String url) {
         return COOKIES.get(parseKey(url));

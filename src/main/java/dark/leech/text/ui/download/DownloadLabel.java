@@ -14,13 +14,16 @@ import dark.leech.text.ui.material.DropShadowBorder;
 import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.ui.material.JMProgressBar;
 import dark.leech.text.ui.notification.Notification;
-import dark.leech.text.util.*;
-
-import javax.swing.*;
+import dark.leech.text.util.ColorUtils;
+import dark.leech.text.util.FileUtils;
+import dark.leech.text.util.FontUtils;
+import dark.leech.text.util.SettingUtils;
+import dark.leech.text.util.StringUtils;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import javax.swing.*;
 
 public class DownloadLabel extends JMPanel implements DownloadListener {
     private JMProgressBar load;
@@ -44,7 +47,6 @@ public class DownloadLabel extends JMPanel implements DownloadListener {
         pause = false;
     }
 
-
     public void importDownload(Properties properties) {
         this.properties = properties;
         this.max = properties.getSize();
@@ -57,7 +59,6 @@ public class DownloadLabel extends JMPanel implements DownloadListener {
         lbStatus.setText("Hoàn tất");
         setValue(max);
         pnCover.path(properties.getSavePath() + "/data/cover.jpg").load();
-
     }
 
     public void addDownload(Properties properties) {
@@ -74,7 +75,6 @@ public class DownloadLabel extends JMPanel implements DownloadListener {
         pnCover.url(properties.getCover())
                 .path(properties.getSavePath() + "/data/cover.jpg")
                 .load();
-
     }
 
     public void addRemoveListener(RemoveListener removeListener) {
@@ -95,8 +95,7 @@ public class DownloadLabel extends JMPanel implements DownloadListener {
     // Xóa
     @SuppressWarnings("unused")
     private void delete() {
-        if (download != null)
-            download.cancel();
+        if (download != null) download.cancel();
         removeListener.removeComponent(this);
     }
 
@@ -107,8 +106,7 @@ public class DownloadLabel extends JMPanel implements DownloadListener {
         if (properties.isForum()) {
             ArrayList<Chapter> chapList = new ArrayList<>();
             for (Pager pager : properties.getPageList()) {
-                for (Chapter ch : pager.getChapter())
-                    chapList.add(ch);
+                for (Chapter ch : pager.getChapter()) chapList.add(ch);
             }
             properties.setChapList(chapList);
             properties.setSize(chapList.size());
@@ -120,7 +118,6 @@ public class DownloadLabel extends JMPanel implements DownloadListener {
                 .path(properties.getSavePath() + "/data/cover.jpg")
                 .delay(5000)
                 .open();
-
     }
 
     // Khi bị lỗi
@@ -138,10 +135,9 @@ public class DownloadLabel extends JMPanel implements DownloadListener {
     // Đặt giá trị
     private void setValue(int value) {
         load.setPercent(value * 100 / max);
-        lbProgress.setText(Integer.toString(value) + "/" + Integer.toString(max));
-        lbPercent.setText(Integer.toString(load.getPercent()) + "%");
+        lbProgress.setText(value + "/" + max);
+        lbPercent.setText(load.getPercent() + "%");
     }
-
 
     // Trạng thái
     public String getStatus(int status) {
@@ -211,46 +207,46 @@ public class DownloadLabel extends JMPanel implements DownloadListener {
         // ---- btPR ----
         btPR = new CircleButton("\ue034", 20f);
         btPR.setForeground(ColorUtils.THEME_COLOR);
-        btPR.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pause = !pause;
-                if (pause)
-                    pause();
-                else
-                    resume();
-            }
-        });
+        btPR.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        pause = !pause;
+                        if (pause) pause();
+                        else resume();
+                    }
+                });
         add(btPR);
         btPR.setBounds(310, 5, 30, 30);
 
         // ---- btInfo ----
         btInfo = new CircleButton(StringUtils.ADD, 20f);
         btInfo.setForeground(ColorUtils.THEME_COLOR);
-        btInfo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new InfoUI(properties).open();
-            }
-        });
+        btInfo.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        new InfoUI(properties).open();
+                    }
+                });
         add(btInfo);
         btInfo.setBounds(310, 5, 30, 30);
         btInfo.setVisible(false);
         // ---- btDelete ----
         btDelete = new CircleButton(StringUtils.DELETE, 20f);
         btDelete.setForeground(ColorUtils.THEME_COLOR);
-        btDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                delete();
-            }
-        });
+        btDelete.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        delete();
+                    }
+                });
         add(btDelete);
         btDelete.setBounds(345, 5, 30, 30);
         setBorder(new DropShadowBorder(SettingUtils.THEME_COLOR, 5, 3));
         setPreferredSize(new Dimension(375, 90));
     }
-
 
     private void doCreateFolder() {
         FileUtils.mkdir(properties.getSavePath() + "/raw");
@@ -272,5 +268,4 @@ public class DownloadLabel extends JMPanel implements DownloadListener {
             lbStatus.setText(getStatus(status));
         }
     }
-
 }

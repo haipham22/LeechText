@@ -1,5 +1,3 @@
 package dark.leech.text.lua.api;
 
-public class Cloudflare {
-
-}
+public class Cloudflare {}

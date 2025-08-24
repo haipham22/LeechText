@@ -1,47 +1,65 @@
 package dark.leech.text.enities;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class PluginEntity {
 
     @SerializedName("uuid")
     private String uuid = "";
+
     @SerializedName("name")
-    private String name; //Tên
+    private String name; // Tên
+
     @SerializedName("version")
-    private double version; //Phiên bản
+    private double version; // Phiên bản
+
     @SerializedName("url")
-    private String url; //Link plugin
+    private String url; // Link plugin
+
     @SerializedName("language")
-    private String language; //Ngôn ngữ (code: vi, en)
+    private String language; // Ngôn ngữ (code: vi, en)
+
     @SerializedName("icon")
-    private String icon; //Icon, base64
+    private String icon; // Icon, base64
+
     @SerializedName("source")
-    private String source; //Trang nguồn
+    private String source; // Trang nguồn
+
     @SerializedName("regex")
-    private String regex; //Chuỗi khớp Http
+    private String regex; // Chuỗi khớp Http
+
     @SerializedName("author")
-    private String author; //Tác giả
+    private String author; // Tác giả
+
     @SerializedName("describe")
-    private String describe; //Mô tả
+    private String describe; // Mô tả
+
     @SerializedName("group")
-    private String group; //Nhóm: dich, convert, truyentranh
+    private String group; // Nhóm: dich, convert, truyentranh
+
     @SerializedName("data")
-    private String data; //Base64
+    private String data; // Base64
+
     private boolean supportUpdate;
 
-    //Class
+    // Class
     @SerializedName("chap")
-    private String chapGetter; //Nội dung chương
+    private String chapGetter; // Nội dung chương
+
     @SerializedName("toc")
-    private String tocGetter; //Danh sánh chương
+    private String tocGetter; // Danh sánh chương
+
     @SerializedName("page")
-    private String pageGetter; //Dnah sách trang chương
+    private String pageGetter; // Dnah sách trang chương
+
     @SerializedName("search")
-    private String searchGetter; //Tìm kiếm
+    private String searchGetter; // Tìm kiếm
+
     @SerializedName("detail")
-    private String detailGetter; //Chi tiết
+    private String detailGetter; // Chi tiết
+
+    @SerializedName("checked")
+    private boolean checked;
 
     public boolean isChecked() {
         return checked;
@@ -50,10 +68,6 @@ public class PluginEntity {
     public void setChecked(boolean checked) {
         this.checked = checked;
     }
-
-    @SerializedName("checked")
-    private boolean checked;
-
 
     public String getUuid() {
         return uuid;

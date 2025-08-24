@@ -11,13 +11,10 @@ import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMProgressBar;
 import dark.leech.text.ui.material.SelectBox;
 import dark.leech.text.ui.notification.Notification;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * Created by Long on 9/10/2016.
- */
+/** Created by Long on 9/10/2016. */
 public class ExportText extends JMDialog implements ProgressListener, ChangeListener {
     private PanelTitle pnTitle;
     private SelectBox sbStyle;
@@ -26,17 +23,18 @@ public class ExportText extends JMDialog implements ProgressListener, ChangeList
     private JMCheckBox cbCss;
     private BasicButton btOk;
     private JMProgressBar progressBar;
-    private Properties properties;
+    private final Properties properties;
 
     public ExportText(Properties properties) {
         this.properties = properties;
         setSize(245, 255);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                onCreate();
-            }
-        });
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        onCreate();
+                    }
+                });
     }
 
     @Override
@@ -46,27 +44,27 @@ public class ExportText extends JMDialog implements ProgressListener, ChangeList
         btOk = new BasicButton();
         progressBar = new JMProgressBar();
 
-        //======== this ========
+        // ======== this ========
         pnTitle.setText("Xuất Text");
-        pnTitle.addCloseListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        pnTitle.addCloseListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        close();
+                    }
+                });
         container.add(pnTitle);
         pnTitle.setBounds(0, 0, 245, 45);
 
-        //---- sbStyle ----
-        sbStyle = new SelectBox("Định dạng xuất", new String[]{"HTML", "TXT"}, 0);
+        // ---- sbStyle ----
+        sbStyle = new SelectBox("Định dạng xuất", new String[] {"HTML", "TXT"}, 0);
         sbStyle.addChangeListener(this);
         sbStyle.addBlurListener(this);
         container.add(sbStyle);
         sbStyle.setBounds(15, 60, 200, 30);
 
-
-        //---- sbType ----
-        sbType = new SelectBox("Kiểu xuất", new String[]{"Tách", "Gộp"}, 0);
+        // ---- sbType ----
+        sbType = new SelectBox("Kiểu xuất", new String[] {"Tách", "Gộp"}, 0);
         sbType.addBlurListener(this);
         sbType.addChangeListener(this);
         container.add(sbType);
@@ -81,32 +79,40 @@ public class ExportText extends JMDialog implements ProgressListener, ChangeList
         container.add(cbCss);
         cbCss.setBounds(15, 165, 200, 30);
         cbCss.setVisible(sbStyle.getSelectIndex() == 0 && sbType.getSelectIndex() == 1);
-        //---- btOk ----
+        // ---- btOk ----
         btOk.setText("XUẤT");
-        btOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Thread(new Runnable() {
+        btOk.addActionListener(
+                new ActionListener() {
                     @Override
-                    public void run() {
-                        doExport();
+                    public void actionPerformed(ActionEvent e) {
+                        new Thread(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                doExport();
+                                            }
+                                        })
+                                .start();
                     }
-                }).start();
-            }
-        });
+                });
         container.add(btOk);
         btOk.setBounds(15, 210, 210, 35);
         progressBar.setPercent(0);
         container.add(progressBar);
         progressBar.setBounds(15, 210, 210, 35);
         progressBar.setVisible(false);
-
     }
 
     private void doExport() {
         progressBar.setVisible(true);
         btOk.setVisible(false);
-        Text exportText = new Text(properties, sbStyle.getSelectIndex(), cbToc.isChecked(), cbCss.isChecked(), sbType.getSelectIndex());
+        Text exportText =
+                new Text(
+                        properties,
+                        sbStyle.getSelectIndex(),
+                        cbToc.isChecked(),
+                        cbCss.isChecked(),
+                        sbType.getSelectIndex());
         exportText.addProgressListener(this);
         exportText.export();
 
@@ -121,8 +127,7 @@ public class ExportText extends JMDialog implements ProgressListener, ChangeList
     @Override
     public void setProgress(int value, String string) {
         progressBar.setPercent(value);
-        if (value == 100)
-            close();
+        if (value == 100) close();
     }
 
     @Override

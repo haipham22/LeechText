@@ -1,5 +1,6 @@
 package dark.leech.text.lua.api;
 
+import java.util.Iterator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,17 +8,12 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-import java.util.Iterator;
-
 public class Json {
 
-    public static LuaValue to_table(Object object){
-        if(object instanceof JSONObject)
-            return json2table((JSONObject) object);
-        else  if(object instanceof  JSONArray)
-            return array2table((JSONArray) object);
-        else if(object instanceof String)
-            return string2table((String) object);
+    public static LuaValue to_table(Object object) {
+        if (object instanceof JSONObject) return json2table((JSONObject) object);
+        else if (object instanceof JSONArray) return array2table((JSONArray) object);
+        else if (object instanceof String) return string2table((String) object);
         else return string2table(object.toString());
     }
 
@@ -54,7 +50,7 @@ public class Json {
         LuaValue result = LuaValue.NIL;
 
         if (obj != null) {
-            result = new LuaTable();//只要不空，就创建一个table
+            result = new LuaTable(); // 只要不空，就创建一个table
             if (obj.length() > 0) {
                 for (int i = 0; i < obj.length(); i++) {
                     final int key = i + 1;

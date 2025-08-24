@@ -3,13 +3,10 @@ package dark.leech.text.ui.button;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
-/**
- * Created by Long on 9/30/2016.
- */
+/** Created by Long on 9/30/2016. */
 public class CloseButton extends JButton {
     public CloseButton() {
         setText(StringUtils.CLOSE);
@@ -29,5 +26,4 @@ public class CloseButton extends JButton {
         styledButton.setPressedBackground(rolloverBackground);
         setUI(styledButton);
     }
-
 }

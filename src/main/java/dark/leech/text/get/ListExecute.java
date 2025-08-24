@@ -8,14 +8,11 @@ import dark.leech.text.lua.loader.TocLoader;
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Pager;
 import dark.leech.text.models.Properties;
-
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
 
-/**
- * Created by Dark on 1/18/2017.
- */
+/** Created by Dark on 1/18/2017. */
 public class ListExecute extends SwingWorker {
     private TocLoader loader;
     private ChangeListener changeListener;
@@ -36,7 +33,6 @@ public class ListExecute extends SwingWorker {
         this.properties = properties;
         return this;
     }
-
 
     @Override
     protected Void doInBackground() {
@@ -65,14 +61,12 @@ public class ListExecute extends SwingWorker {
                 List<Pager> pageList = properties.getPageList();
                 for (int i = 0; i < pageList.size(); i++) {
                     Pager pager = pageList.get(i);
-                    if (pager.getName() == null)
-                        pager.setName("Trang " + Integer.toString(i + 1));
+                    if (pager.getName() == null) pager.setName("Trang " + (i + 1));
                     pager.setId(i);
                 }
             } else {
                 List<Chapter> chapList = properties.getChapList();
-                for (int i = 0; i < chapList.size(); i++)
-                    chapList.get(i).setId(i);
+                for (int i = 0; i < chapList.size(); i++) chapList.get(i).setId(i);
             }
         }
         changeListener.doChanger();

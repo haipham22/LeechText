@@ -1,16 +1,13 @@
 package dark.leech.text.ui;
 
+import dark.leech.text.ui.button.CloseButton;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-import dark.leech.text.ui.button.CloseButton;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
-/**
- * Created by Long on 1/3/2017.
- */
+/** Created by Long on 1/3/2017. */
 public class PanelTitle extends JPanel {
     JLabel lbTitle = new JLabel();
     CloseButton btClose = new CloseButton();

@@ -3,19 +3,20 @@ package dark.leech.text.ui.main.export.config;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.BasicButton;
-import dark.leech.text.ui.material.*;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import dark.leech.text.ui.material.JMCheckBox;
+import dark.leech.text.ui.material.JMDialog;
+import dark.leech.text.ui.material.JMProgressBar;
+import dark.leech.text.ui.material.JMTable;
+import dark.leech.text.ui.material.JMTextField;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
-/**
- * Created by Dark on 3/8/2017.
- */
+/** Created by Dark on 3/8/2017. */
 class FindAndReplace extends JMDialog {
-    private JMTable table;
+    private final JMTable table;
     private JMTextField tfFind;
     private JMTextField tfReplace;
     private JMCheckBox cbRegex;
@@ -44,12 +45,13 @@ class FindAndReplace extends JMDialog {
         progressBar = new JMProgressBar();
 
         pnTitle.setText("Thay thế");
-        pnTitle.addCloseListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        pnTitle.addCloseListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        close();
+                    }
+                });
         container.add(pnTitle);
         pnTitle.setBounds(0, 0, 290, 45);
         container.add(tfFind);
@@ -57,57 +59,58 @@ class FindAndReplace extends JMDialog {
         container.add(tfReplace);
         tfReplace.setBounds(25, 130, 250, 35);
 
-        //---- lbFind ----
+        // ---- lbFind ----
         lbFind.setText("Tìm");
         container.add(lbFind);
         lbFind.setBounds(10, 45, 65, 25);
 
-        //---- lbReplace ----
+        // ---- lbReplace ----
         lbReplace.setText("Thay thế");
         container.add(lbReplace);
         lbReplace.setBounds(10, 105, 70, 25);
 
-        //---- cbRegex ----
+        // ---- cbRegex ----
         container.add(cbRegex);
-        cbRegex.setChangeListener(new ChangeListener() {
-            @Override
-            public void doChanger() {
-                cbCase.setVisible(cbRegex.isChecked());
-            }
-        });
+        cbRegex.setChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void doChanger() {
+                        cbCase.setVisible(cbRegex.isChecked());
+                    }
+                });
         cbRegex.setBounds(25, 170, 90, 30);
 
-        //---- cbCase ----
+        // ---- cbCase ----
         container.add(cbCase);
         cbCase.setVisible(cbRegex.isChecked());
         cbCase.setBounds(25, 200, 100, 30);
 
-        //---- btReplace ----
+        // ---- btReplace ----
         btReplace.setText("Thay thế");
         btReplace.setBackground(Color.LIGHT_GRAY);
-        btReplace.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                runOnUiThread(new Runnable() {
+        btReplace.addActionListener(
+                new ActionListener() {
                     @Override
-                    public void run() {
-                        btReplace.setEnabled(false);
-                        replace();
-                        btReplace.setEnabled(true);
+                    public void actionPerformed(ActionEvent e) {
+                        runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        btReplace.setEnabled(false);
+                                        replace();
+                                        btReplace.setEnabled(true);
+                                    }
+                                });
                     }
                 });
-            }
-        });
         container.add(btReplace);
         btReplace.setBounds(150, 170, 125, 60);
 
-        //---- lbResult ----
+        // ---- lbResult ----
         container.add(progressBar);
         progressBar.setVisible(false);
         progressBar.setBounds(30, 230, 250, 19);
-
     }
-
 
     private void replace() {
         String tFind = tfFind.getText();
@@ -121,9 +124,8 @@ class FindAndReplace extends JMDialog {
                 if (text != null)
                     if (text.length() != 0)
                         if (cbRegex.isChecked())
-                            text = text.replaceAll(cbCase.isChecked() ? "(?i)" : "" + tFind, tReplace);
-                        else
-                            text = text.replace(tFind, tReplace);
+                            text = text.replaceAll(cbCase.isChecked() ? "(?i)" : tFind, tReplace);
+                        else text = text.replace(tFind, tReplace);
                 tableModel.setValueAt(text, i, j);
                 tableModel.fireTableCellUpdated(i, j);
             }

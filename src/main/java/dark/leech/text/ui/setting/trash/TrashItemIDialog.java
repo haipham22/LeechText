@@ -1,19 +1,15 @@
 package dark.leech.text.ui.setting.trash;
 
-import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.models.Trash;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMTextField;
 import dark.leech.text.util.FontUtils;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
-/**
- * Created by Dark on 2/13/2017.
- */
+/** Created by Dark on 2/13/2017. */
 class TrashItemIDialog extends JMDialog {
     private JMTextField textSrc;
     private JMTextField textTo;
@@ -63,21 +59,23 @@ class TrashItemIDialog extends JMDialog {
         textTip.setBounds(10, 160, 280, 37);
         labelTip.setBounds(10, 135, 280, 25);
         ok.setText("XONG");
-        ok.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                check();
-            }
-        });
+        ok.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        check();
+                    }
+                });
         container.add(ok);
         ok.setBounds(105, 210, 90, 30);
         cancel.setText("HỦY");
-        cancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        cancel.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        close();
+                    }
+                });
         container.add(cancel);
         cancel.setBounds(200, 210, 90, 30);
         this.setSize(300, 250);
@@ -105,5 +103,4 @@ class TrashItemIDialog extends JMDialog {
         }
         close();
     }
-
 }

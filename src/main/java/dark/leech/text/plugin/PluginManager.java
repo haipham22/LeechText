@@ -4,38 +4,39 @@ import com.google.gson.Gson;
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 
-/**
- * Created by Long on 1/11/2017.
- */
+/** Created by Long on 1/11/2017. */
 public class PluginManager {
     private static PluginManager manager;
     private static ArrayList<PluginEntity> pluginList;
 
     private PluginManager() {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                pluginList = new ArrayList<>();
-                File[] files = new File(FileUtils.validate(AppUtils.curDir + "/tools/plugins")).listFiles();
-                if (files == null) return;
-                for (File f : files) {
-                    if (f.getName().endsWith(".plugin"))
-                        try {
-                            pluginList.add(createPlugin(f.getAbsolutePath()));
-                        } catch (Exception e) {
-                        }
-                }
-                PluginUpdate.getUpdate().checkUpdate();
-            }
-        }).start();
-
+        new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                pluginList = new ArrayList<>();
+                                File[] files =
+                                        new File(
+                                                        FileUtils.validate(
+                                                                AppUtils.curDir + "/tools/plugins"))
+                                                .listFiles();
+                                if (files == null) return;
+                                for (File f : files) {
+                                    if (f.getName().endsWith(".plugin"))
+                                        try {
+                                            pluginList.add(createPlugin(f.getAbsolutePath()));
+                                        } catch (Exception e) {
+                                        }
+                                }
+                                PluginUpdate.getUpdate().checkUpdate();
+                            }
+                        })
+                .start();
     }
-
 
     public static PluginManager getManager() {
         if (manager == null) manager = new PluginManager();
@@ -45,7 +46,6 @@ public class PluginManager {
     public void add(String path) {
         pluginList.add(createPlugin(path));
     }
-
 
     private PluginEntity createPlugin(String path) {
         PluginEntity entity = new Gson().fromJson(FileUtils.file2string(path), PluginEntity.class);
@@ -61,7 +61,4 @@ public class PluginManager {
     public ArrayList<PluginEntity> list() {
         return pluginList;
     }
-
 }
-
-

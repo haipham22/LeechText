@@ -41,54 +41,43 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
 
-
 /**
- * <p>Provides an abstract implementation of the <code>BufferedImageOp</code>
- * interface. This class can be used to created new image filters based
- * on <code>BufferedImageOp</code>.</p>
+ * Provides an abstract implementation of the <code>BufferedImageOp</code> interface. This class can
+ * be used to created new image filters based on <code>BufferedImageOp</code>.
  *
  * @author Romain Guy <romain.guy@mac.com>
  */
-
 public abstract class AbstractFilter extends AbstractBean implements BufferedImageOp {
     @Override
     public abstract BufferedImage filter(BufferedImage src, BufferedImage dest);
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Rectangle2D getBounds2D(BufferedImage src) {
         return new Rectangle(0, 0, src.getWidth(), src.getHeight());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public BufferedImage createCompatibleDestImage(BufferedImage src,
-                                                   ColorModel destCM) {
+    public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         if (destCM == null) {
             destCM = src.getColorModel();
         }
 
-        return new BufferedImage(destCM,
-                                 destCM.createCompatibleWritableRaster(
-                                         src.getWidth(), src.getHeight()),
-                                 destCM.isAlphaPremultiplied(), null);
+        return new BufferedImage(
+                destCM,
+                destCM.createCompatibleWritableRaster(src.getWidth(), src.getHeight()),
+                destCM.isAlphaPremultiplied(),
+                null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Point2D getPoint2D(Point2D srcPt, Point2D dstPt) {
         return (Point2D) srcPt.clone();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public RenderingHints getRenderingHints() {
         return null;

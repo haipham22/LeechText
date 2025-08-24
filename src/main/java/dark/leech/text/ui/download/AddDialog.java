@@ -18,13 +18,11 @@ import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.SettingUtils;
 import dark.leech.text.util.SyntaxUtils;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.swing.*;
 
 public class AddDialog extends JMDialog {
 
@@ -38,7 +36,6 @@ public class AddDialog extends JMDialog {
     private BasicButton btOk;
     private BasicButton btCancel;
 
-
     private CircleWait circleWait;
     private Properties properties;
     private AddListener addListener;
@@ -49,14 +46,14 @@ public class AddDialog extends JMDialog {
     public AddDialog(String url) {
         this.url = url;
         onCreate();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                doLoad();
-            }
-        });
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        doLoad();
+                    }
+                });
     }
-
 
     public AddDialog(Properties properties) {
         this.properties = properties;
@@ -67,7 +64,7 @@ public class AddDialog extends JMDialog {
         tfAuthor.setText(properties.getAuthor());
         btShowChap.setVisible(true);
         tfChap.setEnabled(true);
-        tfChap.setText("1-" + Integer.toString(properties.getSize()));
+        tfChap.setText("1-" + properties.getSize());
         btShowChap.setVisible(true);
         btOk.setEnabled(true);
         doImp = true;
@@ -89,12 +86,13 @@ public class AddDialog extends JMDialog {
         // ---- button1 ----
         btOk = new BasicButton();
         btOk.setText("OK");
-        btOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                actionAdd();
-            }
-        });
+        btOk.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        actionAdd();
+                    }
+                });
         container.add(btOk);
         btOk.setEnabled(false);
         btOk.setBounds(10, 210, 110, 35);
@@ -102,12 +100,13 @@ public class AddDialog extends JMDialog {
         // ---- button2 ----
         btCancel = new BasicButton();
         btCancel.setText("HỦY");
-        btCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        btCancel.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        close();
+                    }
+                });
         container.add(btCancel);
         btCancel.setBounds(180, 210, 110, 35);
 
@@ -138,12 +137,13 @@ public class AddDialog extends JMDialog {
         btShowChap.setText("Xem DS");
         btShowChap.setBounds(220, 165, 70, 37);
         btShowChap.setVisible(false);
-        btShowChap.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                actionShow();
-            }
-        });
+        btShowChap.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        actionShow();
+                    }
+                });
         container.add(btShowChap);
         this.setSize(300, 260);
     }
@@ -157,7 +157,7 @@ public class AddDialog extends JMDialog {
 
         plugin = pluginManager.get(url);
 
-        //Bắt đầu lấy thông tin
+        // Bắt đầu lấy thông tin
         circleWait.startWait();
         properties = new Properties();
         properties.setUrl(url);
@@ -165,31 +165,32 @@ public class AddDialog extends JMDialog {
         final ListExecute getList = new ListExecute();
 
         getList.plugin(plugin)
-                .listener(new ChangeListener() {
-                    @Override
-                    public void doChanger() {
-                        tfChap.setEnabled(true);
-                        tfChap.setText("1-" + Integer.toString(properties.getSize()));
-                        btShowChap.setVisible(true);
-                        btOk.setEnabled(true);
-                        circleWait.stopWait();
-                    }
-                })
+                .listener(
+                        new ChangeListener() {
+                            @Override
+                            public void doChanger() {
+                                tfChap.setEnabled(true);
+                                tfChap.setText("1-" + properties.getSize());
+                                btShowChap.setVisible(true);
+                                btOk.setEnabled(true);
+                                circleWait.stopWait();
+                            }
+                        })
                 .applyTo(properties);
         getInfo.plugin(plugin)
-                .listener(new ChangeListener() {
-                    @Override
-                    public void doChanger() {
-                        tfName.setEnabled(true);
-                        tfName.setText(properties.getName());
-                        tfAuthor.setEnabled(true);
-                        tfAuthor.setText(properties.getAuthor());
-                        getList.execute();
-                    }
-                })
+                .listener(
+                        new ChangeListener() {
+                            @Override
+                            public void doChanger() {
+                                tfName.setEnabled(true);
+                                tfName.setText(properties.getName());
+                                tfAuthor.setEnabled(true);
+                                tfAuthor.setText(properties.getAuthor());
+                                getList.execute();
+                            }
+                        })
                 .applyTo(properties)
                 .execute();
-
     }
 
     private void actionAdd() {
@@ -207,15 +208,12 @@ public class AddDialog extends JMDialog {
                 return;
             }
             String savePath = SyntaxUtils.xoaDau(tfName.getText());
-            savePath = savePath.replaceAll("[^a-zA-Z0-9_]", "_")
-                    .replace("\"", "")
-                    .trim();
+            savePath = savePath.replaceAll("[^a-zA-Z0-9_]", "_").replace("\"", "").trim();
             savePath = FileUtils.validate(SettingUtils.WORKPATH + "/output/" + savePath);
             properties.setSavePath(savePath);
             properties.setUrl(url);
             FileUtils.mkdir(savePath);
-            if (parseListChap())
-                addListener.addDownload(properties, false);
+            if (parseListChap()) addListener.addDownload(properties, false);
             else return;
         }
         close();
@@ -225,17 +223,16 @@ public class AddDialog extends JMDialog {
         final ListDialog list;
         if (properties.isForum())
             list = new ListDialog(properties.getPageList(), tfChap.getText(), true);
-        else
-            list = new ListDialog(properties.getChapList(), tfChap.getText());
+        else list = new ListDialog(properties.getChapList(), tfChap.getText());
         list.setBlurListener(this);
-        list.setChangeListener(new ChangeListener() {
-            @Override
-            public void doChanger() {
-                tfChap.setText(list.getParseList());
-            }
-        });
+        list.setChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void doChanger() {
+                        tfChap.setText(list.getParseList());
+                    }
+                });
         list.open();
-
     }
 
     private boolean parseListChap() {
@@ -251,15 +248,13 @@ public class AddDialog extends JMDialog {
                 String[] c = list[i].split("-");
                 int c0 = Integer.parseInt(c[0]);
                 if (c.length == 1) {
-                    if (properties.isForum())
-                        newPageList.add(pageList.get(c0 - 1));
+                    if (properties.isForum()) newPageList.add(pageList.get(c0 - 1));
                     else newChapList.add(chapList.get(c0 - 1));
                     size++;
                     continue;
                 }
                 for (int j = c0; j <= Integer.parseInt(c[1]); j++) {
-                    if (properties.isForum())
-                        newPageList.add(pageList.get(j - 1));
+                    if (properties.isForum()) newPageList.add(pageList.get(j - 1));
                     else newChapList.add(chapList.get(j - 1));
                     size++;
                 }
@@ -274,9 +269,7 @@ public class AddDialog extends JMDialog {
         return true;
     }
 
-
     public void setAddListener(AddListener addListener) {
         this.addListener = addListener;
     }
-
 }

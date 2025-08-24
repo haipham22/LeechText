@@ -3,18 +3,15 @@ package dark.leech.text.ui.notification;
 import dark.leech.text.image.ImageLabel;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FontUtils;
-
-import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
 
-/**
- * Created by Long on 9/17/2016.
- */
+/** Created by Long on 9/17/2016. */
 public class Notification extends JWindow {
     public static int pointX;
     public static int pointY;
@@ -54,7 +51,6 @@ public class Notification extends JWindow {
         return this;
     }
 
-
     private void onCreate() {
 
         setAlwaysOnTop(true);
@@ -66,25 +62,25 @@ public class Notification extends JWindow {
         Container panel1 = getContentPane();
         panel1.setBackground(Color.WHITE);
         panel1.setLayout(null);
-        //---- lbCover ----
+        // ---- lbCover ----
         lbCover.path(imagePath).input(imageStream).load();
         lbCover.setOpaque(true);
         panel1.add(lbCover);
         lbCover.setBounds(5, 5, 54, 81);
 
-        //---- lbName ----
+        // ---- lbName ----
         lbName.setText(name);
         lbName.setFont(FontUtils.TEXT_NORMAL);
         panel1.add(lbName);
         lbName.setBounds(70, 5, 175, 30);
 
-        //---- lbNoti ----
+        // ---- lbNoti ----
         lbNoti.setText(contentNotification);
         lbNoti.setFont(FontUtils.TEXT_NORMAL);
         panel1.add(lbNoti);
         lbNoti.setBounds(70, 35, 170, 30);
 
-        //---- lbTime ----
+        // ---- lbTime ----
         Date todaysDate = new Date();
         DateFormat df = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
         lbTime.setText(df.format(todaysDate));
@@ -95,34 +91,35 @@ public class Notification extends JWindow {
         getRootPane().setBorder(new LineBorder(Color.LIGHT_GRAY, 1));
     }
 
-
     public void open() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                onCreate();
-                setVisible(true);
-                int width = AppUtils.width;
-                int height = AppUtils.height;
-                if (pointX == 0) pointX = width;
-                if (pointY == 0) pointY = height - getHeight() - 50;
-                final int x = pointX;
-                final int y = pointY;
-                pointY -= getHeight() + 5;
-                new Thread(new Runnable() {
+        SwingUtilities.invokeLater(
+                new Runnable() {
                     @Override
                     public void run() {
-                        for (int i = 0; i < getWidth() + 10; i++) {
-                            setLocation(x - i, y);
-                            AppUtils.pause(3);
-                        }
-                        AppUtils.pause(timeDelay);
-                        if (!close) doClose();
+                        onCreate();
+                        setVisible(true);
+                        int width = AppUtils.width;
+                        int height = AppUtils.height;
+                        if (pointX == 0) pointX = width;
+                        if (pointY == 0) pointY = height - getHeight() - 50;
+                        final int x = pointX;
+                        final int y = pointY;
+                        pointY -= getHeight() + 5;
+                        new Thread(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                for (int i = 0; i < getWidth() + 10; i++) {
+                                                    setLocation(x - i, y);
+                                                    AppUtils.pause(3);
+                                                }
+                                                AppUtils.pause(timeDelay);
+                                                if (!close) doClose();
+                                            }
+                                        })
+                                .start();
                     }
-                }).start();
-            }
-        });
-
+                });
     }
 
     private void doClose() {
@@ -131,16 +128,17 @@ public class Notification extends JWindow {
         final int x = getLocation().x;
         final int y = getLocation().y;
         pointY = y;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < getWidth() + 10; i++) {
-                    setLocation(x + i, y);
-                    AppUtils.pause(3);
-                }
-                dispose();
-            }
-        }).start();
+        new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                for (int i = 0; i < getWidth() + 10; i++) {
+                                    setLocation(x + i, y);
+                                    AppUtils.pause(3);
+                                }
+                                dispose();
+                            }
+                        })
+                .start();
     }
-
 }

@@ -8,27 +8,28 @@ import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMScrollPane;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FontUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import javax.swing.*;
 
-/**
- * Created by Dark on 2/26/2017.
- */
+/** Created by Dark on 2/26/2017. */
 public class HelpUI extends JMDialog {
-    private StringBuilder INFO;
-    private StringBuilder support;
     private static final String JVM = System.getProperty("java.vm.name");
     private static final String JRE = System.getProperty("java.version");
-
+    private final StringBuilder INFO;
+    private final StringBuilder support;
 
     public HelpUI() {
         INFO = new StringBuilder();
-        INFO.append("<b>LeechText " + AppUtils.VERSION +  "</b>");
-        INFO.append("<br>Build: " + AppUtils.VERSION.replace(".", "/") + " at " + AppUtils.TIME +" <u>© 2017 Darkrai</u>");
+        INFO.append("<b>LeechText " + AppUtils.VERSION + "</b>");
+        INFO.append(
+                "<br>Build: "
+                        + AppUtils.VERSION.replace(".", "/")
+                        + " at "
+                        + AppUtils.TIME
+                        + " <u>© 2017 Darkrai</u>");
         INFO.append("<br>");
         INFO.append("<br>JRE: " + JRE);
         INFO.append("<br>JVM: " + JVM);
@@ -51,15 +52,15 @@ public class HelpUI extends JMDialog {
         JMScrollPane sc = new JMScrollPane(jTPage);
 
         pnTitle.setText("Thông tin");
-        pnTitle.addCloseListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        pnTitle.addCloseListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        close();
+                    }
+                });
         container.add(pnTitle);
         pnTitle.setBounds(0, 0, 300, 45);
-
 
         jTInfo.setFont(FontUtils.TEXT_NORMAL);
         jTInfo.setContentType("text/html");
@@ -80,29 +81,31 @@ public class HelpUI extends JMDialog {
         container.add(sc);
         sc.setBounds(10, 175, 280, 185);
         btClose.setText("ĐÓNG");
-        btClose.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        btClose.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        close();
+                    }
+                });
         container.add(btClose);
         btClose.setBounds(20, 360, 90, 35);
 
         btVisit.setText("VISIT");
-        btVisit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Desktop.getDesktop().browse(new URL("https://www.facebook.com/leechtext/").toURI());
-                } catch (Exception xe) {
-                }
-            }
-        });
+        btVisit.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            Desktop.getDesktop()
+                                    .browse(new URL("https://www.facebook.com/leechtext/").toURI());
+                        } catch (Exception xe) {
+                        }
+                    }
+                });
         container.add(btVisit);
         btVisit.setBounds(200, 360, 90, 35);
 
         setSize(300, 400);
-
     }
 }

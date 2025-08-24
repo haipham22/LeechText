@@ -13,17 +13,16 @@ import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.SettingUtils;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.*;
 
 public class Config {
-    private List<Chapter> chapList;
+    private final List<Chapter> chapList;
     private String path;
     private TableListener tableListener;
     private int index;
@@ -42,16 +41,14 @@ public class Config {
     public List<Chapter> checkError() {
         ArrayList<Chapter> imgErr = new ArrayList<Chapter>();
         for (int i = 0; i < chapList.size(); i++)
-            if (chapList.get(i).isError())
-                imgErr.add(chapList.get(i));
+            if (chapList.get(i).isError()) imgErr.add(chapList.get(i));
         return imgErr;
     }
 
     public List<Chapter> checkImg() {
         ArrayList<Chapter> imgList = new ArrayList<Chapter>();
         for (int i = 0; i < chapList.size(); i++) {
-            if (chapList.get(i).isImageChapter())
-                imgList.add(chapList.get(i));
+            if (chapList.get(i).isImageChapter()) imgList.add(chapList.get(i));
         }
         return imgList;
     }
@@ -61,8 +58,7 @@ public class Config {
         for (Chapter c : chapList)
             if (findMatchs(c.getChapName(), "^(Ch..ng|H.i) \\d+([\\+\\.-]\\d+|)") != 1)
                 nameList.add(c);
-            else if (findMatchs(c.getChapName(), "Ch..ng \\d+") > 1)
-                nameList.add(c);
+            else if (findMatchs(c.getChapName(), "Ch..ng \\d+") > 1) nameList.add(c);
         return nameList;
     }
 
@@ -70,7 +66,8 @@ public class Config {
         if (chapter.getPartName().length() > 1) return;
         String regex = "((Quy.n |Q.|Q)\\d+\\s*[:-](.*?)*)\\s*(([Cc]h..ng|Hồi)\\s+\\d+)";
         if (findMatchs(chapter.getChapName(), "(Quy.n |Q\\.|Q)\\d+([\\+\\.-]\\d+|)") == 1) {
-            String partName = splitMatchs(chapter.getChapName(), regex, 1).replaceAll("\\s*[:-]\\s*$", "");
+            String partName =
+                    splitMatchs(chapter.getChapName(), regex, 1).replaceAll("\\s*[:-]\\s*$", "");
             String chapName = chapter.getChapName();
             chapName = chapName.replace(partName, "").replaceAll("^\\s*[:-]\\s*", "");
             partName = partName.replaceAll("Q\\.|Q(\\d+)", "Quyển $1");
@@ -82,7 +79,12 @@ public class Config {
     public void autoFixName() {
         for (int i = 0; i < chapList.size(); i++) {
             try {
-                Chapter chapter = new Chapter(chapList.get(i).getUrl(), chapList.get(i).getId(), chapList.get(i).getPartName(), chapList.get(i).getChapName());
+                Chapter chapter =
+                        new Chapter(
+                                chapList.get(i).getUrl(),
+                                chapList.get(i).getId(),
+                                chapList.get(i).getPartName(),
+                                chapList.get(i).getChapName());
                 splitPartName(chapter);
                 chapter.setChapName(fixName(chapter.getChapName()));
                 chapter.setPartName(fixName(chapter.getPartName()));
@@ -95,13 +97,14 @@ public class Config {
     private String fixName(String name) {
         if (name == null) return "";
         if (name.length() == 0) return name;
-        name = name.replaceAll("Chương \\d+\\s*[:-]\\s*(Chương \\d+.*?$)", "$1")
-                .replaceAll("^([hH]ồi|[đĐ]ệ) (\\d+)", "Chương $1")
-                .replaceAll("(\\d+) [Cc]h..ng", "Chương $1")
-                .replaceAll("\\s+", " ")
-                .replaceAll("Chương (\\d+)\\s*[-\\+:]\\s*(\\d+)", "Chương $1+$2")
-                .replaceAll("(Chương \\d+)\\s*[;:-]+\\s*", "$1: ")
-                .replaceAll("(Chương \\d+\\+\\d+)\\s*[;:-]+\\s*", "$1: ");
+        name =
+                name.replaceAll("Chương \\d+\\s*[:-]\\s*(Chương \\d+.*?$)", "$1")
+                        .replaceAll("^([hH]ồi|[đĐ]ệ) (\\d+)", "Chương $1")
+                        .replaceAll("(\\d+) [Cc]h..ng", "Chương $1")
+                        .replaceAll("\\s+", " ")
+                        .replaceAll("Chương (\\d+)\\s*[-\\+:]\\s*(\\d+)", "Chương $1+$2")
+                        .replaceAll("(Chương \\d+)\\s*[;:-]+\\s*", "$1: ")
+                        .replaceAll("(Chương \\d+\\+\\d+)\\s*[;:-]+\\s*", "$1: ");
         return name;
     }
 
@@ -119,7 +122,12 @@ public class Config {
     public void Optimize() {
         for (int i = 0; i < chapList.size(); i++) {
             try {
-                Chapter chapter = new Chapter(chapList.get(i).getUrl(), chapList.get(i).getId(), chapList.get(i).getPartName(), chapList.get(i).getChapName());
+                Chapter chapter =
+                        new Chapter(
+                                chapList.get(i).getUrl(),
+                                chapList.get(i).getId(),
+                                chapList.get(i).getPartName(),
+                                chapList.get(i).getChapName());
                 chapter.setChapName(Optimize(chapter.getChapName()));
                 chapter.setPartName(Optimize(chapter.getPartName()));
                 tableListener.updateData(i, chapter);
@@ -153,39 +161,39 @@ public class Config {
         }
         new ChapExecute()
                 .plugin(pluginGetter)
-                .listener(new ChangeListener() {
-                    @Override
-                    public void doChanger() {
-                        if (chapter.isError()) {
-                            errorCount++;
-                        } else {
-                            chapter.setError(false);
-                            tableListener.updateData(index, chapter);
-                        }
-                        index++;
-                        if (index >= chapList.size()) {
-                            History.getHistory().save(properties);
-                            if (errorCount > 0) {
-                                final ConfirmDialog dialog = new ConfirmDialog();
-                                dialog.setConfirmListener(new ConfirmListener() {
-                                    @Override
-                                    public void confirm() {
-                                        downloadChap(properties);
-                                        dialog.close();
-                                    }
+                .listener(
+                        new ChangeListener() {
+                            @Override
+                            public void doChanger() {
+                                if (chapter.isError()) {
+                                    errorCount++;
+                                } else {
+                                    chapter.setError(false);
+                                    tableListener.updateData(index, chapter);
+                                }
+                                index++;
+                                if (index >= chapList.size()) {
+                                    History.getHistory().save(properties);
+                                    if (errorCount > 0) {
+                                        final ConfirmDialog dialog = new ConfirmDialog();
+                                        dialog.setConfirmListener(
+                                                new ConfirmListener() {
+                                                    @Override
+                                                    public void confirm() {
+                                                        downloadChap(properties);
+                                                        dialog.close();
+                                                    }
 
-                                    @Override
-                                    public void cancel() {
-                                        dialog.close();
+                                                    @Override
+                                                    public void cancel() {
+                                                        dialog.close();
+                                                    }
+                                                });
+                                        dialog.open();
                                     }
-                                });
-                                dialog.open();
+                                } else download(properties);
                             }
-                            return;
-                        } else
-                            download(properties);
-                    }
-                })
+                        })
                 .charset(properties.getCharset())
                 .path(properties.getSavePath())
                 .applyTo(chapter)
@@ -207,14 +215,15 @@ public class Config {
         ArrayList<String> imgList = new ArrayList<String>();
         Pattern r = Pattern.compile("<img.*?src=\"(.*?)\"", Pattern.MULTILINE);
         Matcher m = r.matcher(text);
-        while (m.find())
-            imgList.add(m.group(1));
+        while (m.find()) imgList.add(m.group(1));
         for (int i = 0; i < imgList.size(); i++) {
             String imgPath = imgList.get(i);
             if (!imgPath.startsWith("http")) continue;
-            String img = imgPath.substring(imgPath.lastIndexOf("."), imgPath.length()).toLowerCase(); //TÁch đuôi
-            text = text.replace(imgPath, "../Images/" + chapter.getId() + "_" + Integer.toString(i) + img).replace("\">", "\"/>");
-            img = path + "/data/Images/" + chapter.getId() + "_" + Integer.toString(i) + img;
+            String img = imgPath.substring(imgPath.lastIndexOf(".")).toLowerCase(); // TÁch đuôi
+            text =
+                    text.replace(imgPath, "../Images/" + chapter.getId() + "_" + i + img)
+                            .replace("\">", "\"/>");
+            img = path + "/data/Images/" + chapter.getId() + "_" + i + img;
             FileUtils.url2file(imgList.get(i), img);
         }
         FileUtils.string2file(text, path + "/raw/" + chapter.getId() + ".txt");
@@ -236,8 +245,7 @@ public class Config {
         Pattern r = Pattern.compile(regex);
         Matcher m = r.matcher(src);
         String math = "";
-        if (m.find())
-            math = m.group(group);
+        if (m.find()) math = m.group(group);
         return math;
     }
 
@@ -262,12 +270,13 @@ public class Config {
 
         public ConfirmDialog() {
             setSize(300, 150);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    onCreate();
-                }
-            });
+            runOnUiThread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            onCreate();
+                        }
+                    });
         }
 
         @Override
@@ -290,24 +299,22 @@ public class Config {
             container.add(btCancel);
             btCancel.setBounds(190, 100, 100, 35);
 
-            btConfirm.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (confirmListener != null)
-                        confirmListener.confirm();
-                    close();
-                }
-            });
-            btCancel.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (confirmListener != null)
-                        confirmListener.cancel();
-                    close();
-                }
-            });
-
-
+            btConfirm.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (confirmListener != null) confirmListener.confirm();
+                            close();
+                        }
+                    });
+            btCancel.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (confirmListener != null) confirmListener.cancel();
+                            close();
+                        }
+                    });
         }
 
         public void setConfirmListener(ConfirmListener confirmListener) {

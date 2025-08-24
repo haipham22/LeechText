@@ -8,35 +8,43 @@ import dark.leech.text.models.Properties;
 import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.button.CircleButton;
-import dark.leech.text.ui.material.*;
+import dark.leech.text.ui.material.JMDialog;
+import dark.leech.text.ui.material.JMMenuItem;
+import dark.leech.text.ui.material.JMPopupMenu;
+import dark.leech.text.ui.material.JMProgressBar;
+import dark.leech.text.ui.material.JMScrollPane;
+import dark.leech.text.ui.material.JMTable;
+import dark.leech.text.ui.material.JMTextField;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 
-/**
- * Created by Dark on 3/8/2017.
- */
+/** Created by Dark on 3/8/2017. */
 class ListUI extends JMDialog implements TableListener, ActionListener, KeyListener {
-    private List<Chapter> chapList;
+    private final List<Chapter> chapList;
     private JMTable tableList;
     private DefaultTableModel tableModel;
     private JMPopupMenu popupMenu;
     private JMPopupMenu popupAction;
-    private String name;
-    private String[] nameButton = new String[]{"Auto Fix", "Tải ảnh", "Tải Lại", "Optimize"};
+    private final String name;
+    private final String[] nameButton = new String[] {"Auto Fix", "Tải ảnh", "Tải Lại", "Optimize"};
     private BasicButton bt3;
     private JMProgressBar progressBar;
     private int action;
@@ -59,12 +67,13 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
         this.chapList = chapList;
         this.name = name;
         setSize(380, 430);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                onCreate();
-            }
-        });
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        onCreate();
+                    }
+                });
     }
 
     public ListUI(List<Chapter> chapList, String name, String path) {
@@ -72,12 +81,13 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
         this.name = name;
         this.path = path;
         setSize(380, 430);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                onCreate();
-            }
-        });
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        onCreate();
+                    }
+                });
     }
 
     @Override
@@ -85,8 +95,7 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
         super.onCreate();
         idList = new ArrayList<>();
         tableList = new JMTable(chapList);
-        for (int i = 0; i < chapList.size(); i++)
-            idList.add(i);
+        for (int i = 0; i < chapList.size(); i++) idList.add(i);
         PanelTitle pnTitle = new PanelTitle();
         JMScrollPane scrollPane1 = new JMScrollPane();
         tableList = new JMTable(chapList);
@@ -105,47 +114,48 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
         menuMerge = new JMMenuItem("Gộp");
         btSearch = new CircleButton(StringUtils.SEARCH, 25f);
 
-        //======== this ========
+        // ======== this ========
         pnTitle.setText(name);
-        pnTitle.addCloseListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        pnTitle.addCloseListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        close();
+                    }
+                });
 
         pnTitle.add(btSearch);
-        btSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FindAndReplace findAndReplace = new FindAndReplace(tableList);
-                findAndReplace.setBlurListener(ListUI.this);
-                findAndReplace.open();
-            }
-        });
+        btSearch.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        FindAndReplace findAndReplace = new FindAndReplace(tableList);
+                        findAndReplace.setBlurListener(ListUI.this);
+                        findAndReplace.open();
+                    }
+                });
         btSearch.setBounds(290, 5, 35, 35);
         container.add(pnTitle);
         pnTitle.setBounds(0, 0, 380, 45);
-
 
         scrollPane1.setViewportView(tableList);
         scrollPane1.getVerticalScrollBar().setUnitIncrement(20);
         container.add(scrollPane1);
         scrollPane1.setBounds(0, 45, 380, 335);
 
-        //---- btCancel ----
+        // ---- btCancel ----
         btCancel.setText("HỦY");
         btCancel.addActionListener(this);
         container.add(btCancel);
         btCancel.setBounds(300, 390, 75, 30);
 
-        //---- btOk ----
+        // ---- btOk ----
         btOk.setText("OK");
         btOk.addActionListener(this);
         container.add(btOk);
         btOk.setBounds(200, 390, 75, 30);
 
-        //---- bt3 ----
+        // ---- bt3 ----
         bt3.setText(nameButton[action]);
         bt3.addActionListener(this);
         container.add(bt3);
@@ -171,29 +181,33 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
         popupMenu.setBorder(new LineBorder(ColorUtils.THEME_COLOR.brighter()));
         popupAction.setBorder(new LineBorder(ColorUtils.THEME_COLOR.brighter()));
 
-        tableList.addMouseListener(new MouseAdapter() {
-            private void showIfPopupTrigger(MouseEvent mouseEvent) {
-                if (mouseEvent.isPopupTrigger()) {
-                    if (tableList.getSelectedRowCount() == 1)
-                        popupMenu.show(mouseEvent.getComponent(),
-                                mouseEvent.getX(), mouseEvent.getY());
-                    else if (tableList.getSelectedRowCount() > 1) {
-                        popupAction.show(mouseEvent.getComponent(),
-                                mouseEvent.getX(), mouseEvent.getY());
+        tableList.addMouseListener(
+                new MouseAdapter() {
+                    private void showIfPopupTrigger(MouseEvent mouseEvent) {
+                        if (mouseEvent.isPopupTrigger()) {
+                            if (tableList.getSelectedRowCount() == 1)
+                                popupMenu.show(
+                                        mouseEvent.getComponent(),
+                                        mouseEvent.getX(),
+                                        mouseEvent.getY());
+                            else if (tableList.getSelectedRowCount() > 1) {
+                                popupAction.show(
+                                        mouseEvent.getComponent(),
+                                        mouseEvent.getX(),
+                                        mouseEvent.getY());
+                            }
+                        }
                     }
-                }
-            }
 
-            public void mousePressed(MouseEvent mouseEvent) {
-                showIfPopupTrigger(mouseEvent);
-            }
+                    public void mousePressed(MouseEvent mouseEvent) {
+                        showIfPopupTrigger(mouseEvent);
+                    }
 
-            public void mouseReleased(MouseEvent mouseEvent) {
-                showIfPopupTrigger(mouseEvent);
-            }
-        });
+                    public void mouseReleased(MouseEvent mouseEvent) {
+                        showIfPopupTrigger(mouseEvent);
+                    }
+                });
         tableList.addKeyListener(this);
-
     }
 
     public void setAction(int action) {
@@ -203,25 +217,26 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
     private void doAction() {
         bt3.setVisible(false);
         progressBar.setVisible(true);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                switch (action) {
-                    case ConfigUI.NAME:
-                        fixName();
-                        break;
-                    case ConfigUI.IMG:
-                        downImg();
-                        break;
-                    case ConfigUI.ERROR:
-                        fixError();
-                        break;
-                    case ConfigUI.OPTIMIZE:
-                        Optimize();
-                        break;
-                }
-            }
-        });
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        switch (action) {
+                            case ConfigUI.NAME:
+                                fixName();
+                                break;
+                            case ConfigUI.IMG:
+                                downImg();
+                                break;
+                            case ConfigUI.ERROR:
+                                fixError();
+                                break;
+                            case ConfigUI.OPTIMIZE:
+                                Optimize();
+                                break;
+                        }
+                    }
+                });
     }
 
     private void doEdit() {
@@ -229,15 +244,15 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
         final Chapter chapter = chapList.get(idList.get(row));
         ListUI.Edit edit = new ListUI.Edit(chapter);
         edit.setBlurListener(this);
-        edit.setChangeListener(new ChangeListener() {
-            @Override
-            public void doChanger() {
-                tableList.setValueAt(chapter.getPartName(), row, 1);
-                tableList.setValueAt(chapter.getChapName(), row, 2);
-            }
-        });
+        edit.setChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void doChanger() {
+                        tableList.setValueAt(chapter.getPartName(), row, 1);
+                        tableList.setValueAt(chapter.getChapName(), row, 2);
+                    }
+                });
         edit.open();
-
     }
 
     private void doGoto() {
@@ -267,9 +282,22 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
 
     private void doMerge() {
         int[] rows = tableList.getSelectedRows();
-        File file = new File(FileUtils.validate(path + "/raw/" + chapList.get(idList.get(rows[0])).getId() + ".txt"));
+        File file =
+                new File(
+                        FileUtils.validate(
+                                path
+                                        + "/raw/"
+                                        + chapList.get(idList.get(rows[0])).getId()
+                                        + ".txt"));
         for (int i = 1; i < rows.length; i++) {
-            FileUtils.add2file(new File(FileUtils.validate(path + "/raw/" + chapList.get(idList.get(rows[i])).getId() + ".txt")), file);
+            FileUtils.add2file(
+                    new File(
+                            FileUtils.validate(
+                                    path
+                                            + "/raw/"
+                                            + chapList.get(idList.get(rows[i])).getId()
+                                            + ".txt")),
+                    file);
             tableModel.removeRow(rows[rows.length - i]);
             idList.remove(rows[rows.length - i]);
         }
@@ -320,32 +348,23 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == menuCopy)
-            doCopy();
-        if (e.getSource() == menuEdit)
-            doEdit();
-        if (e.getSource() == menuGoto)
-            doGoto();
-        if (e.getSource() == menuDeletes || e.getSource() == menuDelete)
-            doDelete();
-        if (e.getSource() == menuMerge)
-            doMerge();
-        if (e.getSource() == bt3)
-            doAction();
-        if (e.getSource() == btOk)
-            doSave();
-        if (e.getSource() == btCancel)
-            close();
+        if (e.getSource() == menuCopy) doCopy();
+        if (e.getSource() == menuEdit) doEdit();
+        if (e.getSource() == menuGoto) doGoto();
+        if (e.getSource() == menuDeletes || e.getSource() == menuDelete) doDelete();
+        if (e.getSource() == menuMerge) doMerge();
+        if (e.getSource() == bt3) doAction();
+        if (e.getSource() == btOk) doSave();
+        if (e.getSource() == btCancel) close();
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
+    public void keyTyped(KeyEvent e) {}
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if ((e.getKeyCode() == KeyEvent.VK_H) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+        if ((e.getKeyCode() == KeyEvent.VK_H)
+                && ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)) {
             FindAndReplace findAndReplace = new FindAndReplace(tableList);
             findAndReplace.setBlurListener(ListUI.this);
             findAndReplace.open();
@@ -353,8 +372,19 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e) {}
 
+    @Override
+    public void updateData(int row, Chapter chapter) {
+        if (tableList.getCellEditor() != null) tableList.getCellEditor().stopCellEditing();
+        tableModel.setValueAt("Ok", row, 0);
+        tableModel.setValueAt(chapter.getPartName(), row, 1);
+        tableModel.setValueAt(chapter.getChapName(), row, 2);
+        tableModel.fireTableCellUpdated(row, 0);
+        tableModel.fireTableCellUpdated(row, 1);
+        tableModel.fireTableCellUpdated(row, 2);
+        progressBar.setPercent((row + 1) * 100 / chapList.size());
+        if (row + 1 == chapList.size()) progressBar.setVisible(false);
     }
 
     private class Edit extends JMDialog {
@@ -367,7 +397,7 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
         private JLabel lbChap;
         private BasicButton btOk;
         private BasicButton btCancel;
-        private Chapter chapter;
+        private final Chapter chapter;
 
         public Edit(Chapter chapter) {
             this.chapter = chapter;
@@ -387,14 +417,15 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
             btOk = new BasicButton();
             btCancel = new BasicButton();
 
-            //======== this ========
+            // ======== this ========
             pnTitle.setText(chapter.getChapName());
-            pnTitle.addCloseListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    close();
-                }
-            });
+            pnTitle.addCloseListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            close();
+                        }
+                    });
             container.add(pnTitle);
             pnTitle.setBounds(0, 0, 310, 45);
             container.add(tfPart);
@@ -404,47 +435,46 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
             tfChap.setBounds(80, 95, 220, 30);
             tfChap.setText(chapter.getChapName());
 
-
             scrollPane1.setViewportView(taText);
             taText.setLineWrap(true);
             taText.setWrapStyleWord(true);
             Font font = FontUtils.codeFont(12f);
             String text = FileUtils.file2string(path + "/raw/" + chapter.getId() + ".txt");
-            if (text != null)
-                if (font.canDisplayUpTo(text) == -1)
-                    taText.setFont(font);
+            if (text != null) if (font.canDisplayUpTo(text) == -1) taText.setFont(font);
             taText.setText(text);
             taText.setForeground(ColorUtils.THEME_COLOR);
             container.add(scrollPane1);
             scrollPane1.setBounds(10, 135, 290, 220);
 
-            //---- lbPart ----
+            // ---- lbPart ----
             lbPart.setText("Quyển");
             container.add(lbPart);
             lbPart.setBounds(5, 55, 70, 30);
 
-            //---- lbChap ----
+            // ---- lbChap ----
             lbChap.setText("Chương");
             container.add(lbChap);
             lbChap.setBounds(5, 95, 70, 30);
             btOk.setText("OK");
             container.add(btOk);
             btOk.setBounds(125, 360, 75, 30);
-            btOk.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    doClick();
-                }
-            });
+            btOk.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            doClick();
+                        }
+                    });
             btCancel.setText("HỦY");
             container.add(btCancel);
             btCancel.setBounds(225, 360, 75, 30);
-            btCancel.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    close();
-                }
-            });
+            btCancel.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            close();
+                        }
+                    });
             setSize(310, 400);
         }
 
@@ -454,19 +484,5 @@ class ListUI extends JMDialog implements TableListener, ActionListener, KeyListe
             FileUtils.string2file(taText.getText(), path + "/raw/" + chapter.getId() + ".txt");
             close();
         }
-
-    }
-
-    @Override
-    public void updateData(int row, Chapter chapter) {
-        if (tableList.getCellEditor() != null) tableList.getCellEditor().stopCellEditing();
-        tableModel.setValueAt("Ok", row, 0);
-        tableModel.setValueAt(chapter.getPartName(), row, 1);
-        tableModel.setValueAt(chapter.getChapName(), row, 2);
-        tableModel.fireTableCellUpdated(row, 0);
-        tableModel.fireTableCellUpdated(row, 1);
-        tableModel.fireTableCellUpdated(row, 2);
-        progressBar.setPercent((row + 1) * 100 / chapList.size());
-        if (row + 1 == chapList.size()) progressBar.setVisible(false);
     }
 }

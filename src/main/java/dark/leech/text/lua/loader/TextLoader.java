@@ -8,14 +8,14 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 
 public class TextLoader {
-    private PluginEntity plugin;
-
-    public static TextLoader with(PluginEntity plugin) {
-        return new TextLoader(plugin);
-    }
+    private final PluginEntity plugin;
 
     private TextLoader(PluginEntity plugin) {
         this.plugin = plugin;
+    }
+
+    public static TextLoader with(PluginEntity plugin) {
+        return new TextLoader(plugin);
     }
 
     public String load(String url) {

@@ -2,13 +2,10 @@ package dark.leech.text.ui.button;
 
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
-/**
- * Created by Long on 9/30/2016.
- */
+/** Created by Long on 9/30/2016. */
 public class CircleButton extends JButton {
     public CircleButton(String text, float fs) {
         setText(text);
@@ -18,6 +15,7 @@ public class CircleButton extends JButton {
         setVerticalAlignment(SwingConstants.CENTER);
         setFocusable(false);
     }
+
     public CircleButton(String text) {
         setText(text);
         setForeground(Color.WHITE);

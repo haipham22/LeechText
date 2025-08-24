@@ -1,21 +1,18 @@
 package dark.leech.text.models;
-/**
- * Code by Darkrai on 8/21/2016.
- */
 
-import java.util.ArrayList;
+/** Code by Darkrai on 8/21/2016. */
 import java.util.List;
 
 public class Properties {
-    private String name; //Tên truyện
-    private String author; //Tác giả
-    private String url; //Đường dẩn truyện
-    private String cover; //Đường dẫn Cover
-    private List<Chapter> chapList; //Danh sách chương
-    private List<Pager> pageList; //Danh sách trang
-    private boolean forum; //Trang get có phải forum hay không
-    private int size; //Số chương
-    private String savePath; //Thư mục lưu
+    private String name; // Tên truyện
+    private String author; // Tác giả
+    private String url; // Đường dẩn truyện
+    private String cover; // Đường dẫn Cover
+    private List<Chapter> chapList; // Danh sách chương
+    private List<Pager> pageList; // Danh sách trang
+    private boolean forum; // Trang get có phải forum hay không
+    private int size; // Số chương
+    private String savePath; // Thư mục lưu
     private String gioiThieu;
     private boolean addGt;
     private String charset = "UTF-8";
@@ -87,8 +84,7 @@ public class Properties {
 
     public void setCover(String cover, String page) {
         if (cover == null) return;
-        if (cover.startsWith("http"))
-            this.cover = cover;
+        if (cover.startsWith("http")) this.cover = cover;
         else this.cover = page + cover;
     }
 

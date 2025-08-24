@@ -2,6 +2,7 @@ package dark.leech.text.lua.api;
 
 import dark.leech.text.util.SettingUtils;
 import dark.leech.text.util.TextUtils;
+import java.io.IOException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.luaj.vm2.LuaBoolean;
@@ -9,17 +10,9 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-import java.io.IOException;
-
 public class Http {
 
     private static final String TAG = "Http";
-    private String url;
-    private boolean syncCookie = true;
-    private boolean skipCookie = false;
-    private Connection connection;
-    private Connection.Response response;
-
     private static CookieManager cookieManager;
 
     static {
@@ -29,30 +22,38 @@ public class Http {
         }
     }
 
-    public Http() {
-    }
+    private String url;
+    private boolean syncCookie = true;
+    private boolean skipCookie = false;
+    private Connection connection;
+    private Connection.Response response;
+
+    public Http() {}
 
     public Http request(Object url) {
         if (url instanceof String) {
             this.url = (String) url;
         } else this.url = url.toString();
-        connection = Jsoup.connect(this.url)
-                .header("User-Agent", SettingUtils.USER_AGENT)
-                .followRedirects(true)
-                .ignoreContentType(true)
-                .ignoreHttpErrors(true)
-                .timeout(SettingUtils.TIMEOUT)
-                .maxBodySize(0);
+        connection =
+                Jsoup.connect(this.url)
+                        .header("User-Agent", SettingUtils.USER_AGENT)
+                        .followRedirects(true)
+                        .ignoreContentType(true)
+                        .ignoreHttpErrors(true)
+                        .timeout(SettingUtils.TIMEOUT)
+                        .maxBodySize(0);
         return this;
     }
 
     public Http headers(LuaTable headers) {
-        Lua.forEach(headers, new Lua.TableAction() {
-            @Override
-            public void action(String key, LuaValue value) {
-                connection.header(key, value.tojstring());
-            }
-        });
+        Lua.forEach(
+                headers,
+                new Lua.TableAction() {
+                    @Override
+                    public void action(String key, LuaValue value) {
+                        connection.header(key, value.tojstring());
+                    }
+                });
         return this;
     }
 
@@ -62,18 +63,19 @@ public class Http {
     }
 
     public Http params(LuaTable params) {
-        Lua.forEach(params, new Lua.TableAction() {
-            @Override
-            public void action(String key, LuaValue value) {
-                connection.data(key, value.tojstring());
-            }
-        });
+        Lua.forEach(
+                params,
+                new Lua.TableAction() {
+                    @Override
+                    public void action(String key, LuaValue value) {
+                        connection.data(key, value.tojstring());
+                    }
+                });
         return this;
     }
 
     public LuaValue cookies() {
-        if (response != null)
-            return LuaValue.valueOf(response.header("Set-Cookie"));
+        if (response != null) return LuaValue.valueOf(response.header("Set-Cookie"));
         return LuaValue.valueOf("");
     }
 
@@ -84,18 +86,13 @@ public class Http {
     }
 
     public Http cookie(Object sync, Object skip) {
-        if (sync instanceof Boolean)
-            syncCookie = (boolean) sync;
-        else if (sync instanceof LuaBoolean)
-            syncCookie = ((LuaBoolean) sync).booleanValue();
+        if (sync instanceof Boolean) syncCookie = (boolean) sync;
+        else if (sync instanceof LuaBoolean) syncCookie = ((LuaBoolean) sync).booleanValue();
 
-        if (skip instanceof Boolean)
-            skipCookie = (boolean) skip;
-        else if (skip instanceof LuaBoolean)
-            skipCookie = ((LuaBoolean) skip).booleanValue();
+        if (skip instanceof Boolean) skipCookie = (boolean) skip;
+        else if (skip instanceof LuaBoolean) skipCookie = ((LuaBoolean) skip).booleanValue();
         return this;
     }
-
 
     public Http timeout(Object value) {
         try {
@@ -104,7 +101,6 @@ public class Http {
         }
         return this;
     }
-
 
     public Http post() {
         connection.method(Connection.Method.POST);
@@ -129,8 +125,7 @@ public class Http {
             if (!skipCookie) {
                 if (cookieManager != null) {
                     String cookie = cookieManager.getCookie(url);
-                    if (cookie != null)
-                        connection.header("Cookie", cookie);
+                    if (cookie != null) connection.header("Cookie", cookie);
                 }
             }
             response = connection.execute();
@@ -149,13 +144,11 @@ public class Http {
     public LuaValue string() {
         try {
             String htm = call().body();
-            if (htm.charAt(0) == '\uFEFF')
-                htm = htm.substring(1);
+            if (htm.charAt(0) == '\uFEFF') htm = htm.substring(1);
             return LuaValue.valueOf(htm);
         } catch (Exception e) {
             return LuaValue.NIL;
         }
-
     }
 
     public LuaValue table() {
@@ -173,6 +166,4 @@ public class Http {
             return null;
         }
     }
-
-
 }

@@ -35,22 +35,19 @@
 package dark.leech.text.image;
 
 import dark.leech.text.util.GraphicsUtils;
-
 import java.awt.image.BufferedImage;
 
 public class GaussianBlurFilter extends AbstractFilter {
     private final int radius;
 
-    /**
-     * <p>Creates a new blur filter with a default radius of 3.</p>
-     */
+    /** Creates a new blur filter with a default radius of 3. */
     public GaussianBlurFilter() {
         this(3);
     }
 
     /**
-     * <p>Creates a new blur filter with the specified radius. If the radius
-     * is lower than 0, a radius of 0.1 will be used automatically.</p>
+     * Creates a new blur filter with the specified radius. If the radius is lower than 0, a radius
+     * of 0.1 will be used automatically.
      *
      * @param radius the radius, in pixels, of the blur
      */
@@ -63,49 +60,13 @@ public class GaussianBlurFilter extends AbstractFilter {
     }
 
     /**
-     * <p>Returns the radius used by this filter, in pixels.</p>
+     * Blurs the source pixels into the destination pixels. The force of the blur is specified by
+     * the radius which must be greater than 0.
      *
-     * @return the radius of the blur
-     */
-    public int getRadius() {
-        return radius;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-        int width = src.getWidth();
-        int height = src.getHeight();
-
-        if (dst == null) {
-            dst = createCompatibleDestImage(src, null);
-        }
-
-        int[] srcPixels = new int[width * height];
-        int[] dstPixels = new int[width * height];
-
-        float[] kernel = createGaussianKernel(radius);
-
-        GraphicsUtils.getPixels(src, 0, 0, width, height, srcPixels);
-        // horizontal pass
-        blur(srcPixels, dstPixels, width, height, kernel, radius);
-        // vertical pass
-        blur(dstPixels, srcPixels, height, width, kernel, radius);
-        // the result is now stored in srcPixels due to the 2nd pass
-        GraphicsUtils.setPixels(dst, 0, 0, width, height, srcPixels);
-
-        return dst;
-    }
-
-    /**
-     * <p>Blurs the source pixels into the destination pixels. The force of
-     * the blur is specified by the radius which must be greater than 0.</p>
-     * <p>The source and destination pixels arrays are expected to be in the
-     * INT_ARGB format.</p>
-     * <p>After this method is executed, dstPixels contains a transposed and
-     * filtered copy of srcPixels.</p>
+     * <p>The source and destination pixels arrays are expected to be in the INT_ARGB format.
+     *
+     * <p>After this method is executed, dstPixels contains a transposed and filtered copy of
+     * srcPixels.
      *
      * @param srcPixels the source pixels
      * @param dstPixels the destination pixels
@@ -114,9 +75,8 @@ public class GaussianBlurFilter extends AbstractFilter {
      * @param kernel the kernel of the blur effect
      * @param radius the radius of the blur effect
      */
-    static void blur(int[] srcPixels, int[] dstPixels,
-                     int width, int height,
-                     float[] kernel, int radius) {
+    static void blur(
+            int[] srcPixels, int[] dstPixels, int width, int height, float[] kernel, int radius) {
         float a;
         float r;
         float g;
@@ -145,8 +105,8 @@ public class GaussianBlurFilter extends AbstractFilter {
 
                     a += blurFactor * ((pixel >> 24) & 0xFF);
                     r += blurFactor * ((pixel >> 16) & 0xFF);
-                    g += blurFactor * ((pixel >>  8) & 0xFF);
-                    b += blurFactor * ((pixel      ) & 0xFF);
+                    g += blurFactor * ((pixel >> 8) & 0xFF);
+                    b += blurFactor * ((pixel) & 0xFF);
                 }
 
                 ca = (int) (a + 0.5f);
@@ -154,10 +114,11 @@ public class GaussianBlurFilter extends AbstractFilter {
                 cg = (int) (g + 0.5f);
                 cb = (int) (b + 0.5f);
 
-                dstPixels[index] = ((ca > 255 ? 255 : ca) << 24) |
-                                   ((cr > 255 ? 255 : cr) << 16) |
-                                   ((cg > 255 ? 255 : cg) <<  8) |
-                                    (cb > 255 ? 255 : cb);
+                dstPixels[index] =
+                        ((ca > 255 ? 255 : ca) << 24)
+                                | ((cr > 255 ? 255 : cr) << 16)
+                                | ((cg > 255 ? 255 : cg) << 8)
+                                | (cb > 255 ? 255 : cb);
                 index += height;
             }
         }
@@ -187,5 +148,40 @@ public class GaussianBlurFilter extends AbstractFilter {
         }
 
         return data;
+    }
+
+    /**
+     * Returns the radius used by this filter, in pixels.
+     *
+     * @return the radius of the blur
+     */
+    public int getRadius() {
+        return radius;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
+        int width = src.getWidth();
+        int height = src.getHeight();
+
+        if (dst == null) {
+            dst = createCompatibleDestImage(src, null);
+        }
+
+        int[] srcPixels = new int[width * height];
+        int[] dstPixels = new int[width * height];
+
+        float[] kernel = createGaussianKernel(radius);
+
+        GraphicsUtils.getPixels(src, 0, 0, width, height, srcPixels);
+        // horizontal pass
+        blur(srcPixels, dstPixels, width, height, kernel, radius);
+        // vertical pass
+        blur(dstPixels, srcPixels, height, width, kernel, radius);
+        // the result is now stored in srcPixels due to the 2nd pass
+        GraphicsUtils.setPixels(dst, 0, 0, width, height, srcPixels);
+
+        return dst;
     }
 }

@@ -1,11 +1,11 @@
 package dark.leech.text.lua.api;
 
-import org.luaj.vm2.LuaTable;
-import org.luaj.vm2.LuaValue;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
 
 public class Core {
 
@@ -16,14 +16,14 @@ public class Core {
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
             int res = 0;
-            byte buf[] = new byte[1024];
+            byte[] buf = new byte[1024];
             while (res >= 0) {
                 res = gzIn.read(buf, 0, buf.length);
                 if (res > 0) {
                     byteOut.write(buf, 0, res);
                 }
             }
-            return LuaValue.valueOf(new String(byteOut.toByteArray(), "UTF-8"));
+            return LuaValue.valueOf(byteOut.toString(StandardCharsets.UTF_8));
         } catch (Exception e) {
             return LuaValue.valueOf("");
         }
@@ -56,35 +56,31 @@ public class Core {
         return new_search(name, url);
     }
 
-
     public static LuaValue merge_url(Object host, Object url) {
         String newUrl = url.toString().trim();
         if (newUrl.length() == 0) return LuaValue.NIL;
         String hostName = host.toString().trim();
         if (!newUrl.startsWith("http") && !hostName.isEmpty()) {
-            if (newUrl.startsWith("/"))
-                newUrl = newUrl.substring(1);
-            if (!hostName.endsWith("/"))
-                hostName = hostName + "/";
+            if (newUrl.startsWith("/")) newUrl = newUrl.substring(1);
+            if (!hostName.endsWith("/")) hostName = hostName + "/";
             newUrl = hostName + newUrl;
         }
         return LuaValue.valueOf(newUrl);
     }
 
     public static LuaValue create_login(Object url) {
-        return LuaValue.valueOf(0+ "0#" + url);
-
+        return LuaValue.valueOf(0 + "0#" + url);
     }
 
     public static LuaValue create_confirm(Object url) {
-        return LuaValue.valueOf( "1#" + url.toString());
+        return LuaValue.valueOf("1#" + url.toString());
     }
 
     public static LuaValue create_capcha(Object url) {
-        return LuaValue.valueOf( "2#" + url.toString());
+        return LuaValue.valueOf("2#" + url.toString());
     }
 
     public static LuaValue create_purchase(Object url) {
-        return LuaValue.valueOf( "3#" + url.toString());
+        return LuaValue.valueOf("3#" + url.toString());
     }
 }

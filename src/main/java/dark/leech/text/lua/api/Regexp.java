@@ -1,11 +1,10 @@
 package dark.leech.text.lua.api;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Regexp {
     public LuaValue find(Object str, Object regex) {
@@ -17,10 +16,8 @@ public class Regexp {
         String regex = regexp.toString();
         int groupInt = 1;
         try {
-            if (group instanceof Integer)
-                groupInt = (int) group;
-            else
-                groupInt = Integer.parseInt(group.toString());
+            if (group instanceof Integer) groupInt = (int) group;
+            else groupInt = Integer.parseInt(group.toString());
         } catch (Exception ignored) {
         }
         try {
@@ -45,10 +42,8 @@ public class Regexp {
         String regex = regexp.toString();
         int groupInt = 1;
         try {
-            if (group instanceof Integer)
-                groupInt = (int) group;
-            else
-                groupInt = Integer.parseInt(group.toString());
+            if (group instanceof Integer) groupInt = (int) group;
+            else groupInt = Integer.parseInt(group.toString());
         } catch (Exception ignored) {
         }
         try {
@@ -69,10 +64,8 @@ public class Regexp {
         String regex = regexp.toString();
         int groupInt = 1;
         try {
-            if (group instanceof Integer)
-                groupInt = (int) group;
-            else
-                groupInt = Integer.parseInt(group.toString());
+            if (group instanceof Integer) groupInt = (int) group;
+            else groupInt = Integer.parseInt(group.toString());
         } catch (Exception ignored) {
         }
 
@@ -89,5 +82,4 @@ public class Regexp {
             return LuaValue.NIL;
         }
     }
-
 }

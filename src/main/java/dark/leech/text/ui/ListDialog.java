@@ -1,24 +1,20 @@
 package dark.leech.text.ui;
 
-/**
- * Created by Long on 9/3/2016.
- */
-
+/** Created by Long on 9/3/2016. */
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Pager;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMScrollPane;
 import dark.leech.text.ui.material.JMTable;
-
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class ListDialog extends JMDialog {
 
@@ -32,15 +28,13 @@ public class ListDialog extends JMDialog {
     private List<Pager> pageList;
     private String parseList;
     private boolean selected = true;
-    private boolean forum;
-
+    private final boolean forum;
 
     public ListDialog(List<Pager> pageList, String parseList, boolean forum) {
         this.pageList = pageList;
         this.parseList = parseList;
         this.forum = forum;
         onCreate();
-
     }
 
     public ListDialog(List<Chapter> chapList, String parseList) {
@@ -59,7 +53,7 @@ public class ListDialog extends JMDialog {
         btSelect = new BasicButton();
         pnTitle = new PanelTitle();
 
-        //======== scPn ========
+        // ======== scPn ========
         Object[] columnNames = {"", "Tên chương"};
         Object[][] data = null;
         if (forum) {
@@ -77,14 +71,15 @@ public class ListDialog extends JMDialog {
         }
         tbList = new JMTable();
         doUpdateData(parseList, data);
-        tbList.setModel(new DefaultTableModel(data, columnNames) {
-            Class<?>[] columnTypes = new Class<?>[]{Boolean.class, String.class};
+        tbList.setModel(
+                new DefaultTableModel(data, columnNames) {
+                    final Class<?>[] columnTypes = new Class<?>[] {Boolean.class, String.class};
 
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return columnTypes[columnIndex];
-            }
-        });
+                    @Override
+                    public Class<?> getColumnClass(int columnIndex) {
+                        return columnTypes[columnIndex];
+                    }
+                });
         doUpdateData(parseList, data);
         TableColumnModel cm = tbList.getColumnModel();
         cm.getColumn(0).setMaxWidth(30);
@@ -94,52 +89,55 @@ public class ListDialog extends JMDialog {
         container.add(scPn);
         scPn.setBounds(0, 50, 348, 420);
 
-        //---- btCancel ----
+        // ---- btCancel ----
         btCancel.setText("HỦY");
-        btCancel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                close();
-            }
-        });
+        btCancel.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        close();
+                    }
+                });
         container.add(btCancel);
         btCancel.setBounds(275, 475, 65, 30);
 
-        //---- btOk ----
+        // ---- btOk ----
         btOk.setText("OK");
         container.add(btOk);
-        btOk.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                okClick();
-            }
-        });
+        btOk.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        okClick();
+                    }
+                });
         btOk.setBounds(210, 475, 60, 30);
 
-        //---- btSelect ----
+        // ---- btSelect ----
         btSelect.setText("BỎ CHỌN");
         container.add(btSelect);
-        btSelect.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                doSelect();
-            }
-        });
+        btSelect.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        doSelect();
+                    }
+                });
         btSelect.setBounds(5, 475, 100, 30);
 
-        //---- lbTitle ----
+        // ---- lbTitle ----
         pnTitle.setText("Danh sách chương");
-        pnTitle.addCloseListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        pnTitle.addCloseListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        close();
+                    }
+                });
         container.add(pnTitle);
         pnTitle.setBounds(0, 0, 350, 45);
         this.setSize(350, 520);
     }
-
 
     private void okClick() {
         ArrayList<Integer> c = new ArrayList<Integer>();
@@ -164,14 +162,11 @@ public class ListDialog extends JMDialog {
         if (tbList.getSelectedRowCount() != 0) {
             int[] sl = tbList.getSelectedRows();
 
-            for (int i = 0; i < sl.length; i++)
-                tbList.setValueAt(selected, sl[i], 0);
+            for (int i = 0; i < sl.length; i++) tbList.setValueAt(selected, sl[i], 0);
         } else {
-            for (int i = 0; i < tbList.getRowCount(); i++)
-                tbList.setValueAt(selected, i, 0);
+            for (int i = 0; i < tbList.getRowCount(); i++) tbList.setValueAt(selected, i, 0);
         }
     }
-
 
     public String getParseList() {
         return parseList;
@@ -182,12 +177,11 @@ public class ListDialog extends JMDialog {
         String[] c = parseList.split(",");
         for (int i = 0; i < c.length; i++) {
             String[] cc = c[i].split("-");
-            for (int j = Integer.parseInt(cc[0]); j <= Integer
-                    .parseInt(cc[cc.length - 1]); j++)
+            for (int j = Integer.parseInt(cc[0]); j <= Integer.parseInt(cc[cc.length - 1]); j++)
                 data[j - 1][0] = true;
         }
-//        if (parseList.equals("1-" + i2s(chapList.size())))
-//            return;
+        //        if (parseList.equals("1-" + i2s(chapList.size())))
+        //            return;
 
     }
 
@@ -195,19 +189,13 @@ public class ListDialog extends JMDialog {
     public void doParseList(ArrayList<Integer> intMang) {
         parseList = "";
         for (int i = 0; i < intMang.size() - 1; i++)
-            if (intMang.get(i) + 1 == intMang.get(i + 1))
-                parseList += i2s(intMang.get(i)) + "-";
-            else
-                parseList += i2s(intMang.get(i)) + ",";
+            if (intMang.get(i) + 1 == intMang.get(i + 1)) parseList += i2s(intMang.get(i)) + "-";
+            else parseList += i2s(intMang.get(i)) + ",";
         parseList += i2s(intMang.get(intMang.size() - 1));
         parseList = parseList.replaceAll("(\\d+-).*?(\\d+(,|$))", "$1$2");
-
     }
 
     private String i2s(int i) {
         return Integer.toString(i);
     }
-
 }
-
-

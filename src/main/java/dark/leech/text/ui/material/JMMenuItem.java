@@ -2,12 +2,12 @@ package dark.leech.text.ui.material;
 
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class JMMenuItem extends JMenuItem {
-    private JLabel label;
+    private final JLabel label;
+
     public JMMenuItem(String text) {
         label = new JLabel();
         label.setText(text);
@@ -32,5 +32,4 @@ public class JMMenuItem extends JMenuItem {
         }
         g2.fillRect(0, 0, getWidth(), getHeight());
     }
-
 }

@@ -11,13 +11,12 @@ import dark.leech.text.util.CookiesUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.SettingUtils;
 import dark.leech.text.util.StringUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class AddURL extends JMDialog {
 
@@ -44,30 +43,33 @@ public class AddURL extends JMDialog {
         lbUrl = new JLabel();
         // ---- button1 ----
         btOk.setText("OK");
-        btOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                url = tfUrl.getText();
-                runOnUiThread(new Runnable() {
+        btOk.addActionListener(
+                new ActionListener() {
                     @Override
-                    public void run() {
-                        checkURL();
+                    public void actionPerformed(ActionEvent e) {
+                        url = tfUrl.getText();
+                        runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        checkURL();
+                                    }
+                                });
                     }
                 });
-            }
-        });
 
         container.add(btOk);
         btOk.setBounds(15, 75, 110, 35);
 
         // ---- button2 ----
         btCancel.setText("HỦY");
-        btCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        btCancel.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        close();
+                    }
+                });
         container.add(btCancel);
         btCancel.setBounds(125, 75, 110, 35);
 
@@ -85,38 +87,36 @@ public class AddURL extends JMDialog {
 
         btAddMul.setBounds(220, 5, 25, 25);
         btAddMul.setForeground(SettingUtils.THEME_COLOR);
-        btAddMul.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (tfUrl.getText() == null || tfUrl.getText().length() < 5)
-                    tfUrl.addError("Xin nhập URL!");
-                else {
-                    AddOption lg = new AddOption();
-                    lg.setBlurListener(AddURL.this);
-                    lg.open();
-                }
-            }
-        });
+        btAddMul.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        if (tfUrl.getText() == null || tfUrl.getText().length() < 5)
+                            tfUrl.addError("Xin nhập URL!");
+                        else {
+                            AddOption lg = new AddOption();
+                            lg.setBlurListener(AddURL.this);
+                            lg.open();
+                        }
+                    }
+                });
         container.add(btAddMul);
         container.setBackground(Color.WHITE);
         setSize(255, 125);
     }
 
     public String getUrl() {
-        if (url.lastIndexOf("/") == url.length() - 1)
-            url = url.substring(0, url.length() - 1);
+        if (url.lastIndexOf("/") == url.length() - 1) url = url.substring(0, url.length() - 1);
         return url;
     }
 
     private void checkURL() {
         PluginEntity pluginGetter = PluginManager.getManager().get(url);
-        if (pluginGetter == null)
-            tfUrl.addError("Liên kết này không được hỗ trợ!");
+        if (pluginGetter == null) tfUrl.addError("Liên kết này không được hỗ trợ!");
         else if (pluginGetter.isChecked()) {
             AddDialog add = new AddDialog(getUrl());
             add.setAddListener(addListener);
-            if (cookies != null && cookies.length() != 0)
-                CookiesUtils.put(getUrl(), cookies);
+            if (cookies != null && cookies.length() != 0) CookiesUtils.put(getUrl(), cookies);
             close();
             add.open();
         } else {
@@ -126,11 +126,12 @@ public class AddURL extends JMDialog {
 
     private String getClipboard() {
         try {
-            Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            Transferable transferable =
+                    Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            if (transferable != null
+                    && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String result = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                if (result.toLowerCase().startsWith("http"))
-                    return result;
+                if (result.toLowerCase().startsWith("http")) return result;
             }
         } catch (Exception e) {
         }
@@ -170,21 +171,21 @@ public class AddURL extends JMDialog {
             container.add(tfCookies);
             container.add(label);
 
-            btOk.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    cookies = tfCookies.getText();
-                    close();
-                }
-            });
-            btCancel.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    close();
-                }
-            });
-
+            btOk.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent actionEvent) {
+                            cookies = tfCookies.getText();
+                            close();
+                        }
+                    });
+            btCancel.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent actionEvent) {
+                            close();
+                        }
+                    });
         }
     }
-
 }

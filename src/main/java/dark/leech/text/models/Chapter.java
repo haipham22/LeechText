@@ -1,11 +1,11 @@
 package dark.leech.text.models;
 
-public class Chapter implements Cloneable{
+public class Chapter implements Cloneable {
 
     private String url; // Đường dẩn
     private String partName; // Tên quyển
     private String chapName; // Tên chương
-    private boolean completed; //Đã tải hoàn tất
+    private boolean completed; // Đã tải hoàn tất
     private boolean error; // Lỗi
     private boolean empty;
     private boolean imageChapter;
@@ -28,9 +28,15 @@ public class Chapter implements Cloneable{
         this(url, id, partName, chapName, false, false);
     }
 
-    public Chapter(String url, int id, String partName, String chapName, boolean completed, boolean error) {
+    public Chapter(
+            String url,
+            int id,
+            String partName,
+            String chapName,
+            boolean completed,
+            boolean error) {
         this.url = url;
-        this.id = "C" + Integer.toString(id);
+        this.id = "C" + id;
         this.partName = partName;
         this.chapName = chapName;
         this.error = error;
@@ -54,6 +60,10 @@ public class Chapter implements Cloneable{
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setId(int id) {
+        this.id = "C" + id;
     }
 
     public String getUrl() {
@@ -104,10 +114,6 @@ public class Chapter implements Cloneable{
 
     public void setImageChapter(boolean imageChapter) {
         this.imageChapter = imageChapter;
-    }
-
-    public void setId(int id) {
-        this.id = "C" + Integer.toString(id);
     }
 
     public boolean isPurchase() {

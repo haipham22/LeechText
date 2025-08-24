@@ -1,14 +1,11 @@
 package dark.leech.text.ui.button;
 
 import dark.leech.text.util.ColorUtils;
-
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
-import java.awt.*;
 
-/**
- * Created by Long on 9/30/2016.
- */
+/** Created by Long on 9/30/2016. */
 class ButtonUI extends BasicButtonUI {
     private boolean round;
     private Color rolloverBackground;
@@ -44,7 +41,6 @@ class ButtonUI extends BasicButtonUI {
         this.defaultBackground = defaultBackground;
     }
 
-
     @Override
     public void installUI(JComponent c) {
         super.installUI(c);
@@ -58,24 +54,27 @@ class ButtonUI extends BasicButtonUI {
     @Override
     public void paint(Graphics g, JComponent c) {
         AbstractButton b = (AbstractButton) c;
-        paintBackground(g, b, b.getModel().isRollover(), b.getModel().isPressed(), b.getModel().isSelected());
+        paintBackground(
+                g,
+                b,
+                b.getModel().isRollover(),
+                b.getModel().isPressed(),
+                b.getModel().isSelected());
         super.paint(g, c);
     }
 
-    private void paintBackground(Graphics g, JComponent c, boolean rollover, boolean pressed, boolean clicked) {
+    private void paintBackground(
+            Graphics g, JComponent c, boolean rollover, boolean pressed, boolean clicked) {
         Graphics2D g2 = (Graphics2D) g;
-        RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+        RenderingHints rh =
+                new RenderingHints(
+                        RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         rh.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2.setRenderingHints(rh);
         g2.setColor(defaultBackground);
-        if (rollover)
-            g2.setColor(rolloverBackground);
-        if (clicked || pressed)
-            g2.setColor(pressedBackground);
+        if (rollover) g2.setColor(rolloverBackground);
+        if (clicked || pressed) g2.setColor(pressedBackground);
         if (round) g.fillOval(size.width / 2 - size.height / 2, 0, size.height, size.height);
-        else
-            g2.fillRoundRect(0, 0, size.width, size.height, 5, 5);
+        else g2.fillRoundRect(0, 0, size.width, size.height, 5, 5);
     }
-
 }
