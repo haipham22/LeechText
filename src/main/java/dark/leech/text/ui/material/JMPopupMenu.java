@@ -62,13 +62,10 @@ public class JMPopupMenu extends JPopupMenu {
             g2.dispose();
         }
         EventQueue.invokeLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        Window pop = SwingUtilities.getWindowAncestor(JMPopupMenu.this);
-                        if (pop instanceof JWindow) {
-                            pop.setBackground(new Color(0x0, true)); // JDK 1.7.0
-                        }
+                () -> {
+                    Window pop = SwingUtilities.getWindowAncestor(JMPopupMenu.this);
+                    if (pop instanceof JWindow) {
+                        pop.setBackground(new Color(0x0, true)); // JDK 1.7.0
                     }
                 });
         super.show(c, x, y);

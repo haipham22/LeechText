@@ -1,14 +1,11 @@
 package dark.leech.text.ui.setting.trash;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 
-import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.listeners.RemoveListener;
 import dark.leech.text.models.Trash;
 import dark.leech.text.ui.PanelTitle;
@@ -52,15 +49,11 @@ class TrashUI extends JMDialog implements RemoveListener {
         PanelTitle pnTitle = new PanelTitle();
 
         pnTitle.setText("Lọc rác");
-        pnTitle.addCloseListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        close();
-                    }
-                });
+        pnTitle.addCloseListener(e -> close());
         pnTitle.setBounds(0, 0, 330, 45);
+
         container.add(pnTitle);
+
         body.setBackground(Color.white);
         GridBagConstraints gi = new GridBagConstraints();
         gi.gridwidth = GridBagConstraints.REMAINDER;
@@ -77,38 +70,25 @@ class TrashUI extends JMDialog implements RemoveListener {
         scrollPane.setBounds(0, 45, 327, 270);
         //
         add.setText("THÊM");
-        add.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        addItem();
-                    }
-                });
+        add.addActionListener(e -> addItem());
         container.add(add);
+
         add.setBounds(10, 320, 100, 30);
 
         ok.setText("OK");
         ok.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        done = true;
-                        close();
-                    }
+                e -> {
+                    done = true;
+                    close();
                 });
         container.add(ok);
         ok.setBounds(170, 320, 70, 30);
 
         cancel.setText("HỦY");
-        cancel.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        close();
-                    }
-                });
+        cancel.addActionListener(e -> close());
         container.add(cancel);
         cancel.setBounds(250, 320, 70, 30);
+
         gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.weightx = 1;
@@ -130,13 +110,7 @@ class TrashUI extends JMDialog implements RemoveListener {
     private void addItem() {
         final TrashItemIDialog trashItemDialog = new TrashItemIDialog();
         trashItemDialog.setBlurListener(this);
-        trashItemDialog.setChangeListener(
-                new ChangeListener() {
-                    @Override
-                    public void doChanger() {
-                        addItem(trashItemDialog.getTrash());
-                    }
-                });
+        trashItemDialog.setChangeListener(() -> addItem(trashItemDialog.getTrash()));
         trashItemDialog.open();
     }
 

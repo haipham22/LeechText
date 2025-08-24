@@ -1,4 +1,3 @@
-// Configure plugin management (must be first)
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -11,7 +10,6 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenCentral()
-        // Add other repositories if needed
     }
 }
 

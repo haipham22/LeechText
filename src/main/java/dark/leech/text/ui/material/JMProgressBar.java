@@ -4,18 +4,16 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import lombok.Getter;
+
 import dark.leech.text.util.ColorUtils;
 
-/** Created by Long on 9/9/2016. */
+@Getter
 public class JMProgressBar extends JPanel {
     private int percent;
 
     public JMProgressBar() {
         setBackground(Color.WHITE);
-    }
-
-    public int getPercent() {
-        return percent;
     }
 
     public void setPercent(int percent) {

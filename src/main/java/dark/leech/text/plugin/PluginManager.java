@@ -10,7 +10,6 @@ import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 
-/** Created by Long on 1/11/2017. */
 public class PluginManager {
     private static final Gson gson = new Gson();
 
@@ -18,7 +17,6 @@ public class PluginManager {
     private static ArrayList<PluginEntity> pluginList;
 
     private PluginManager() {
-
         new Thread(
                         () -> {
                             pluginList = new ArrayList<>();

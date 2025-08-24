@@ -1,89 +1,139 @@
 package dark.leech.text.ui.main.repository;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
-import com.google.gson.Gson;
-
-import dark.leech.text.enities.PluginEntity;
-import dark.leech.text.plugin.PluginManager;
+import dark.leech.text.enities.RepositoryEntity;
+import dark.leech.text.listeners.RemoveListener;
 import dark.leech.text.ui.PanelTitle;
-import dark.leech.text.ui.main.plugin.PluginItem;
+import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMScrollPane;
-import dark.leech.text.util.AppUtils;
-import dark.leech.text.util.FileUtils;
+import dark.leech.text.ui.repository.AddRepositoriesDialog;
+import dark.leech.text.ui.repository.RepositoryTile;
 
-/** Created by Long on 1/11/2017. */
-public class RepositoryUI extends JMDialog {
-    private PanelTitle pnTitle;
-    private JPanel pnList;
+public class RepositoryUI extends JMDialog implements RemoveListener {
+    private int numRepository = 0;
+
     private GridBagConstraints gbc;
 
+    private List<RepositoryEntity> repositoryList;
+    private BasicButton add;
+    private BasicButton ok;
+    private BasicButton cancel;
+    private JPanel body;
+    private boolean done;
+
     public RepositoryUI() {
+        numRepository = 0;
+        this.repositoryList = new ArrayList<>();
+        add = new BasicButton();
+        ok = new BasicButton();
+        cancel = new BasicButton();
+        body = new JPanel(new GridBagLayout());
+        body.setBackground(Color.white);
         onCreate();
     }
 
     @Override
     protected void onCreate() {
         super.onCreate();
-        pnTitle = new PanelTitle();
-        pnList = new JPanel(new GridBagLayout());
+        add = new BasicButton();
+        ok = new BasicButton();
+        cancel = new BasicButton();
+        body = new JPanel(new GridBagLayout());
+        body.setBackground(Color.white);
+        PanelTitle pnTitle = new PanelTitle();
 
         pnTitle.setText("Repository");
-        pnTitle.addCloseListener(
-                e -> {
-                    new Thread(
-                                    () -> {
-                                        for (PluginEntity pl : PluginManager.getManager().list()) {
-                                            String path =
-                                                    AppUtils.curDir
-                                                            + "/tools/plugins/"
-                                                            + pl.getUuid()
-                                                            + ".plugin";
-                                            FileUtils.string2file(new Gson().toJson(pl), path);
-                                        }
-                                    })
-                            .start();
+        pnTitle.addCloseListener(e -> close());
+        pnTitle.setBounds(0, 0, 330, 45);
 
-                    close();
-                });
         container.add(pnTitle);
-        pnTitle.setBounds(0, 0, 380, 45);
 
-        pnList.setBackground(Color.WHITE);
+        body.setBackground(Color.white);
         GridBagConstraints gi = new GridBagConstraints();
         gi.gridwidth = GridBagConstraints.REMAINDER;
         gi.weightx = 1;
         gi.weighty = 1;
-        JMScrollPane scrollPane = new JMScrollPane(pnList);
+        JMScrollPane scrollPane = new JMScrollPane(body);
 
         JPanel demo = new JPanel();
         demo.setBackground(Color.WHITE);
-        pnList.add(demo, gi);
+        body.add(demo, gi);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         container.add(scrollPane);
-        scrollPane.setBounds(0, 45, 380, 350);
+        scrollPane.setBounds(0, 45, 327, 270);
+        //
+        add.setText("THÊM");
+        add.addActionListener(e -> addItem());
+        container.add(add);
+        add.setBounds(10, 320, 100, 30);
+
+        ok.setText("OK");
+        ok.addActionListener(
+                e -> {
+                    if (done) {
+                        close();
+                    }
+                });
+        container.add(ok);
+        ok.setBounds(170, 320, 70, 30);
+
+        cancel.setText("HỦY");
+        cancel.addActionListener(e -> close());
+        container.add(cancel);
+        cancel.setBounds(250, 320, 70, 30);
 
         gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.weightx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        runOnUiThread(
-                () -> {
-                    for (PluginEntity pluginGetter : PluginManager.getManager().list())
-                        addItem(pluginGetter);
-                });
-
-        setSize(380, 400);
+        setSize(330, 370);
     }
 
-    private void addItem(PluginEntity pluginGetter) {
-        PluginItem pluginItem = new PluginItem(pluginGetter);
-        pnList.add(pluginItem, gbc, 0);
-        validate();
-        repaint();
+    private void load() {
+        for (RepositoryEntity pl : repositoryList) {
+            addItem(pl);
+        }
+    }
+
+    private void addItem() {
+        final AddRepositoriesDialog addRepositoriesDialog = new AddRepositoriesDialog();
+        addRepositoriesDialog.setBlurListener(this);
+        addRepositoriesDialog.setChangeListener(
+                () -> {
+                    repositoryList.addAll(addRepositoriesDialog.getRepositoryList());
+                    load();
+                });
+        addRepositoriesDialog.open();
+    }
+
+    private void addItem(RepositoryEntity repositoryEntity) {
+        RepositoryTile repositoryTile = new RepositoryTile(repositoryEntity);
+        repositoryTile.setRemoveListener(this);
+        repositoryTile.setBlurListener(this);
+        body.add(repositoryTile, gbc, numRepository);
+        body.updateUI();
+        numRepository++;
+    }
+
+    private void removeItem(RepositoryTile repositoryTile) {
+        repositoryList.remove(repositoryTile.getRepositoryEntity());
+        body.remove(repositoryTile);
+        numRepository--;
+    }
+
+    @Override
+    public void removeComponent(Component comp) {
+        if (comp instanceof RepositoryTile) {
+            removeItem((RepositoryTile) comp);
+            body.revalidate();
+            body.repaint();
+        }
     }
 }

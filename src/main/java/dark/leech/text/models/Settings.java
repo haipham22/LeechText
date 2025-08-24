@@ -7,8 +7,6 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import dark.leech.text.enities.RepositoryEntity;
-
 /**
  * Settings data model for JSON serialization with Gson. Represents the complete settings structure
  * for the application.
@@ -24,9 +22,6 @@ public class Settings {
 
     @SerializedName("other")
     private OtherSettings other;
-
-    @SerializedName("repositories")
-    private RepositoriesSettings repositories;
 
     @Data
     @NoArgsConstructor
@@ -92,11 +87,5 @@ public class Settings {
 
         @SerializedName("trash")
         private List<Trash> trash;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class RepositoriesSettings {
-        private List<RepositoryEntity> repositories;
     }
 }

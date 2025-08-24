@@ -7,7 +7,6 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import dark.leech.text.enities.RepositoryEntity;
 import dark.leech.text.models.Settings;
 import dark.leech.text.models.Trash;
 import dark.leech.text.ui.notification.Toast;
@@ -38,9 +37,6 @@ public class SettingUtils {
     public static String KINDLEGEN;
     public static String CALIBRE;
     public static Color THEME_COLOR;
-
-    // Repositories
-    public static List<RepositoryEntity> REPOSITORIES;
 
     private SettingUtils() {}
 
@@ -145,9 +141,6 @@ public class SettingUtils {
         KINDLEGEN = "";
         THEME_COLOR = Color.decode("#263238");
         TRASH = new ArrayList<>();
-
-        // Repositories
-        REPOSITORIES = new ArrayList<>();
     }
 
     public Settings getSettings() {
@@ -224,11 +217,6 @@ public class SettingUtils {
                     THEME_COLOR = Color.decode("#263238");
                 }
             }
-        }
-
-        if (settings.getRepositories() != null
-                && !settings.getRepositories().getRepositories().isEmpty()) {
-            REPOSITORIES = settings.getRepositories().getRepositories();
         }
     }
 }

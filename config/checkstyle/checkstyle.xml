@@ -26,7 +26,14 @@
         <property name="max" value="2000"/>
     </module>
 
+    <!-- Line length -->
+    <module name="LineLength">
+        <property name="tabWidth" value="2"/>
+    </module>
+
+    <!-- Tree Walker -->
     <module name="TreeWalker">
+
         <!-- Naming Conventions -->
         <module name="ConstantName"/>
         <module name="LocalFinalVariableName"/>

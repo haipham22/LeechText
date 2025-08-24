@@ -24,6 +24,7 @@ import dark.leech.text.ui.button.CloseButton;
 import dark.leech.text.ui.download.AddURL;
 import dark.leech.text.ui.download.DownloadUI;
 import dark.leech.text.ui.main.plugin.PluginUI;
+import dark.leech.text.ui.main.repository.RepositoryUI;
 import dark.leech.text.ui.material.JMMenuItem;
 import dark.leech.text.ui.material.JMPopupMenu;
 import dark.leech.text.util.AppUtils;
@@ -105,6 +106,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
 
     /** Menu item for accessing plugin management */
     private JMMenuItem pnPlugin;
+    private JMMenuItem pnRepository;
 
     // Window control components
     /** Exit button for closing the application */
@@ -139,7 +141,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
      * based on screen dimensions.
      */
     public MainUI() {
-        setLocation(AppUtils.width - 420, AppUtils.height - 650);
+        //        setLocation(AppUtils.width - 420, AppUtils.height - 650);
         setSize(390, 555);
         getRootPane().setBorder(new LineBorder(Color.LIGHT_GRAY, 1));
         setUndecorated(true);
@@ -147,14 +149,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         setIconImage(
                 Toolkit.getDefaultToolkit()
                         .getImage(getClass().getResource("/dark/leech/res/icon.png")));
-        new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                onCreate();
-                            }
-                        })
-                .start();
+        new Thread(this::onCreate).start();
     }
 
     /**
@@ -325,17 +320,29 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
                     }
                     if (e.getSource() == pnHelp) new HelpUI().open();
                     if (e.getSource() == pnPlugin) new PluginUI().open();
+                    if (e.getSource() == pnRepository) {
+                        new RepositoryUI().open();
+                    }
+                    ;
                 };
+
         menu = new JMPopupMenu();
         pnSetting = new JMMenuItem("Cài đặt");
         pnSetting.addActionListener(actionListener);
         menu.add(pnSetting);
+
+        pnRepository = new JMMenuItem("Repositories");
+        pnRepository.addActionListener(actionListener);
+        menu.add(pnRepository);
+
         pnPlugin = new JMMenuItem("Plugins");
         pnPlugin.addActionListener(actionListener);
         menu.add(pnPlugin);
+
         pnHelp = new JMMenuItem("Thông tin");
         pnHelp.addActionListener(actionListener);
         menu.add(pnHelp);
+
         container.add(menu);
     }
 
@@ -363,7 +370,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         time.start();
 
         PluginManager.getManager();
-        //        UpdateUI.checkUpdate();
+        // UpdateUI.checkUpdate();
         time.stop();
         timer.start();
     }
