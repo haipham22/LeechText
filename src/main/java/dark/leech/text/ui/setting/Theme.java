@@ -1,13 +1,15 @@
 package dark.leech.text.ui.setting;
 
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.*;
+
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.FontUtils;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.*;
 
 /** Created by Long on 10/7/2016. */
 public class Theme extends JMPanel {

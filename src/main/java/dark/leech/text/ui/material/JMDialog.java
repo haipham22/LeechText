@@ -1,5 +1,12 @@
 package dark.leech.text.ui.material;
 
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
+
+import javax.swing.*;
+
 import dark.leech.text.image.GaussianBlurFilter;
 import dark.leech.text.listeners.BlurListener;
 import dark.leech.text.listeners.ChangeListener;
@@ -7,11 +14,6 @@ import dark.leech.text.ui.Animation;
 import dark.leech.text.ui.main.App;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.GraphicsUtils;
-import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
-import javax.swing.*;
 
 public abstract class JMDialog extends JDialog implements BlurListener {
     protected Container container;

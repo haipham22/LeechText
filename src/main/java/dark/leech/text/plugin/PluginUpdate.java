@@ -1,14 +1,16 @@
 package dark.leech.text.plugin;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.google.gson.Gson;
+
 import dark.leech.text.action.Log;
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.ui.notification.Toast;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.Http;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /** Created by Dark on 2/24/2017. */
 public class PluginUpdate {

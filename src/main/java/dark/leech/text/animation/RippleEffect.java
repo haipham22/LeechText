@@ -1,17 +1,19 @@
 package dark.leech.text.animation;
 
-import dark.leech.text.animation.timing.AccelerationInterpolator;
-import dark.leech.text.animation.timing.Animator;
-import dark.leech.text.animation.timing.SwingTimerTimingSource;
-import dark.leech.text.animation.timing.TimingTargetAdapter;
-import dark.leech.text.util.SafePropertySetter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.swing.*;
+
+import dark.leech.text.animation.timing.AccelerationInterpolator;
+import dark.leech.text.animation.timing.Animator;
+import dark.leech.text.animation.timing.SwingTimerTimingSource;
+import dark.leech.text.animation.timing.TimingTargetAdapter;
+import dark.leech.text.util.SafePropertySetter;
 
 /** A ripple effect. */
 public class RippleEffect {

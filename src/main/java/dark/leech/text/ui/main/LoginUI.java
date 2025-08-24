@@ -1,15 +1,17 @@
 package dark.leech.text.ui.main;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMCheckBox;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMTextField;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
 
 /** Created by Long on 11/2/2016. */
 public class LoginUI extends JMDialog {

@@ -1,20 +1,22 @@
 package dark.leech.text.ui;
 
 /** Created by Long on 9/3/2016. */
-import dark.leech.text.models.Chapter;
-import dark.leech.text.models.Pager;
-import dark.leech.text.ui.button.BasicButton;
-import dark.leech.text.ui.material.JMDialog;
-import dark.leech.text.ui.material.JMScrollPane;
-import dark.leech.text.ui.material.JMTable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+
+import dark.leech.text.models.Chapter;
+import dark.leech.text.models.Pager;
+import dark.leech.text.ui.button.BasicButton;
+import dark.leech.text.ui.material.JMDialog;
+import dark.leech.text.ui.material.JMScrollPane;
+import dark.leech.text.ui.material.JMTable;
 
 public class ListDialog extends JMDialog {
 

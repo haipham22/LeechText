@@ -1,6 +1,13 @@
 package dark.leech.text.ui.main.plugin;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
 import com.google.gson.Gson;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.plugin.PluginManager;
 import dark.leech.text.ui.PanelTitle;
@@ -8,10 +15,6 @@ import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMScrollPane;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
 
 /** Created by Long on 1/11/2017. */
 public class PluginUI extends JMDialog {

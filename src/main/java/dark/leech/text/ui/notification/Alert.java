@@ -1,17 +1,19 @@
 package dark.leech.text.ui.notification;
 
-import dark.leech.text.ui.button.BasicButton;
-import dark.leech.text.ui.button.CloseButton;
-import dark.leech.text.ui.material.JMDialog;
-import dark.leech.text.util.AppUtils;
-import dark.leech.text.util.FontUtils;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
+import dark.leech.text.ui.button.BasicButton;
+import dark.leech.text.ui.button.CloseButton;
+import dark.leech.text.ui.material.JMDialog;
+import dark.leech.text.util.AppUtils;
+import dark.leech.text.util.FontUtils;
 
 /** Created by Long on 9/20/2016. */
 public class Alert extends JMDialog {

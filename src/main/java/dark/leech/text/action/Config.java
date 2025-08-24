@@ -1,5 +1,14 @@
 package dark.leech.text.action;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.*;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.get.ChapExecute;
 import dark.leech.text.listeners.BlurListener;
@@ -13,13 +22,6 @@ import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.SettingUtils;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.swing.*;
 
 public class Config {
     private final List<Chapter> chapList;

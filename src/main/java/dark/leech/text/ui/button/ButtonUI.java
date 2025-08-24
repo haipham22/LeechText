@@ -1,9 +1,11 @@
 package dark.leech.text.ui.button;
 
-import dark.leech.text.util.ColorUtils;
 import java.awt.*;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
+
+import dark.leech.text.util.ColorUtils;
 
 /** Created by Long on 9/30/2016. */
 class ButtonUI extends BasicButtonUI {

@@ -1,5 +1,12 @@
 package dark.leech.text.ui.download;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.*;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.get.InfoExecute;
 import dark.leech.text.get.ListExecute;
@@ -18,11 +25,6 @@ import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.SettingUtils;
 import dark.leech.text.util.SyntaxUtils;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.*;
 
 public class AddDialog extends JMDialog {
 

@@ -1,11 +1,13 @@
 package dark.leech.text.ui.material;
 
-import dark.leech.text.models.Chapter;
 import java.awt.*;
 import java.util.List;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+
+import dark.leech.text.models.Chapter;
 
 /** Created by Long on 9/10/2016. */
 public class JMTable extends JTable {

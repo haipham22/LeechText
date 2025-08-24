@@ -1,5 +1,12 @@
 package dark.leech.text.ui.setting.trash;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+import javax.swing.*;
+
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.models.Trash;
 import dark.leech.text.ui.button.CircleButton;
@@ -7,11 +14,6 @@ import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-import javax.swing.*;
 
 public class TrashPane extends JMPanel {
 

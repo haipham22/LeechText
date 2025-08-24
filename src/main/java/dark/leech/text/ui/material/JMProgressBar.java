@@ -1,8 +1,10 @@
 package dark.leech.text.ui.material;
 
-import dark.leech.text.util.ColorUtils;
 import java.awt.*;
+
 import javax.swing.*;
+
+import dark.leech.text.util.ColorUtils;
 
 /** Created by Long on 9/9/2016. */
 public class JMProgressBar extends JPanel {

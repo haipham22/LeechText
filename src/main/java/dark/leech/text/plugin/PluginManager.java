@@ -1,11 +1,13 @@
 package dark.leech.text.plugin;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import com.google.gson.Gson;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
-import java.io.File;
-import java.util.ArrayList;
 
 /** Created by Long on 1/11/2017. */
 public class PluginManager {

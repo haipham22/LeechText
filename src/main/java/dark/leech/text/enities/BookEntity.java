@@ -1,7 +1,8 @@
 package dark.leech.text.enities;
 
-import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
+
+import com.google.gson.annotations.SerializedName;
 
 public class BookEntity implements Serializable {
 

@@ -1,11 +1,5 @@
 package dark.leech.text.ui.download;
 
-import dark.leech.text.action.History;
-import dark.leech.text.listeners.AddListener;
-import dark.leech.text.listeners.RemoveListener;
-import dark.leech.text.models.Properties;
-import dark.leech.text.ui.material.JMPanel;
-import dark.leech.text.ui.material.JMScrollPane;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -16,7 +10,15 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
+
 import javax.swing.*;
+
+import dark.leech.text.action.History;
+import dark.leech.text.listeners.AddListener;
+import dark.leech.text.listeners.RemoveListener;
+import dark.leech.text.models.Properties;
+import dark.leech.text.ui.material.JMPanel;
+import dark.leech.text.ui.material.JMScrollPane;
 
 /** Created by Dark on 1/14/2017. */
 public class DownloadUI extends JPanel implements AddListener, RemoveListener, DropTargetListener {

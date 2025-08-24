@@ -1,13 +1,15 @@
 package dark.leech.text.ui.button;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
 
 /** Created by Long on 10/20/2016. */
 public class SelectButton extends JButton {

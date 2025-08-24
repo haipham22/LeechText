@@ -1,5 +1,23 @@
 package dark.leech.text.ui.main.export.config;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+
 import dark.leech.text.action.Config;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.listeners.TableListener;
@@ -19,22 +37,6 @@ import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableModel;
 
 /** Created by Dark on 3/8/2017. */
 class ListUI extends JMDialog implements TableListener, ActionListener, KeyListener {

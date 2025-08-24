@@ -1,5 +1,20 @@
 package dark.leech.text.ui.main;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+
 import dark.leech.text.image.GaussianBlurFilter;
 import dark.leech.text.listeners.BlurListener;
 import dark.leech.text.plugin.PluginManager;
@@ -16,19 +31,6 @@ import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.GraphicsUtils;
 import dark.leech.text.util.StringUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import javax.swing.*;
-import javax.swing.border.LineBorder;
 
 public class MainUI extends JFrame implements BlurListener, ActionListener {
 

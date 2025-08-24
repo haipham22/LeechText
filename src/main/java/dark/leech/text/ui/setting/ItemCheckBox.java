@@ -1,13 +1,15 @@
 package dark.leech.text.ui.setting;
 
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.*;
+
 import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.*;
 
 public class ItemCheckBox extends JMPanel {
     private JLabel lbName;

@@ -1,12 +1,14 @@
 package dark.leech.text.util;
 
-import dark.leech.text.models.Trash;
-import dark.leech.text.ui.notification.Toast;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import dark.leech.text.models.Trash;
+import dark.leech.text.ui.notification.Toast;
 
 /** Created by Long on 10/3/2016. */
 public class SettingUtils {

@@ -1,15 +1,17 @@
 package dark.leech.text.ui.material;
 
-import dark.leech.text.listeners.BlurListener;
-import dark.leech.text.listeners.ChangeListener;
-import dark.leech.text.util.FontUtils;
-import dark.leech.text.util.StringUtils;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.*;
+
+import dark.leech.text.listeners.BlurListener;
+import dark.leech.text.listeners.ChangeListener;
+import dark.leech.text.util.FontUtils;
+import dark.leech.text.util.StringUtils;
 
 public class SelectBox extends JMPanel {
     private int selectIndex;

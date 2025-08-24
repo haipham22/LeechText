@@ -1,9 +1,11 @@
 package dark.leech.text.ui.button;
 
+import java.awt.*;
+
+import javax.swing.*;
+
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-import java.awt.*;
-import javax.swing.*;
 
 /** Created by Long on 9/30/2016. */
 public class CircleButton extends JButton {

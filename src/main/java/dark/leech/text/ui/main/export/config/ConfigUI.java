@@ -1,5 +1,11 @@
 package dark.leech.text.ui.main.export.config;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+import javax.swing.*;
+
 import dark.leech.text.action.Config;
 import dark.leech.text.action.History;
 import dark.leech.text.listeners.ChangeListener;
@@ -9,10 +15,6 @@ import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.util.FontUtils;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-import javax.swing.*;
 
 /** Created by Long on 9/10/2016. */
 public class ConfigUI extends JMDialog implements ChangeListener {

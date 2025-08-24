@@ -1,5 +1,12 @@
 package dark.leech.text.ui.main.export.config;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.BasicButton;
@@ -8,11 +15,6 @@ import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMProgressBar;
 import dark.leech.text.ui.material.JMTable;
 import dark.leech.text.ui.material.JMTextField;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 /** Created by Dark on 3/8/2017. */
 class FindAndReplace extends JMDialog {

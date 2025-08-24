@@ -1,11 +1,13 @@
 package dark.leech.text.ui.material;
 
-import dark.leech.text.util.ColorUtils;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+
+import dark.leech.text.util.ColorUtils;
 
 /** Created by Long on 9/23/2016. */
 public class JMPopupMenu extends JPopupMenu {

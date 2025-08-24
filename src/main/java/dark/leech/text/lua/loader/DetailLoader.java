@@ -1,12 +1,13 @@
 package dark.leech.text.lua.loader;
 
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaValue;
+
 import dark.leech.text.enities.BookEntity;
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.lua.api.LuaScriptEngine;
 import dark.leech.text.util.TextUtils;
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaError;
-import org.luaj.vm2.LuaValue;
 
 public class DetailLoader {
 

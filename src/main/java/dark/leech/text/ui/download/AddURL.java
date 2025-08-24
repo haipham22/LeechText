@@ -1,5 +1,13 @@
 package dark.leech.text.ui.download;
 
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.listeners.AddListener;
 import dark.leech.text.plugin.PluginManager;
@@ -11,12 +19,6 @@ import dark.leech.text.util.CookiesUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.SettingUtils;
 import dark.leech.text.util.StringUtils;
-import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
 
 public class AddURL extends JMDialog {
 

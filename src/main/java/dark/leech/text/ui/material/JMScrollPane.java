@@ -1,10 +1,12 @@
 package dark.leech.text.ui.material;
 
-import dark.leech.text.util.ColorUtils;
 import java.awt.*;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+
+import dark.leech.text.util.ColorUtils;
 
 public class JMScrollPane extends JScrollPane {
     public JMScrollPane(Component view) {

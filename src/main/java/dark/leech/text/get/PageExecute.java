@@ -1,5 +1,10 @@
 package dark.leech.text.get;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.*;
+
 import dark.leech.text.action.Log;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.models.Chapter;
@@ -7,9 +12,6 @@ import dark.leech.text.models.Pager;
 import dark.leech.text.models.Post;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.SyntaxUtils;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.*;
 
 /** Created by Dark on 1/21/2017. */
 public class PageExecute extends SwingWorker<ArrayList<Post>, Void> {

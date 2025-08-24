@@ -1,16 +1,17 @@
 package dark.leech.text.action.export;
 
-import dark.leech.text.models.Chapter;
-import dark.leech.text.models.Properties;
-import dark.leech.text.util.FileUtils;
-import dark.leech.text.util.RegexUtils;
-import dark.leech.text.util.SettingUtils;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import dark.leech.text.models.Chapter;
+import dark.leech.text.models.Properties;
+import dark.leech.text.util.FileUtils;
+import dark.leech.text.util.RegexUtils;
+import dark.leech.text.util.SettingUtils;
 
 /** Created by Long on 9/17/2016. */
 public class ToC {

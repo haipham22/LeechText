@@ -1,14 +1,16 @@
 package dark.leech.text.ui;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMScrollPane;
 import dark.leech.text.util.FontUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 /** Created by Long on 10/28/2016. */
 public class SyntaxDialog extends JMDialog {

@@ -1,5 +1,13 @@
 package dark.leech.text.ui.setting.trash;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.*;
+
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.listeners.RemoveListener;
 import dark.leech.text.models.Trash;
@@ -7,12 +15,6 @@ import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMScrollPane;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.*;
 
 /** Created by Dark on 2/13/2017. */
 class TrashUI extends JMDialog implements RemoveListener {

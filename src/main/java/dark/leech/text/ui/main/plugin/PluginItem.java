@@ -1,5 +1,13 @@
 package dark.leech.text.ui.main.plugin;
 
+import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.image.ImageLabel;
 import dark.leech.text.ui.button.SelectButton;
@@ -8,12 +16,6 @@ import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.Base64;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.SettingUtils;
-import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /** Created by Long on 1/11/2017. */
 public class PluginItem extends JMPanel {

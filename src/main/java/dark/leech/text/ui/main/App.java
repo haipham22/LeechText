@@ -1,11 +1,13 @@
 package dark.leech.text.ui.main;
 
+import java.awt.*;
+
+import javax.swing.*;
+
 import dark.leech.text.ui.Animation;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.SettingUtils;
-import java.awt.*;
-import javax.swing.*;
 
 public class App {
 

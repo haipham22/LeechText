@@ -1,5 +1,12 @@
 package dark.leech.text.ui.download;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.*;
+
 import dark.leech.text.action.Download;
 import dark.leech.text.action.History;
 import dark.leech.text.image.ImageLabel;
@@ -19,11 +26,6 @@ import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.SettingUtils;
 import dark.leech.text.util.StringUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import javax.swing.*;
 
 public class DownloadLabel extends JMPanel implements DownloadListener {
     private JMProgressBar load;

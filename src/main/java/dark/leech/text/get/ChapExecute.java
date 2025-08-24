@@ -1,5 +1,7 @@
 package dark.leech.text.get;
 
+import javax.swing.*;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.lua.loader.TextLoader;
@@ -8,7 +10,6 @@ import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.SettingUtils;
 import dark.leech.text.util.SyntaxUtils;
-import javax.swing.*;
 
 /** Created by Dark on 1/18/2017. */
 public class ChapExecute extends SwingWorker<String, Void> {

@@ -1,9 +1,11 @@
 package dark.leech.text.ui.material;
 
+import java.awt.*;
+
+import javax.swing.*;
+
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-import java.awt.*;
-import javax.swing.*;
 
 public class JMMenuItem extends JMenuItem {
     private final JLabel label;

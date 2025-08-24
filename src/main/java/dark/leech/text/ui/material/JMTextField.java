@@ -1,5 +1,18 @@
 package dark.leech.text.ui.material;
 
+import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.*;
+import javax.swing.text.DefaultCaret;
+
+import net.java.balloontip.BalloonTip;
+import net.java.balloontip.styles.BalloonTipStyle;
+import net.java.balloontip.styles.MinimalBalloonStyle;
+import net.java.balloontip.utils.TimingUtils;
+
 import dark.leech.text.animation.timing.Animator;
 import dark.leech.text.animation.timing.SplineInterpolator;
 import dark.leech.text.animation.timing.SwingTimerTimingSource;
@@ -7,16 +20,6 @@ import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.SafePropertySetter;
 import dark.leech.text.util.SettingUtils;
-import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.util.concurrent.TimeUnit;
-import javax.swing.*;
-import javax.swing.text.DefaultCaret;
-import net.java.balloontip.BalloonTip;
-import net.java.balloontip.styles.BalloonTipStyle;
-import net.java.balloontip.styles.MinimalBalloonStyle;
-import net.java.balloontip.utils.TimingUtils;
 
 public class JMTextField extends JTextField {
     private final Line line = new Line(this);

@@ -1,10 +1,12 @@
 package dark.leech.text.ui;
 
+import java.awt.*;
+
+import javax.swing.*;
+
 import dark.leech.text.ui.main.MainUI;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.GraphicsUtils;
-import java.awt.*;
-import javax.swing.*;
 
 public class Animation {
 

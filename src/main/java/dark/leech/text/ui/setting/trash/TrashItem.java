@@ -1,5 +1,11 @@
 package dark.leech.text.ui.setting.trash;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
 import dark.leech.text.listeners.BlurListener;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.listeners.RemoveListener;
@@ -12,10 +18,6 @@ import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.SettingUtils;
 import dark.leech.text.util.StringUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
 
 /** Created by Dark on 2/13/2017. */
 class TrashItem extends JMPanel {

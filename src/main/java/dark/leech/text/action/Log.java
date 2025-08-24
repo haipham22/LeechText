@@ -1,13 +1,14 @@
 package dark.leech.text.action;
 
-import dark.leech.text.util.FileUtils;
-import dark.leech.text.util.SettingUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+
+import dark.leech.text.util.FileUtils;
+import dark.leech.text.util.SettingUtils;
 
 /** Created by Long on 8/20/2016. */
 public class Log {

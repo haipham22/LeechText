@@ -1,5 +1,11 @@
 package dark.leech.text.ui.setting;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.ui.SyntaxDialog;
 import dark.leech.text.ui.button.CircleButton;
@@ -8,10 +14,6 @@ import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
 
 public class ItemStyle extends JMPanel {
     private JLabel labelTitle;

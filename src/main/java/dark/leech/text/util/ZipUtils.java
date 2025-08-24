@@ -1,12 +1,14 @@
 package dark.leech.text.util;
 
-import dark.leech.text.action.Log;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.model.enums.CompressionLevel;
 import net.lingala.zip4j.model.enums.CompressionMethod;
+
+import dark.leech.text.action.Log;
 
 /** Created by Long on 10/1/2016. Updated to use zip4j library */
 public class ZipUtils {

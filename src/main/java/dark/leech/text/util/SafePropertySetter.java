@@ -1,11 +1,12 @@
 package dark.leech.text.util;
 
+import java.awt.*;
+import java.util.concurrent.atomic.AtomicReference;
+
 import dark.leech.text.animation.timing.Animator;
 import dark.leech.text.animation.timing.KeyFrames;
 import dark.leech.text.animation.timing.TimingTarget;
 import dark.leech.text.animation.timing.TimingTargetAdapter;
-import java.awt.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 /** Created by Long on 1/5/2017. */
 public class SafePropertySetter<T> extends TimingTargetAdapter implements TimingTarget {

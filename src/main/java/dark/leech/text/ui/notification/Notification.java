@@ -1,15 +1,17 @@
 package dark.leech.text.ui.notification;
 
-import dark.leech.text.image.ImageLabel;
-import dark.leech.text.util.AppUtils;
-import dark.leech.text.util.FontUtils;
 import java.awt.*;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
+import dark.leech.text.image.ImageLabel;
+import dark.leech.text.util.AppUtils;
+import dark.leech.text.util.FontUtils;
 
 /** Created by Long on 9/17/2016. */
 public class Notification extends JWindow {

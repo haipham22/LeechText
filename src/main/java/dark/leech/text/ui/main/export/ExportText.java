@@ -1,5 +1,8 @@
 package dark.leech.text.ui.main.export;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import dark.leech.text.action.export.Text;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.listeners.ProgressListener;
@@ -11,8 +14,6 @@ import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMProgressBar;
 import dark.leech.text.ui.material.SelectBox;
 import dark.leech.text.ui.notification.Notification;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /** Created by Long on 9/10/2016. */
 public class ExportText extends JMDialog implements ProgressListener, ChangeListener {

@@ -1,10 +1,12 @@
 package dark.leech.text.ui.setting;
 
+import java.awt.*;
+
+import javax.swing.*;
+
 import dark.leech.text.ui.material.JMPanel;
 import dark.leech.text.ui.material.JMTextField;
 import dark.leech.text.util.FontUtils;
-import java.awt.*;
-import javax.swing.*;
 
 public class ItemConn extends JMPanel {
     private final String title;

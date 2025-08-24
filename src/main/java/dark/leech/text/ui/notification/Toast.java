@@ -1,12 +1,14 @@
 package dark.leech.text.ui.notification;
 
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
+
+import javax.swing.*;
+
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.GraphicsUtils;
-import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
-import javax.swing.*;
 
 public class Toast extends JWindow {
     private static int toastCount;

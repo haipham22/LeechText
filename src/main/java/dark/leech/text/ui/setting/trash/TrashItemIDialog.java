@@ -1,13 +1,15 @@
 package dark.leech.text.ui.setting.trash;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
 import dark.leech.text.models.Trash;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMTextField;
 import dark.leech.text.util.FontUtils;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
 
 /** Created by Dark on 2/13/2017. */
 class TrashItemIDialog extends JMDialog {

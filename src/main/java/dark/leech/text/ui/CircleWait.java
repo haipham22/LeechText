@@ -1,12 +1,14 @@
 package dark.leech.text.ui;
 
-import dark.leech.text.util.ColorUtils;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
+
 import javax.swing.*;
 import javax.swing.plaf.LayerUI;
+
+import dark.leech.text.util.ColorUtils;
 
 /** Created by Long on 10/9/2016. */
 public class CircleWait {

@@ -1,5 +1,14 @@
 package dark.leech.text.ui.main;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import javax.swing.*;
+
+import org.json.JSONObject;
+
 import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
@@ -7,12 +16,6 @@ import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.Http;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import javax.swing.*;
-import org.json.JSONObject;
 
 /** Created by Dark on 2/25/2017. */
 public class UpdateUI extends JMDialog {

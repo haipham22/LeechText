@@ -143,6 +143,9 @@ spotless {
         // Remove unused imports
         removeUnusedImports()
 
+        // Import order configuration
+        importOrder('java', 'javax', 'org', 'com', '', 'dark.leech')
+
         // Trim trailing whitespace
         trimTrailingWhitespace()
 

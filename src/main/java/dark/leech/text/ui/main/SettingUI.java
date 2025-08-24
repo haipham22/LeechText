@@ -21,6 +21,14 @@ import static dark.leech.text.util.SettingUtils.WORKPATH;
 import static dark.leech.text.util.SettingUtils.doDefault;
 import static dark.leech.text.util.SettingUtils.doSave;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMScrollPane;
 import dark.leech.text.ui.notification.Toast;
@@ -31,11 +39,6 @@ import dark.leech.text.ui.setting.ToolPane;
 import dark.leech.text.ui.setting.trash.TrashPane;
 import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 public class SettingUI extends JPanel {
     private JPanel body;

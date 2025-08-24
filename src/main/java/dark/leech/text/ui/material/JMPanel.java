@@ -1,11 +1,13 @@
 package dark.leech.text.ui.material;
 
-import dark.leech.text.animation.RippleEffect;
-import dark.leech.text.util.SettingUtils;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.*;
+
+import dark.leech.text.animation.RippleEffect;
+import dark.leech.text.util.SettingUtils;
 
 public class JMPanel extends JPanel {
     RippleEffect rippleEffect;

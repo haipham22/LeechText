@@ -34,8 +34,9 @@
 
 package dark.leech.text.image;
 
-import dark.leech.text.util.GraphicsUtils;
 import java.awt.image.BufferedImage;
+
+import dark.leech.text.util.GraphicsUtils;
 
 public class GaussianBlurFilter extends AbstractFilter {
     private final int radius;

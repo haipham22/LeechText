@@ -1,5 +1,7 @@
 package dark.leech.text.action.export;
 
+import java.util.List;
+
 import dark.leech.text.action.Log;
 import dark.leech.text.listeners.ProgressListener;
 import dark.leech.text.models.Chapter;
@@ -10,7 +12,6 @@ import dark.leech.text.util.RegexUtils;
 import dark.leech.text.util.SettingUtils;
 import dark.leech.text.util.SyntaxUtils;
 import dark.leech.text.util.TypeUtils;
-import java.util.List;
 
 /** Created by Long on 9/17/2016. */
 public class Text {

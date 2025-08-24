@@ -1,14 +1,16 @@
 package dark.leech.text.image;
 
-import dark.leech.text.action.Log;
-import dark.leech.text.ui.CircleWait;
-import dark.leech.text.util.FileUtils;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import dark.leech.text.action.Log;
+import dark.leech.text.ui.CircleWait;
+import dark.leech.text.util.FileUtils;
 
 /** Created by Long on 1/6/2017. */
 public class ImageLabel extends JLabel {

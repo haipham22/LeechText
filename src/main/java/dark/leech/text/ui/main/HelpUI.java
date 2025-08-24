@@ -1,5 +1,12 @@
 package dark.leech.text.ui.main;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
+
+import javax.swing.*;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.plugin.PluginManager;
 import dark.leech.text.ui.PanelTitle;
@@ -8,11 +15,6 @@ import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMScrollPane;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FontUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.URL;
-import javax.swing.*;
 
 /** Created by Dark on 2/26/2017. */
 public class HelpUI extends JMDialog {

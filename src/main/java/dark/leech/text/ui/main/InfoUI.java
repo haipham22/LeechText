@@ -1,5 +1,16 @@
 package dark.leech.text.ui.main;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+
+import javax.swing.*;
+
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+
 import dark.leech.text.image.ImageLabel;
 import dark.leech.text.listeners.BlurListener;
 import dark.leech.text.listeners.ChangeListener;
@@ -20,14 +31,6 @@ import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import javax.swing.*;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 public class InfoUI extends JMDialog {
     private PanelTitle pnTitle;

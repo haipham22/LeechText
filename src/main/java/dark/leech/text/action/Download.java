@@ -2,6 +2,8 @@ package dark.leech.text.action;
 
 import static dark.leech.text.util.SettingUtils.MAX_CONN;
 
+import java.util.List;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.get.ChapExecute;
 import dark.leech.text.listeners.ChangeListener;
@@ -10,7 +12,6 @@ import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Pager;
 import dark.leech.text.models.Properties;
 import dark.leech.text.plugin.PluginManager;
-import java.util.List;
 
 public class Download implements ChangeListener {
     public static final int DOWNLOADING = 0,

@@ -1,5 +1,10 @@
 package dark.leech.text.get;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.*;
+
 import dark.leech.text.action.Log;
 import dark.leech.text.enities.ChapterEntity;
 import dark.leech.text.enities.PluginEntity;
@@ -8,9 +13,6 @@ import dark.leech.text.lua.loader.TocLoader;
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Pager;
 import dark.leech.text.models.Properties;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.*;
 
 /** Created by Dark on 1/18/2017. */
 public class ListExecute extends SwingWorker {
