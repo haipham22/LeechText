@@ -4,14 +4,20 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import dark.leech.text.enities.RepositoryEntity;
+import dark.leech.text.models.Settings;
 import dark.leech.text.models.Trash;
 import dark.leech.text.ui.notification.Toast;
 
 /** Created by Long on 10/3/2016. */
 public class SettingUtils {
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    private static Settings settings;
+
     // Kết nối
     public static int MAX_CONN;
     public static int TIMEOUT;
@@ -33,40 +39,56 @@ public class SettingUtils {
     public static String CALIBRE;
     public static Color THEME_COLOR;
 
+    // Repositories
+    public static List<RepositoryEntity> REPOSITORIES;
+
     private SettingUtils() {}
 
     public static void doLoad() {
         doDefault();
         String json = FileUtils.file2string(AppUtils.curDir + "/tools/setting.json");
-        if (json != null) new SettingUtils().doLoad(new JSONObject(json), false);
+        if (json != null) {
+            try {
+                Settings settings = gson.fromJson(json, Settings.class);
+                new SettingUtils().loadFromSettings(settings, false);
+            } catch (Exception e) {
+                // Fallback to default settings if JSON parsing fails
+                doDefault();
+            }
+        }
     }
 
     public static void doSave() {
-        JSONObject stt = new JSONObject();
-        JSONObject connection = new JSONObject();
-        connection.put("num_conn", MAX_CONN);
-        connection.put("re_conn", RE_CONN);
-        connection.put("time_out", TIMEOUT);
-        connection.put("delay", DELAY);
-        connection.put("user_agent", USER_AGENT);
-        stt.put("connection", connection);
+        Settings settings = new Settings();
 
-        JSONObject style = new JSONObject();
-        style.put("dropcaps", getObject(IS_DROP_SELECTED, DROP_SYNTAX));
-        style.put("html", getObject(IS_HTML_SELECTED, HTML_SYNTAX));
-        style.put("txt", getObject(IS_TXT_SELECTED, TXT_SYNTAX));
-        style.put("css", getObject(IS_CSS_SELECTED, CSS_SYNTAX));
-        stt.put("style", style);
+        // Connection settings
+        Settings.ConnectionSettings connection = new Settings.ConnectionSettings();
+        connection.setNumConn(MAX_CONN);
+        connection.setReConn(RE_CONN);
+        connection.setTimeOut(TIMEOUT);
+        connection.setDelay(DELAY);
+        connection.setUserAgent(USER_AGENT);
+        settings.setConnection(connection);
 
-        JSONObject other = new JSONObject();
-        other.put("workspace", WORKPATH);
-        other.put("calibre", CALIBRE);
-        other.put("kindlegen", KINDLEGEN);
-        other.put("theme_color", getHexColor(THEME_COLOR));
-        other.put("trash", new JSONArray(TRASH));
-        stt.put("other", other);
+        // Style settings
+        Settings.StyleSettings style = new Settings.StyleSettings();
+        style.setDropcaps(createStyleItem(IS_DROP_SELECTED, DROP_SYNTAX));
+        style.setHtml(createStyleItem(IS_HTML_SELECTED, HTML_SYNTAX));
+        style.setTxt(createStyleItem(IS_TXT_SELECTED, TXT_SYNTAX));
+        style.setCss(createStyleItem(IS_CSS_SELECTED, CSS_SYNTAX));
+        settings.setStyle(style);
 
-        FileUtils.string2file(stt.toString(), AppUtils.curDir + "/tools/setting.json");
+        // Other settings
+        Settings.OtherSettings other = new Settings.OtherSettings();
+        other.setWorkspace(WORKPATH);
+        other.setCalibre(CALIBRE);
+        other.setKindlegen(KINDLEGEN);
+        other.setThemeColor(getHexColor(THEME_COLOR));
+        other.setTrash(TRASH);
+        settings.setOther(other);
+
+        String json = gson.toJson(settings);
+        FileUtils.string2file(json, AppUtils.curDir + "/tools/setting.json");
         Toast.Build().font(FontUtils.TITLE_NORMAL).content("Đã lưu cài đặt!").open();
     }
 
@@ -80,59 +102,133 @@ public class SettingUtils {
     }
 
     public static void doDefault() {
-        new SettingUtils()
-                .doLoad(
-                        new JSONObject(FileUtils.stream2string("/dark/leech/res/setting.json")),
-                        true);
-    }
-
-    private static JSONObject getObject(boolean b, String value) {
-        JSONObject object = new JSONObject();
-        object.put("checked", Boolean.valueOf(b));
-        object.put("value", value);
-        return object;
-    }
-
-    private void doLoad(JSONObject object, boolean IS_DEFAULT) {
-        JSONObject connection = object.getJSONObject("connection");
-        MAX_CONN = connection.getInt("num_conn");
-        RE_CONN = connection.getInt("re_conn");
-        DELAY = connection.getInt("delay");
-        TIMEOUT = connection.getInt("time_out");
-        USER_AGENT = connection.getString("user_agent");
-
-        JSONObject style = object.getJSONObject("style");
-        IS_CSS_SELECTED = style.getJSONObject("css").getBoolean("checked");
-        if (IS_CSS_SELECTED || IS_DEFAULT)
-            CSS_SYNTAX = style.getJSONObject("css").getString("value");
-        IS_HTML_SELECTED = style.getJSONObject("html").getBoolean("checked");
-        if (IS_HTML_SELECTED || IS_DEFAULT)
-            HTML_SYNTAX = style.getJSONObject("html").getString("value");
-        IS_TXT_SELECTED = style.getJSONObject("txt").getBoolean("checked");
-        if (IS_TXT_SELECTED || IS_DEFAULT)
-            TXT_SYNTAX = style.getJSONObject("txt").getString("value");
-        IS_DROP_SELECTED = style.getJSONObject("dropcaps").getBoolean("checked");
-        if (IS_DROP_SELECTED || IS_DEFAULT)
-            DROP_SYNTAX = style.getJSONObject("dropcaps").getString("value");
-        //
-        JSONObject other = object.getJSONObject("other");
-        WORKPATH = other.getString("workspace");
-        if (WORKPATH.length() == 0) WORKPATH = AppUtils.curDir;
-        CALIBRE = other.getString("calibre");
-        KINDLEGEN = other.getString("kindlegen");
-        List<Trash> trash = new ArrayList<Trash>();
-        JSONArray trashArr = other.getJSONArray("trash");
-        for (int i = 0; i < trashArr.length(); i++) {
-            JSONObject obj = trashArr.getJSONObject(i);
-            trash.add(
-                    new Trash(
-                            obj.getString("src"),
-                            obj.getString("to"),
-                            obj.getString("tip"),
-                            obj.getBoolean("replace")));
+        try {
+            String defaultJson = FileUtils.stream2string("/dark/leech/res/setting.json");
+            settings = gson.fromJson(defaultJson, Settings.class);
+            new SettingUtils().loadFromSettings(settings, true);
+        } catch (Exception e) {
+            // Fallback to hardcoded defaults if resource loading fails
+            setHardcodedDefaults();
         }
-        TRASH = trash;
-        String color = other.getString("theme_color");
-        if (color != null) if (color.length() > 0) THEME_COLOR = Color.decode(color);
+    }
+
+    private static Settings.StyleItem createStyleItem(boolean checked, String value) {
+        Settings.StyleItem item = new Settings.StyleItem();
+        item.setChecked(checked);
+        item.setValue(value);
+        return item;
+    }
+
+    private static void setHardcodedDefaults() {
+        // Connection defaults
+        MAX_CONN = 5;
+        RE_CONN = 3;
+        DELAY = 10;
+        TIMEOUT = 30000;
+        USER_AGENT =
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
+                        + " Chrome/54.0.2840.71 Safari/537.36";
+
+        // Style defaults
+        IS_CSS_SELECTED = false;
+        IS_HTML_SELECTED = false;
+        IS_TXT_SELECTED = false;
+        IS_DROP_SELECTED = false;
+        CSS_SYNTAX = "";
+        HTML_SYNTAX = "";
+        TXT_SYNTAX = "";
+        DROP_SYNTAX = "";
+
+        // Other defaults
+        WORKPATH = AppUtils.curDir;
+        CALIBRE = "";
+        KINDLEGEN = "";
+        THEME_COLOR = Color.decode("#263238");
+        TRASH = new ArrayList<>();
+
+        // Repositories
+        REPOSITORIES = new ArrayList<>();
+    }
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    private void loadFromSettings(Settings settings, boolean isDefault) {
+        if (settings == null) {
+            setHardcodedDefaults();
+            return;
+        }
+
+        // Load connection settings
+        if (settings.getConnection() != null) {
+            Settings.ConnectionSettings connection = settings.getConnection();
+            MAX_CONN = connection.getNumConn();
+            RE_CONN = connection.getReConn();
+            DELAY = connection.getDelay();
+            TIMEOUT = connection.getTimeOut();
+            USER_AGENT = connection.getUserAgent();
+        }
+
+        // Load style settings
+        if (settings.getStyle() != null) {
+            Settings.StyleSettings style = settings.getStyle();
+
+            if (style.getCss() != null) {
+                IS_CSS_SELECTED = style.getCss().isChecked();
+                if (IS_CSS_SELECTED || isDefault) {
+                    CSS_SYNTAX = style.getCss().getValue();
+                }
+            }
+
+            if (style.getHtml() != null) {
+                IS_HTML_SELECTED = style.getHtml().isChecked();
+                if (IS_HTML_SELECTED || isDefault) {
+                    HTML_SYNTAX = style.getHtml().getValue();
+                }
+            }
+
+            if (style.getTxt() != null) {
+                IS_TXT_SELECTED = style.getTxt().isChecked();
+                if (IS_TXT_SELECTED || isDefault) {
+                    TXT_SYNTAX = style.getTxt().getValue();
+                }
+            }
+
+            if (style.getDropcaps() != null) {
+                IS_DROP_SELECTED = style.getDropcaps().isChecked();
+                if (IS_DROP_SELECTED || isDefault) {
+                    DROP_SYNTAX = style.getDropcaps().getValue();
+                }
+            }
+        }
+
+        // Load other settings
+        if (settings.getOther() != null) {
+            Settings.OtherSettings other = settings.getOther();
+            WORKPATH = other.getWorkspace();
+            if (WORKPATH == null || WORKPATH.length() == 0) {
+                WORKPATH = AppUtils.curDir;
+            }
+            CALIBRE = other.getCalibre();
+            KINDLEGEN = other.getKindlegen();
+
+            List<Trash> trash = other.getTrash();
+            TRASH = trash != null ? trash : new ArrayList<>();
+
+            String color = other.getThemeColor();
+            if (color != null && color.length() > 0) {
+                try {
+                    THEME_COLOR = Color.decode(color);
+                } catch (NumberFormatException e) {
+                    THEME_COLOR = Color.decode("#263238");
+                }
+            }
+        }
+
+        if (settings.getRepositories() != null
+                && !settings.getRepositories().getRepositories().isEmpty()) {
+            REPOSITORIES = settings.getRepositories().getRepositories();
+        }
     }
 }

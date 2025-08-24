@@ -41,12 +41,9 @@ public class ConfigUI extends JMDialog implements ChangeListener {
         this.chapList = properties.getChapList();
         setSize(295, 260);
         runOnUiThread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        onCreate();
-                        loadErr();
-                    }
+                () -> {
+                    onCreate();
+                    loadErr();
                 });
     }
 
@@ -157,15 +154,15 @@ public class ConfigUI extends JMDialog implements ChangeListener {
         config = new Config(chapList);
         nameList = config.checkName();
         lbName.setText("Tên chương: " + nameList.size() + " không hợp lệ");
-        if (nameList.size() == 0) btName.setVisible(false);
+        if (nameList.isEmpty()) btName.setVisible(false);
 
         imgList = config.checkImg();
         lbImg.setText("Chương ảnh: " + imgList.size() + " chương");
-        if (imgList.size() == 0) btImg.setVisible(false);
+        if (imgList.isEmpty()) btImg.setVisible(false);
 
         errorList = config.checkError();
         lbError.setText("Chương lỗi: " + errorList.size() + " chương");
-        if (errorList.size() == 0) btError.setVisible(false);
+        if (errorList.isEmpty()) btError.setVisible(false);
     }
 
     private void editName() {

@@ -57,7 +57,7 @@ public class JMTextField extends JTextField {
     @Override
     public void setText(String s) {
         if (s != null)
-            if (s.length() != 0)
+            if (!s.isEmpty())
                 if (FontUtils.TEXT_NORMAL.canDisplayUpTo(s) == -1) setFont(FontUtils.TEXT_NORMAL);
         super.setText(s);
         line.update();

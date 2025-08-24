@@ -4,8 +4,8 @@ import javax.swing.*;
 
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.listeners.ChangeListener;
-import dark.leech.text.lua.loader.TextLoader;
 import dark.leech.text.models.Chapter;
+import dark.leech.text.plugin.lua.loader.TextLoader;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.SettingUtils;

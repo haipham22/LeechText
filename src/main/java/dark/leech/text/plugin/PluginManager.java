@@ -5,37 +5,36 @@ import java.util.ArrayList;
 
 import com.google.gson.Gson;
 
+import dark.leech.text.action.Log;
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 
 /** Created by Long on 1/11/2017. */
 public class PluginManager {
+    private static final Gson gson = new Gson();
+
     private static PluginManager manager;
     private static ArrayList<PluginEntity> pluginList;
 
     private PluginManager() {
 
         new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                pluginList = new ArrayList<>();
-                                File[] files =
-                                        new File(
-                                                        FileUtils.validate(
-                                                                AppUtils.curDir + "/tools/plugins"))
-                                                .listFiles();
-                                if (files == null) return;
-                                for (File f : files) {
-                                    if (f.getName().endsWith(".plugin"))
-                                        try {
-                                            pluginList.add(createPlugin(f.getAbsolutePath()));
-                                        } catch (Exception e) {
-                                        }
-                                }
-                                PluginUpdate.getUpdate().checkUpdate();
+                        () -> {
+                            pluginList = new ArrayList<>();
+                            File[] files =
+                                    new File(FileUtils.validate(AppUtils.curDir + "/tools/plugins"))
+                                            .listFiles();
+                            if (files == null) return;
+                            for (File f : files) {
+                                if (f.getName().endsWith(".plugin"))
+                                    try {
+                                        pluginList.add(createPlugin(f.getAbsolutePath()));
+                                    } catch (Exception e) {
+                                        Log.add(e);
+                                    }
                             }
+                            PluginUpdate.getUpdate().checkUpdate();
                         })
                 .start();
     }
@@ -50,8 +49,7 @@ public class PluginManager {
     }
 
     private PluginEntity createPlugin(String path) {
-        PluginEntity entity = new Gson().fromJson(FileUtils.file2string(path), PluginEntity.class);
-        return entity;
+        return gson.fromJson(FileUtils.file2string(path), PluginEntity.class);
     }
 
     public PluginEntity get(String url) {

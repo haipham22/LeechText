@@ -318,16 +318,13 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
 
     private void createPopupMenu() {
         ActionListener actionListener =
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (e.getSource() == pnSetting) {
-                            Animation.go(downloadUI, setting);
-                            setting.load();
-                        }
-                        if (e.getSource() == pnHelp) new HelpUI().open();
-                        if (e.getSource() == pnPlugin) new PluginUI().open();
+                e -> {
+                    if (e.getSource() == pnSetting) {
+                        Animation.go(downloadUI, setting);
+                        setting.load();
                     }
+                    if (e.getSource() == pnHelp) new HelpUI().open();
+                    if (e.getSource() == pnPlugin) new PluginUI().open();
                 };
         menu = new JMPopupMenu();
         pnSetting = new JMMenuItem("Cài đặt");
@@ -348,11 +345,11 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         int xMoved = (thisX + e.getX()) - (thisX + initialClick.x);
         int yMoved = (thisY + e.getY()) - (thisY + initialClick.y);
         int X = thisX + xMoved;
-        X = X < 10 ? 10 : X;
+        X = Math.max(X, 10);
         X = (X + getWidth() > AppUtils.width) ? AppUtils.width - getWidth() - 10 : X;
         int Y = thisY + yMoved;
         Y = (Y + getHeight() > AppUtils.height) ? AppUtils.height - getHeight() - 10 : Y;
-        Y = Y < 10 ? 10 : Y;
+        Y = Math.max(Y, 10);
         setLocation(X, Y);
         AppUtils.LOCATION = getLocation();
     }
@@ -362,17 +359,11 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         final String[] s = new String[] {".", "..", "...", "...."};
         Timer time =
                 new Timer(
-                        200,
-                        new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                lbStatus.setText("Đang kiểm tra cập nhật" + s[i = (i + 1) % 4]);
-                            }
-                        });
+                        200, e -> lbStatus.setText("Đang kiểm tra cập nhật" + s[i = (i + 1) % 4]));
         time.start();
 
         PluginManager.getManager();
-        UpdateUI.checkUpdate();
+        //        UpdateUI.checkUpdate();
         time.stop();
         timer.start();
     }

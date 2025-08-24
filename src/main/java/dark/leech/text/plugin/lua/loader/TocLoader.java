@@ -1,4 +1,4 @@
-package dark.leech.text.lua.loader;
+package dark.leech.text.plugin.lua.loader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,8 @@ import org.luaj.vm2.LuaValue;
 
 import dark.leech.text.enities.ChapterEntity;
 import dark.leech.text.enities.PluginEntity;
-import dark.leech.text.lua.api.Lua;
-import dark.leech.text.lua.api.LuaScriptEngine;
+import dark.leech.text.plugin.lua.api.Lua;
+import dark.leech.text.plugin.lua.api.LuaScriptEngine;
 import dark.leech.text.util.TextUtils;
 
 public class TocLoader {

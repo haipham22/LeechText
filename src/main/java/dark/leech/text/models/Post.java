@@ -1,6 +1,10 @@
 package dark.leech.text.models;
 
-/** Created by Dark on 2/16/2017. */
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class Post {
     private String partName; // Tên quyển
     private String chapName; // Tên chương
@@ -23,54 +27,6 @@ public class Post {
 
     public Post(String chapName, String text) {
         this.chapName = chapName;
-        this.text = text;
-    }
-
-    public String getPartName() {
-        return partName;
-    }
-
-    public void setPartName(String partName) {
-        this.partName = partName;
-    }
-
-    public String getChapName() {
-        return chapName;
-    }
-
-    public void setChapName(String chapName) {
-        this.chapName = chapName;
-    }
-
-    public boolean isError() {
-        return error;
-    }
-
-    public void setError(boolean error) {
-        this.error = error;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
-    }
-
-    public boolean isImageChapter() {
-        return imageChapter;
-    }
-
-    public void setImageChapter(boolean imageChapter) {
-        this.imageChapter = imageChapter;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
         this.text = text;
     }
 }
