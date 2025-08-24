@@ -1,0 +1,32 @@
+{
+  "find": {
+    "chap": "(?s)((H.i|[cC]h..ng)\\s*\\d+.*?)<",
+    "part": "(?s)((Q|Quy.n)\\s*\\d+.*?)<"
+  },
+  "optimize": [
+	{
+      "replace": "\n",
+      "to": ""
+    },
+    {
+      "replace": "\r|<br {0,1}/{0,1}>|</{0,1}p>",
+      "to": "\n"
+    },
+    {
+      "replace": "<span .*?</span>|<a .*?>|&nbsp;",
+      "to": ""
+    },
+    {
+      "replace": "</{0,1}[a-zA-Z0-9]+>",
+      "to": ""
+    },
+    {
+      "replace": "\\s*\n\\s*",
+      "to": "\n"
+    },
+    {
+      "replace": "^\\s+|\\s+$",
+      "to": ""
+    }
+  ]
+}

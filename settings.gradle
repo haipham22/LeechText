@@ -1,0 +1,18 @@
+// Configure plugin management (must be first)
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+// Configure dependency resolution management
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        // Add other repositories if needed
+    }
+}
+
+rootProject.name = 'leechtext-java'

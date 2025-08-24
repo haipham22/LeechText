@@ -1,0 +1,130 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.13' apply false
+}
+
+group = 'dark.leech'
+version = '2019.03.30'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+application {
+    mainClass = 'dark.leech.text.ui.main.App'
+}
+
+dependencies {
+    // JSoup for HTML parsing
+    implementation 'org.jsoup:jsoup:1.16.1'
+    
+    // JSON processing
+    implementation 'org.json:json:20230618'
+    
+    // Gson for JSON serialization
+    implementation 'com.google.code.gson:gson:2.10.1'
+    
+    // LuaJ for Lua scripting support (using newer version compatible with Java 17)
+    implementation('org.luaj:luaj-jse:3.0.1') {
+        exclude group: 'org.luaj', module: 'luaj-sources'
+    }
+    
+    // Archive handling (equivalent to zt-zip)
+    implementation 'net.lingala.zip4j:zip4j:2.11.5'
+    
+    // HTTP client
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+    
+    // RSyntaxTextArea for syntax highlighting
+    implementation 'com.fifesoft:rsyntaxtextarea:3.3.4'
+    
+    // Testing dependencies
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:5.4.0'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+// Custom task to copy native libraries if needed
+tasks.register('copyNativeLibs', Copy) {
+    from configurations.runtimeClasspath
+    into layout.buildDirectory.dir('libs')
+    include '**/*.dll', '**/*.so', '**/*.dylib'
+}
+
+// Ensure native libraries are copied before running
+run.dependsOn copyNativeLibs
+
+// Configure the JAR task
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    manifest {
+        attributes(
+            'Main-Class': 'dark.leech.text.ui.main.App',
+            'Implementation-Title': 'LeechText',
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': 'LeechText Team'
+        )
+    }
+    
+    // Include all dependencies in the JAR (fat JAR)
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+// Configure compiler options
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xlint:unchecked', '-Xlint:deprecation']
+}
+
+// Configure test execution
+test {
+    useJUnit()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+// Task to run the application in development
+tasks.register('runDev', JavaExec) {
+    group = 'application'
+    description = 'Run the application in development mode'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'dark.leech.text.ui.main.App'
+    
+    // Set system properties for development
+    systemProperty 'java.awt.headless', 'false'
+    systemProperty 'swing.defaultlaf', 'javax.swing.plaf.metal.MetalLookAndFeel'
+    
+    // Enable debugging
+    jvmArgs = ['-Xmx1g', '-Xms512m']
+}
+
+// Wrapper configuration
+wrapper {
+    gradleVersion = '8.4'
+    distributionType = Wrapper.DistributionType.BIN
+}
