@@ -35,6 +35,10 @@ public class RepositoryManager {
         return manager;
     }
 
+    public boolean hasRepoSetting() {
+        return FileUtils.file2string(AppUtils.curDir + "/tools/repository.json") != null;
+    }
+
     public List<RepositoryEntity> repositoryList() {
         return repositoryList;
     }

@@ -20,6 +20,9 @@ import dark.leech.text.util.Http;
 
 /** Created by Dark on 2/24/2017. */
 public class PluginUpdate {
+
+    private static final Gson gson = new Gson();
+
     private static PluginUpdate pluginUpdate;
 
     private PluginUpdate() {}
