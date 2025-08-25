@@ -18,6 +18,8 @@ import javax.swing.border.LineBorder;
 import dark.leech.text.image.GaussianBlurFilter;
 import dark.leech.text.listeners.BlurListener;
 import dark.leech.text.plugin.PluginManager;
+import dark.leech.text.plugin.PluginUpdate;
+import dark.leech.text.plugin.RepositoryManager;
 import dark.leech.text.ui.Animation;
 import dark.leech.text.ui.button.CircleButton;
 import dark.leech.text.ui.button.CloseButton;
@@ -60,86 +62,48 @@ import dark.leech.text.util.StringUtils;
  * @see PluginUI
  */
 public class MainUI extends JFrame implements BlurListener, ActionListener {
-
-    // Global panel references
-    /** Main download management interface */
     private DownloadUI downloadUI;
-
-    /** Settings and configuration interface */
     private SettingUI setting;
+    private RepositoryUI repositoryUI;
 
-    /** Main application bar containing logo and action buttons */
     private JPanel appBar;
 
-    /** Button for adding new download URLs */
     private CircleButton btAdd;
 
-    /** Button for accessing the main menu */
     private CircleButton btMenu;
 
-    // Header panel components
-    /** Status bar showing time and providing window drag functionality */
     private JPanel statusBar;
 
-    /** Back button for navigation */
     private CircleButton btBack;
 
-    /** OK/Confirm button for actions */
     private CircleButton btOk;
 
-    /** Application logo label */
     private JLabel lbLogo;
 
-    /** Header panel for secondary views */
     private JPanel pnHeader;
 
-    // Menu components
-    /** Popup menu for main application options */
     private JMPopupMenu menu;
-
-    /** Menu item for accessing settings */
     private JMMenuItem pnSetting;
-
-    /** Menu item for accessing help */
     private JMenuItem pnHelp;
-
-    /** Menu item for accessing plugin management */
     private JMMenuItem pnPlugin;
-
     private JMMenuItem pnRepository;
 
-    // Window control components
-    /** Exit button for closing the application */
     private CloseButton btExit;
 
-    /** Status label displaying current time */
     private JLabel lbStatus;
 
-    /** Main content container */
     private Container container;
 
-    /** Initial click point for window dragging */
     private Point initialClick;
 
-    /** Buffer for blur effect during animations */
     private BufferedImage blurBuffer;
 
-    /** Background buffer for rendering */
     private BufferedImage backBuffer;
 
-    /** Timer for updating status display */
     private Timer timer;
 
-    /** Counter variable for various operations */
     private int i = 0;
 
-    /**
-     * Constructs the main user interface.
-     *
-     * <p>Initializes the main window with custom styling, positioning, and background
-     * initialization. The window is set to be undecorated for a custom appearance and positioned
-     * based on screen dimensions.
-     */
     public MainUI() {
         // setLocation(AppUtils.width - 420, AppUtils.height - 650);
         setSize(390, 555);
@@ -166,6 +130,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         onCreateAppBar();
         createPanelHeaderUI();
         createPopupMenu();
+        ensureRepository();
         downloadUI = new DownloadUI();
         downloadUI.add(appBar);
         appBar.setBounds(0, 0, 390, 55);
@@ -177,6 +142,17 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         pnHeader.setBounds(0, 0, 390, 55);
         container.add(setting);
         checkUpdate();
+    }
+
+    private void ensureRepository() {
+        var manager = RepositoryManager.getManager();
+        if (manager.hasRepoSetting()) {
+            if (repositoryUI == null) {
+                repositoryUI = new RepositoryUI();
+            }
+
+            repositoryUI.load();
+        }
     }
 
     /** Handles the exit action with fade-out animation. */
@@ -322,10 +298,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
                     if (e.getSource() == pnPlugin) new PluginUI().open();
                     if (e.getSource() == pnRepository) {
                         final var repoUI = new RepositoryUI();
-                        repoUI.setChangeListener(
-                                () -> {
-                                    setting.load();
-                                });
+                        repoUI.setChangeListener(PluginUpdate::getUpdate);
                         repoUI.open();
                     }
                     ;

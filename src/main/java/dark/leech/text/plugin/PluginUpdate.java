@@ -17,9 +17,12 @@ import dark.leech.text.ui.notification.Toast;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.Http;
+import dark.leech.text.util.SettingUtils;
 
-/** Created by Dark on 2/24/2017. */
 public class PluginUpdate {
+
+    private static final Gson gson = new Gson();
+
     private static PluginUpdate pluginUpdate;
 
     private PluginUpdate() {}
@@ -33,8 +36,7 @@ public class PluginUpdate {
         var repos = RepositoryManager.getManager().repositoryList();
         if (repos == null || repos.isEmpty()) return;
 
-        // int poolSize = Math.max(1, SettingUtils.MAX_CONN);
-        int poolSize = 1;
+        int poolSize = Math.max(1, SettingUtils.MAX_CONN);
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (RepositoryEntity repo : repos) {
             if (repo == null || !repo.isEnabled()) continue;
@@ -59,7 +61,7 @@ public class PluginUpdate {
         try {
             var js = Http.request(repositoryLink).string();
 
-            Repository repository = new Gson().fromJson(js, Repository.class);
+            Repository repository = gson.fromJson(js, Repository.class);
 
             if (CollectionUtils.isEmpty(repository.getPlugins())) return;
 
@@ -69,7 +71,7 @@ public class PluginUpdate {
 
                 if (plugin.getVersion() > pluginGetter.getVersion()) {
                     var path = AppUtils.curDir + "/tools/plugins/" + plugin.getUuid() + ".zip";
-                    FileUtils.string2file(new Gson().toJson(plugin), path);
+                    FileUtils.string2file(gson.toJson(plugin), path);
                 }
             }
             JSONArray objArr = new JSONArray(js);
@@ -87,9 +89,9 @@ public class PluginUpdate {
                                             + ".plugin";
                             String json = Http.request(obj.getString("url")).string();
 
-                            PluginEntity entity = new Gson().fromJson(json, PluginEntity.class);
+                            PluginEntity entity = gson.fromJson(json, PluginEntity.class);
                             entity.setChecked(true);
-                            FileUtils.string2file(new Gson().toJson(entity), path);
+                            FileUtils.string2file(gson.toJson(entity), path);
                             pluginGetter.apply(entity);
                             Toast.Build()
                                     .content(
@@ -107,9 +109,9 @@ public class PluginUpdate {
                             AppUtils.curDir + "/tools/plugins/" + obj.getString("uuid") + ".plugin";
                     String json = Http.request(obj.getString("url")).string();
 
-                    PluginEntity entity = new Gson().fromJson(json, PluginEntity.class);
+                    PluginEntity entity = gson.fromJson(json, PluginEntity.class);
                     entity.setChecked(true);
-                    FileUtils.string2file(new Gson().toJson(entity), path);
+                    FileUtils.string2file(gson.toJson(entity), path);
                     PluginManager.getManager().add(path);
                     Toast.Build()
                             .content("Đã tải xuống plugin " + obj.getString("name"))
