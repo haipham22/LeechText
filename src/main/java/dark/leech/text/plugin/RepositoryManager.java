@@ -6,10 +6,11 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import dark.leech.text.action.Log;
 import dark.leech.text.enities.RepositoryEntity;
-import dark.leech.text.util.Http;
+import dark.leech.text.util.AppUtils;
+import dark.leech.text.util.FileUtils;
 
-/** Created by Long on 1/11/2017. */
 public class RepositoryManager {
     private static final Gson gson = new Gson();
 
@@ -19,26 +20,19 @@ public class RepositoryManager {
 
     private RepositoryManager() {
 
-        new Thread(
-                        () -> {
-                            repositoryList = new ArrayList<>();
-                        })
-                .start();
+        repositoryList = new ArrayList<>();
+        try {
+            var json = FileUtils.file2string(AppUtils.curDir + "/tools/repository.json");
+            var type = TypeToken.getParameterized(List.class, RepositoryEntity.class).getType();
+            repositoryList = gson.fromJson(json, type);
+        } catch (Exception e) {
+            Log.add(e);
+        }
     }
 
     public static RepositoryManager getManager() {
         if (manager == null) manager = new RepositoryManager();
         return manager;
-    }
-
-    public void add(String link) {
-        repositoryList.addAll(addRepository(link));
-    }
-
-    private List<RepositoryEntity> addRepository(String link) {
-        var js = Http.request(link).string();
-        var type = TypeToken.getParameterized(List.class, RepositoryEntity.class).getType();
-        return gson.fromJson(js, type);
     }
 
     public List<RepositoryEntity> repositoryList() {

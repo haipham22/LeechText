@@ -1,18 +1,19 @@
 package dark.leech.text.ui.main.plugin;
 
 import java.awt.*;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 
-import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 
 import dark.leech.text.enities.PluginEntity;
+import dark.leech.text.enities.RepositoryEntity;
 import dark.leech.text.plugin.PluginManager;
+import dark.leech.text.plugin.RepositoryManager;
 import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMScrollPane;
-import dark.leech.text.util.AppUtils;
-import dark.leech.text.util.FileUtils;
 
 public class PluginUI extends JMDialog {
     private PanelTitle pnTitle;
@@ -32,18 +33,21 @@ public class PluginUI extends JMDialog {
         pnTitle.setText("Plugins");
         pnTitle.addCloseListener(
                 e -> {
-                    new Thread(
-                                    () -> {
-                                        for (PluginEntity pl : PluginManager.getManager().list()) {
-                                            String path =
-                                                    AppUtils.curDir
-                                                            + "/tools/plugins/"
-                                                            + pl.getUuid()
-                                                            + ".plugin";
-                                            FileUtils.string2file(new Gson().toJson(pl), path);
-                                        }
-                                    })
-                            .start();
+                    // new Thread(
+                    //                 () -> {
+                    //                     for (PluginEntity pl : PluginManager.getManager().list())
+                    // {
+                    //                         String path =
+                    //                                 AppUtils.curDir
+                    //                                         + "/tools/plugins/"
+                    //                                         + pl.getUuid()
+                    //                                         + ".plugin";
+                    //                         FileUtils.string2file(new Gson().toJson(pl), path);
+                    //                     }
+                    //                 })
+                    //         .start();
+
+                    getPlugin();
 
                     close();
                 });
@@ -83,5 +87,19 @@ public class PluginUI extends JMDialog {
         pnList.add(pluginItem, gbc, 0);
         validate();
         repaint();
+    }
+
+    private void getPlugin() {
+        var repos = RepositoryManager.getManager().repositoryList();
+
+        var activatedRepos =
+                repos.stream().filter(RepositoryEntity::isEnabled).collect(Collectors.toList());
+
+        for (RepositoryEntity repo : activatedRepos) {
+            var plugins = repo.getLink();
+            if (StringUtils.isBlank(plugins)) {
+                continue;
+            }
+        }
     }
 }

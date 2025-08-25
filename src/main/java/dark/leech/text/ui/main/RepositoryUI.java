@@ -6,10 +6,13 @@ import java.util.Set;
 
 import javax.swing.*;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import com.google.gson.Gson;
 
 import dark.leech.text.enities.RepositoryEntity;
 import dark.leech.text.listeners.RemoveListener;
+import dark.leech.text.plugin.RepositoryManager;
 import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
@@ -48,20 +51,9 @@ public class RepositoryUI extends JMDialog implements RemoveListener {
                 e -> {
                     new Thread(
                                     () -> {
-                                        //                                        for (PluginEntity
-                                        // pl : PluginManager.getManager().list()) {
-                                        //                                            String path =
-                                        //
-                                        // AppUtils.curDir
-                                        //
-                                        //  + "/tools/plugins/"
-                                        //
-                                        //  + pl.getUuid()
-                                        //
-                                        //  + ".plugin";
-                                        //
-                                        // FileUtils.string2file(new Gson().toJson(pl), path);
-                                        //                                        }
+                                        var repos = RepositoryManager.getManager().repositoryList();
+                                        repositoryList.addAll(repos);
+                                        refreshList();
                                     })
                             .start();
 
@@ -91,6 +83,8 @@ public class RepositoryUI extends JMDialog implements RemoveListener {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         runOnUiThread(
                 () -> {
+                    var repos = RepositoryManager.getManager().repositoryList();
+                    repositoryList.addAll(repos);
                     refreshList();
                 });
 
@@ -123,13 +117,12 @@ public class RepositoryUI extends JMDialog implements RemoveListener {
         dialog.setBlurListener(this);
         dialog.setChangeListener(
                 () -> {
-                    if (dialog.getRepositoryList() == null
-                            || dialog.getRepositoryList().isEmpty()) {
+                    if (CollectionUtils.isEmpty(dialog.getRepositoryList())) {
                         return;
                     }
 
                     for (RepositoryEntity repositoryEntity : dialog.getRepositoryList()) {
-                        repositoryEntity.setSelected(true);
+                        repositoryEntity.setEnabled(true);
                         repositoryList.add(repositoryEntity);
                     }
 

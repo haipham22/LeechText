@@ -5,6 +5,7 @@ import static dark.leech.text.util.TextUtils.getClipboard;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 
@@ -22,6 +23,7 @@ import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.ui.material.JMTextField;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.Http;
+import dark.leech.text.util.TextUtils;
 
 public class AddRepositoriesDialog extends JMDialog {
 
@@ -83,6 +85,19 @@ public class AddRepositoriesDialog extends JMDialog {
         var listType = TypeToken.getParameterized(List.class, RepositoryEntity.class).getType();
 
         List<RepositoryEntity> list = gson.fromJson(js, listType);
+
+        if (CollectionUtils.isNotEmpty(list)) {
+            list =
+                    list.stream()
+                            .peek(
+                                    repo -> {
+                                        repo.setUuid(
+                                                TextUtils.getUUID(
+                                                        repo.getLink(), repo.getAuthor()));
+                                        repo.setEnabled(true);
+                                    })
+                            .collect(Collectors.toList());
+        }
 
         if (CollectionUtils.isEmpty(list)) {
             textUrl.addError("Không tìm thấy repository!");

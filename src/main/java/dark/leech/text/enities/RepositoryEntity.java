@@ -1,5 +1,7 @@
 package dark.leech.text.enities;
 
+import com.google.gson.annotations.SerializedName;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +14,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @EqualsAndHashCode(of = {"link"})
 public class RepositoryEntity {
+    private String uuid;
     private String link;
     private String author;
     private String description;
-    private boolean selected;
+
+    @SerializedName("enabled")
+    private boolean isEnabled;
 }

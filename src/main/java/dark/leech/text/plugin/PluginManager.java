@@ -2,6 +2,7 @@ package dark.leech.text.plugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
 
@@ -14,7 +15,7 @@ public class PluginManager {
     private static final Gson gson = new Gson();
 
     private static PluginManager manager;
-    private static ArrayList<PluginEntity> pluginList;
+    private static List<PluginEntity> pluginList;
 
     private PluginManager() {
         new Thread(
@@ -56,7 +57,7 @@ public class PluginManager {
         return null;
     }
 
-    public ArrayList<PluginEntity> list() {
+    public List<PluginEntity> list() {
         return pluginList;
     }
 }

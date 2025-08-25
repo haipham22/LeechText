@@ -54,10 +54,10 @@ public class RepositoryTile extends JMPanel {
         labelLink.setBounds(10, 60, 280, 30);
 
         var btSelect = new SelectButton();
-        btSelect.setSelected(repositoryEntity.isSelected());
+        btSelect.setSelected(repositoryEntity.isEnabled());
         btSelect.addActionListener(
                 e -> {
-                    repositoryEntity.setSelected(!repositoryEntity.isSelected());
+                    repositoryEntity.setEnabled(!repositoryEntity.isEnabled());
                     blurListener.setBlur(true);
                 });
         add(btSelect);

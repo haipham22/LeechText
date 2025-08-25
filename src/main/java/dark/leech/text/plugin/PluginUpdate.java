@@ -1,5 +1,9 @@
 package dark.leech.text.plugin;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -7,6 +11,8 @@ import com.google.gson.Gson;
 
 import dark.leech.text.action.Log;
 import dark.leech.text.enities.PluginEntity;
+import dark.leech.text.enities.RepositoryEntity;
+import dark.leech.text.models.Repository;
 import dark.leech.text.ui.notification.Toast;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
@@ -14,8 +20,6 @@ import dark.leech.text.util.Http;
 
 /** Created by Dark on 2/24/2017. */
 public class PluginUpdate {
-    private static final String URL =
-            "https://www.dropbox.com/scl/fo/k6sv7i1tkuty3jo80y01r/AMCO2opn4NzCwuhRIy8LhOg?rlkey=tv550n0xd8pa2xvzoe1tcnuy0&st=fvf6sciy&dl=1";
     private static PluginUpdate pluginUpdate;
 
     private PluginUpdate() {}
@@ -26,8 +30,48 @@ public class PluginUpdate {
     }
 
     public void checkUpdate() {
+        var repos = RepositoryManager.getManager().repositoryList();
+        if (repos == null || repos.isEmpty()) return;
+
+        // int poolSize = Math.max(1, SettingUtils.MAX_CONN);
+        int poolSize = 1;
+        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
+        for (RepositoryEntity repo : repos) {
+            if (repo == null || !repo.isEnabled()) continue;
+            executor.submit(
+                    () -> {
+                        try {
+                            Log.add(
+                                    "Checking update for repository: "
+                                            + repo.getLink()
+                                            + "  thread: "
+                                            + Thread.currentThread().getName());
+                            checkUpdate(repo.getLink());
+                        } catch (Exception e) {
+                            Log.add(e);
+                        }
+                    });
+        }
+        executor.shutdown();
+    }
+
+    public void checkUpdate(String repositoryLink) {
         try {
-            String js = Http.request(URL).string();
+            var js = Http.request(repositoryLink).string();
+
+            Repository repository = new Gson().fromJson(js, Repository.class);
+
+            if (CollectionUtils.isEmpty(repository.getPlugins())) return;
+
+            for (Repository.Plugin plugin : repository.getPlugins()) {
+                var pluginGetter = PluginManager.getManager().get(plugin.getPath());
+                if (pluginGetter == null) continue;
+
+                if (plugin.getVersion() > pluginGetter.getVersion()) {
+                    var path = AppUtils.curDir + "/tools/plugins/" + plugin.getUuid() + ".zip";
+                    FileUtils.string2file(new Gson().toJson(plugin), path);
+                }
+            }
             JSONArray objArr = new JSONArray(js);
             for (int i = 0; i < objArr.length(); i++) {
                 JSONObject obj = objArr.getJSONObject(i);
