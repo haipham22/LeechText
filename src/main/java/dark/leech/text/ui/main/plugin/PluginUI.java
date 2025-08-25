@@ -70,12 +70,9 @@ public class PluginUI extends JMDialog {
         gbc.weightx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         runOnUiThread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        for (PluginEntity pluginGetter : PluginManager.getManager().list())
-                            addItem(pluginGetter);
-                    }
+                () -> {
+                    for (PluginEntity pluginGetter : PluginManager.getManager().list())
+                        addItem(pluginGetter);
                 });
 
         setSize(380, 400);

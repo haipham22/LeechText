@@ -105,6 +105,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
 
     /** Menu item for accessing plugin management */
     private JMMenuItem pnPlugin;
+
     private JMMenuItem pnRepository;
 
     // Window control components
@@ -320,7 +321,12 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
                     if (e.getSource() == pnHelp) new HelpUI().open();
                     if (e.getSource() == pnPlugin) new PluginUI().open();
                     if (e.getSource() == pnRepository) {
-                        new RepositoryUI().open();
+                        final var repoUI = new RepositoryUI();
+                        repoUI.setChangeListener(
+                                () -> {
+                                    setting.load();
+                                });
+                        repoUI.open();
                     }
                     ;
                 };
