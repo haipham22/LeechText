@@ -2,6 +2,7 @@ package dark.leech.text.ui.main;
 
 import java.awt.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.*;
@@ -191,7 +192,7 @@ public class RepositoryUI extends JMDialog implements RemoveListener {
 
         var type = TypeToken.getParameterized(List.class, RepositoryEntity.class).getType();
 
-        java.util.List<RepositoryEntity> repos = gson.fromJson(json, type);
+        List<RepositoryEntity> repos = gson.fromJson(json, type);
         if (CollectionUtils.isEmpty(repos)) return;
 
         for (RepositoryEntity repositoryEntity : repos) {

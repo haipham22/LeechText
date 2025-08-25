@@ -3,6 +3,8 @@ package dark.leech.text.plugin;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -20,14 +22,16 @@ public class RepositoryManager {
 
     private RepositoryManager() {
 
-        repositoryList = new ArrayList<>();
+        List<RepositoryEntity> repo = new ArrayList<>();
         try {
             var json = FileUtils.file2string(AppUtils.curDir + "/tools/repository.json");
             var type = TypeToken.getParameterized(List.class, RepositoryEntity.class).getType();
-            repositoryList = gson.fromJson(json, type);
+            repo = gson.fromJson(json, type);
         } catch (Exception e) {
             Log.add(e);
         }
+
+        if (CollectionUtils.isNotEmpty(repo)) repositoryList = repo;
     }
 
     public static RepositoryManager getManager() {
