@@ -32,37 +32,112 @@ import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.GraphicsUtils;
 import dark.leech.text.util.StringUtils;
 
+/**
+ * Main user interface for the LeechText application.
+ *
+ * <p>MainUI is the primary window of the application that provides access to all major features
+ * including download management, settings, plugins, and help. The interface is designed with a
+ * modern, clean aesthetic featuring custom buttons, animations, and a responsive layout.
+ *
+ * <p>The UI consists of several key components:
+ *
+ * <ul>
+ *   <li>Status bar - displays current time and provides window dragging functionality
+ *   <li>App bar - contains the main logo and action buttons (add, menu)
+ *   <li>Download UI - main content area for managing downloads
+ *   <li>Settings UI - configuration and preferences panel
+ *   <li>Plugin management - interface for managing text extraction plugins
+ * </ul>
+ *
+ * <p>The interface supports window dragging, fade animations, and dynamic content switching between
+ * different functional areas.
+ *
+ * @author LeechText Development Team
+ * @version 1.0
+ * @since 1.0
+ * @see DownloadUI
+ * @see SettingUI
+ * @see PluginUI
+ */
 public class MainUI extends JFrame implements BlurListener, ActionListener {
 
-    // global pn
+    // Global panel references
+    /** Main download management interface */
     private DownloadUI downloadUI;
+
+    /** Settings and configuration interface */
     private SettingUI setting;
+
+    /** Main application bar containing logo and action buttons */
     private JPanel appBar;
+
+    /** Button for adding new download URLs */
     private CircleButton btAdd;
+
+    /** Button for accessing the main menu */
     private CircleButton btMenu;
-    // header pn
+
+    // Header panel components
+    /** Status bar showing time and providing window drag functionality */
     private JPanel statusBar;
+
+    /** Back button for navigation */
     private CircleButton btBack;
+
+    /** OK/Confirm button for actions */
     private CircleButton btOk;
+
+    /** Application logo label */
     private JLabel lbLogo;
+
+    /** Header panel for secondary views */
     private JPanel pnHeader;
-    // Menu
+
+    // Menu components
+    /** Popup menu for main application options */
     private JMPopupMenu menu;
+
+    /** Menu item for accessing settings */
     private JMMenuItem pnSetting;
+
+    /** Menu item for accessing help */
     private JMenuItem pnHelp;
+
+    /** Menu item for accessing plugin management */
     private JMMenuItem pnPlugin;
 
-    //
+    // Window control components
+    /** Exit button for closing the application */
     private CloseButton btExit;
+
+    /** Status label displaying current time */
     private JLabel lbStatus;
 
+    /** Main content container */
     private Container container;
+
+    /** Initial click point for window dragging */
     private Point initialClick;
+
+    /** Buffer for blur effect during animations */
     private BufferedImage blurBuffer;
+
+    /** Background buffer for rendering */
     private BufferedImage backBuffer;
+
+    /** Timer for updating status display */
     private Timer timer;
+
+    /** Counter variable for various operations */
     private int i = 0;
 
+    /**
+     * Constructs the main user interface.
+     *
+     * <p>Initializes the main window with custom styling, positioning, and background
+     * initialization. The window is set to be undecorated for a custom appearance and positioned
+     * based on screen dimensions.
+     */
     public MainUI() {
         setLocation(AppUtils.width - 420, AppUtils.height - 650);
         setSize(390, 555);
@@ -82,6 +157,12 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
                 .start();
     }
 
+    /**
+     * Initializes all UI components and layouts.
+     *
+     * <p>This method is called in a separate thread to ensure smooth startup and prevent blocking
+     * the main thread during component initialization.
+     */
     private void onCreate() {
         container = getContentPane();
         container.setLayout(null);
@@ -103,35 +184,46 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         checkUpdate();
     }
 
+    /** Handles the exit action with fade-out animation. */
     private void actionExit() {
         Animation.fadeOut(this);
     }
 
+    /** Handles the add action by opening the URL input dialog. */
     private void actionAdd() {
         AddURL addURL = new AddURL();
         addURL.setAddListener(downloadUI);
         addURL.open();
     }
 
-    // Thanh tiêu đề
+    /**
+     * Creates the status bar at the top of the window.
+     *
+     * <p>The status bar contains the exit button, status label with current time, and provides
+     * window dragging functionality. It's positioned at the very top of the window and spans the
+     * full width.
+     */
     private void onCreateStatusBar() {
         statusBar = new JPanel();
         statusBar.setBackground(ColorUtils.STATUS_BAR);
         statusBar.setLayout(null);
-        // ---- btExit ----
 
+        // Exit button setup
         btExit = new CloseButton();
         btExit.setFont(FontUtils.iconFont(18f));
         btExit.addActionListener(this);
         statusBar.add(btExit);
         btExit.setBounds(360, 0, 20, 20);
-        // ---- lbStatus ----
+
+        // Status label setup
         lbStatus = new JLabel();
         lbStatus.setForeground(Color.white);
         lbStatus.setFocusable(false);
         lbStatus.setFont(FontUtils.textFont(13f, Font.PLAIN));
         statusBar.add(lbStatus);
         lbStatus.setBounds(5, 0, 315, 20);
+
+        // Timer for updating status display
         timer =
                 new Timer(
                         1000,
@@ -145,6 +237,8 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
                         });
         container.add(statusBar);
         statusBar.setBounds(0, 0, 390, 20);
+
+        // Mouse listeners for window dragging
         statusBar.addMouseListener(
                 new MouseAdapter() {
                     public void mousePressed(MouseEvent e) {
@@ -161,18 +255,25 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
                 });
     }
 
-    // Thanh Title
+    /**
+     * Creates the main application bar containing the logo and action buttons.
+     *
+     * <p>The app bar is positioned below the status bar and contains the application logo, add
+     * button for new downloads, and menu button for accessing additional options.
+     */
     private void onCreateAppBar() {
 
         appBar = new JPanel();
         appBar.setBackground(ColorUtils.THEME_COLOR);
         appBar.setLayout(null);
 
+        // Add button for new downloads
         btAdd = new CircleButton(StringUtils.ADD, 25f);
         btAdd.addActionListener(this);
         appBar.add(btAdd);
         btAdd.setBounds(305, 5, 45, 45);
-        // ---- logo ----
+
+        // Application logo
         JLabel logo;
         logo = new JLabel();
         logo.setText("Leech Text");
@@ -182,12 +283,19 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         appBar.add(logo);
         logo.setBounds(20, 0, logo.getPreferredSize().width, 55);
 
+        // Menu button
         btMenu = new CircleButton(StringUtils.MORE, 25f);
         btMenu.addActionListener(this);
         appBar.add(btMenu);
         btMenu.setBounds(355, 5, 30, 45);
     }
 
+    /**
+     * Creates the header panel for secondary views.
+     *
+     * <p>This panel contains navigation elements like back button and is used when switching
+     * between different functional areas of the application.
+     */
     private void createPanelHeaderUI() {
         pnHeader = new JPanel();
         pnHeader.setBackground(ColorUtils.THEME_COLOR);
@@ -197,19 +305,15 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         btBack.addActionListener(this);
         pnHeader.add(btBack);
         btBack.setBounds(5, 5, 45, 45);
-        // ---- logo ----
+
+        // Logo for header panel
         lbLogo = new JLabel();
-        lbLogo.setText("Cài đặt");
+        lbLogo.setText("Leech Text");
         lbLogo.setFont(FontUtils.TITLE_BIG);
         lbLogo.setForeground(Color.white);
         lbLogo.setHorizontalAlignment(SwingConstants.CENTER);
         pnHeader.add(lbLogo);
-        lbLogo.setBounds(55, 0, 100, 55);
-
-        btOk = new CircleButton(StringUtils.CHECK, 25f);
-        btOk.addActionListener(this);
-        pnHeader.add(btOk);
-        btOk.setBounds(335, 5, 45, 45);
+        lbLogo.setBounds(20, 0, lbLogo.getPreferredSize().width, 55);
     }
 
     private void createPopupMenu() {

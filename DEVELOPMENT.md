@@ -1,324 +1,352 @@
-# Development Guidelines
+# Development Guide
 
-This document outlines the development practices, code standards, and workflows for the LeechText Java project.
+This document provides comprehensive guidelines for developers working on the LeechText project.
 
 ## Table of Contents
 
-1. [Getting Started](#getting-started)
-2. [Code Standards](#code-standards)
-3. [Commit Guidelines](#commit-guidelines)
-4. [Testing](#testing)
-5. [Build and CI](#build-and-ci)
-6. [Development Workflow](#development-workflow)
+- [Development Setup](#development-setup)
+- [Project Structure](#project-structure)
+- [Coding Standards](#coding-standards)
+- [Architecture Patterns](#architecture-patterns)
+- [Testing Guidelines](#testing-guidelines)
+- [Documentation Standards](#documentation-standards)
+- [Build System](#build-system)
+- [Code Quality Tools](#code-quality-tools)
 
-## Getting Started
+## Development Setup
 
 ### Prerequisites
+- **Java**: JDK 8 or higher (recommended: JDK 11+)
+- **Gradle**: Version 7.0 or higher
+- **IDE**: IntelliJ IDEA, Eclipse, or VS Code with Java extensions
+- **Git**: Version control system
 
-- Java 17 (OpenJDK)
-- Git
-- mise (for tool management)
+### Environment Setup
+```bash
+# Clone the repository
+git clone https://github.com/haipham22/LeechText.git
+cd LeechText
 
-### Setup
+# Install dependencies
+./gradlew dependencies
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd leechtext-java
-   ```
+# Build the project
+./gradlew build
 
-2. **Install tools and dependencies**
-   ```bash
-   mise install
-   ```
+# Run the application
+./gradlew run
+```
 
-3. **Install pre-commit hooks**
-   ```bash
-   pre-commit install
-   ```
+### IDE Configuration
+- **IntelliJ IDEA**: Import as Gradle project
+- **Eclipse**: Use Gradle integration plugin
+- **VS Code**: Install Java Extension Pack
 
-4. **Build the project**
-   ```bash
-   ./gradlew build
-   ```
+## Project Structure
 
-## Code Standards
+### Source Organization
+```
+src/
+├── main/
+│   ├── java/
+│   │   └── dark/leech/text/
+│   │       ├── action/          # Core application actions
+│   │       ├── animation/       # UI animation system
+│   │       ├── enities/         # Data models and entities
+│   │       ├── get/             # Content retrieval logic
+│   │       ├── image/           # Image processing utilities
+│   │       ├── listeners/       # Event listeners and handlers
+│   │       ├── lua/             # Lua script engine integration
+│   │       ├── models/          # Data models
+│   │       ├── plugin/          # Plugin management system
+│   │       ├── ui/              # User interface components
+│   │       └── util/            # Utility classes and helpers
+│   └── resources/
+│       ├── dark/leech/res/      # Application resources
+│       ├── font/                # Font files
+│       └── values/              # Localization files
+└── test/
+    └── java/                    # Test source code
+```
+
+### Package Naming Convention
+- **Main packages**: `dark.leech.text.*`
+- **UI components**: `dark.leech.text.ui.*`
+- **Utilities**: `dark.leech.text.util.*`
+- **Models**: `dark.leech.text.models.*`
+- **Plugins**: `dark.leech.text.plugin.*`
+
+## Coding Standards
 
 ### Java Code Style
-
-We use **Google Java Format** with AOSP variant for consistent code formatting:
-
-- **Line length**: 100 characters
 - **Indentation**: 4 spaces (no tabs)
-- **Imports**: No wildcard imports
-- **Naming**:
-  - Classes: `PascalCase`
-  - Methods/Variables: `camelCase`
-  - Constants: `UPPER_SNAKE_CASE`
-  - Packages: `lowercase.with.dots`
+- **Line Length**: Maximum 120 characters
+- **Naming**: Follow Java conventions
+  - Classes: PascalCase (e.g., `MainUI`)
+  - Methods: camelCase (e.g., `getChapterList()`)
+  - Constants: UPPER_SNAKE_CASE (e.g., `MAX_DOWNLOADS`)
+  - Variables: camelCase (e.g., `chapterCount`)
 
-### Formatting and Linting
+### Code Organization
+```java
+// File header with package and imports
+package dark.leech.text.ui.main;
 
-#### Automated Formatting
+import java.awt.*;
+import javax.swing.*;
+
+/**
+ * Class description with comprehensive JavaDoc.
+ *
+ * @author Developer Name
+ * @version 1.0
+ * @since 1.0
+ */
+public class ExampleClass {
+
+    // Constants first
+    private static final String DEFAULT_NAME = "Example";
+
+    // Static fields
+    private static int instanceCount = 0;
+
+    // Instance fields
+    private String name;
+    private int value;
+
+    // Constructors
+    public ExampleClass() {
+        this(DEFAULT_NAME);
+    }
+
+    public ExampleClass(String name) {
+        this.name = name;
+        instanceCount++;
+    }
+
+    // Public methods
+    public String getName() {
+        return name;
+    }
+
+    // Private methods
+    private void validateName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+    }
+}
+```
+
+### Documentation Standards
+- **Class-level**: Describe purpose, usage, and key features
+- **Method-level**: Document parameters, return values, and exceptions
+- **Field-level**: Explain purpose and constraints
+- **Inline comments**: Clarify complex logic
+
+## Architecture Patterns
+
+### Design Principles
+1. **Single Responsibility**: Each class has one clear purpose
+2. **Open/Closed**: Open for extension, closed for modification
+3. **Dependency Inversion**: Depend on abstractions, not concretions
+4. **Interface Segregation**: Keep interfaces focused and minimal
+
+### Key Patterns Used
+- **Singleton**: PluginManager, AppUtils
+- **Observer**: Event listeners and handlers
+- **Factory**: Plugin creation and UI component instantiation
+- **Strategy**: Different export formats and extraction methods
+- **Template Method**: Download and export workflows
+
+### UI Architecture
+```
+MainUI (Main Window)
+├── DownloadUI (Download Management)
+├── SettingUI (Configuration)
+├── PluginUI (Plugin Management)
+└── HelpUI (Documentation)
+```
+
+## Testing Guidelines
+
+### Test Structure
+```
+src/test/java/
+└── dark/leech/text/
+    ├── models/          # Model tests
+    ├── util/            # Utility tests
+    ├── plugin/          # Plugin tests
+    └── ui/              # UI component tests
+```
+
+### Testing Standards
+- **Unit Tests**: Test individual methods and classes
+- **Integration Tests**: Test component interactions
+- **Test Coverage**: Aim for 80%+ code coverage
+- **Test Naming**: `MethodName_Scenario_ExpectedResult`
+
+### Example Test
+```java
+@Test
+public void createPlugin_ValidJsonFile_ReturnsPluginEntity() {
+    // Arrange
+    String validJson = "{\"name\":\"Test Plugin\",\"version\":1.0}";
+
+    // Act
+    PluginEntity result = PluginManager.createPlugin(validJson);
+
+    // Assert
+    assertNotNull(result);
+    assertEquals("Test Plugin", result.getName());
+    assertEquals(1.0, result.getVersion(), 0.01);
+}
+```
+
+## Documentation Standards
+
+### JavaDoc Requirements
+- **Public APIs**: All public methods and classes must be documented
+- **Parameters**: Document all parameters with @param tags
+- **Return Values**: Document return values with @return tags
+- **Exceptions**: Document thrown exceptions with @throws tags
+- **Examples**: Include usage examples for complex methods
+
+### Code Comments
+- **Why, not what**: Explain the reasoning behind code decisions
+- **Complex logic**: Clarify non-obvious algorithms
+- **Workarounds**: Document known issues and temporary solutions
+- **TODO/FIXME**: Mark areas needing attention
+
+## Build System
+
+### Gradle Configuration
+- **Version**: 7.0+
+- **Java Version**: 8+
+- **Dependencies**: Managed through build.gradle
+- **Plugins**: Java, Application, Distribution
+
+### Build Commands
 ```bash
-# Check formatting
-./gradlew spotlessCheck
+# Clean build
+./gradlew clean build
 
-# Apply formatting fixes
-./gradlew spotlessApply
-
-# Run all quality checks
-./gradlew qualityGate
-```
-
-#### Code Quality Tools
-
-- **Spotless**: Automatic code formatting
-- **Checkstyle**: Code style enforcement
-- **PMD**: Static code analysis
-- **Pre-commit hooks**: Automated checks on commit
-
-### Best Practices
-
-1. **No wildcard imports** - Use specific imports
-2. **Proper exception handling** - Don't swallow exceptions
-3. **Meaningful variable names** - Avoid abbreviations
-4. **Documentation** - Add JavaDoc for public APIs
-5. **Small methods** - Keep methods under 100 lines
-6. **Single responsibility** - One class, one purpose
-
-## Commit Guidelines
-
-We follow **Conventional Commits** specification for consistent commit messages. While automated validation has been removed, please follow these guidelines manually.
-
-### Commit Message Format
-
-```
-<type>[optional scope]: <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-### Commit Types
-
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation changes
-- `style`: Code style changes (formatting, etc.)
-- `refactor`: Code refactoring
-- `perf`: Performance improvements
-- `test`: Test additions or modifications
-- `build`: Build system changes
-- `ci`: CI/CD changes
-- `chore`: Maintenance tasks
-
-### Examples
-
-```bash
-# Good commit messages
-feat: add new download progress indicator
-fix: resolve memory leak in image processing
-docs: update API documentation for PluginManager
-refactor: extract common validation logic
-style: format code according to Google style guide
-
-# Bad commit messages
-fixed stuff
-update
-new feature
-```
-
-### Manual Validation
-
-Since automated commit message validation has been removed, please ensure your commit messages follow the conventional format before committing.
-
-## Testing
-
-### Running Tests
-
-```bash
-# Run all tests
+# Run tests
 ./gradlew test
 
-# Run specific test class
-./gradlew test --tests "ClassName"
+# Generate Javadoc
+./gradlew javadoc
 
-# Run with coverage
-./gradlew test jacocoTestReport
-```
-
-### Test Guidelines
-
-1. **Test naming**: Use descriptive names
-2. **Test structure**: Follow Given-When-Then pattern
-3. **Assertions**: Use meaningful assertion messages
-4. **Mocking**: Mock external dependencies
-5. **Coverage**: Aim for >80% code coverage
-
-## Build and CI
-
-### Gradle Tasks
-
-```bash
-# Compile source code
-./gradlew compileJava
-
-# Run full build
-./gradlew build
+# Create distribution
+./gradlew distZip
 
 # Run application
 ./gradlew run
-
-# Clean build artifacts
-./gradlew clean
-
-# Run pre-commit checks
-./gradlew preCommit
-
-# Run quality gate (all checks)
-./gradlew qualityGate
 ```
 
+### Dependencies
+- **Core**: Java 8+ APIs
+- **UI**: Swing (built-in)
+- **JSON**: Gson for data serialization
+- **Lua**: LuaJ for scripting
+- **Testing**: JUnit 4+ for unit tests
+
+## Code Quality Tools
+
+### Static Analysis
+- **Checkstyle**: Code style enforcement
+- **PMD**: Code quality and complexity analysis
+- **SpotBugs**: Bug pattern detection
+
+### Configuration Files
+- `config/checkstyle/checkstyle.xml` - Checkstyle rules
+- `config/pmd/pmd-rules.xml` - PMD rules
+- `.editorconfig` - Editor configuration
+
 ### Pre-commit Hooks
-
-The following checks run automatically before each commit:
-
-1. **Code formatting** (Spotless)
-2. **Compilation check**
-3. **Trailing whitespace removal**
-4. **File ending fixes**
-5. **JSON/YAML validation**
-6. **Merge conflict detection**
-7. **Large file detection**
-8. **Secret detection**
-
-### Commit Message Validation
-
-Commit messages are validated using commitlint to ensure they follow conventional commits.
+- **Formatting**: Automatic code formatting
+- **Validation**: Style and quality checks
+- **Tests**: Run unit tests before commit
 
 ## Development Workflow
 
 ### Feature Development
+1. **Create Branch**: `git checkout -b feature/feature-name`
+2. **Implement**: Write code following standards
+3. **Test**: Ensure all tests pass
+4. **Document**: Update documentation and JavaDoc
+5. **Commit**: Use conventional commit format
+6. **Push**: Submit pull request
 
-1. **Create feature branch**
-   ```bash
-   git checkout -b feat/your-feature-name
-   ```
+### Bug Fixes
+1. **Identify**: Reproduce and document the issue
+2. **Fix**: Implement the solution
+3. **Test**: Verify the fix works
+4. **Document**: Update relevant documentation
+5. **Commit**: Reference issue number
 
-2. **Develop and test**
-   - Write code following standards
-   - Add/update tests
-   - Run quality checks locally
+### Code Review Process
+1. **Self-review**: Check your own code first
+2. **Peer Review**: Have another developer review
+3. **Address Feedback**: Make requested changes
+4. **Final Approval**: Get approval from maintainer
+5. **Merge**: Merge to main branch
 
-3. **Commit changes**
-   ```bash
-   git add .
-   git commit -m "feat: add new feature description"
-   ```
+## Performance Guidelines
 
-4. **Push and create PR**
-   ```bash
-   git push origin feat/your-feature-name
-   ```
+### Memory Management
+- **Object Reuse**: Reuse objects when possible
+- **Resource Cleanup**: Properly close streams and connections
+- **Memory Leaks**: Avoid circular references and static collections
 
-### Code Review Guidelines
+### UI Performance
+- **SwingUtilities.invokeLater**: Use for UI updates
+- **Background Threads**: Keep UI responsive
+- **Lazy Loading**: Load data only when needed
 
-1. **Review for functionality** - Does it work as expected?
-2. **Review for style** - Follows code standards?
-3. **Review for tests** - Adequate test coverage?
-4. **Review for documentation** - Is it documented?
-5. **Review for performance** - Any performance concerns?
+### Network Operations
+- **Connection Pooling**: Reuse HTTP connections
+- **Timeout Handling**: Set appropriate timeouts
+- **Error Recovery**: Implement retry mechanisms
 
-### Release Process
+## Security Considerations
 
-1. **Version bump** in relevant files
-2. **Update changelog**
-3. **Create release tag**
-4. **Build and test**
-5. **Deploy artifacts**
+### Input Validation
+- **URL Validation**: Validate all input URLs
+- **File Paths**: Prevent directory traversal attacks
+- **Plugin Security**: Validate plugin files before loading
 
-## IDE Configuration
-
-### IntelliJ IDEA
-
-1. **Import project** as Gradle project
-2. **Install plugins**:
-   - Google Java Format
-   - Checkstyle-IDEA
-   - PMD Plugin
-3. **Configure code style**: Import Google Java Format settings
-4. **Enable auto-formatting** on save
-
-### VS Code
-
-1. **Install extensions**:
-   - Extension Pack for Java
-   - Checkstyle for Java
-   - Spotless Gradle
-2. **Configure settings** for auto-formatting
+### Network Security
+- **HTTPS**: Prefer secure connections
+- **Certificate Validation**: Validate SSL certificates
+- **Proxy Security**: Secure proxy configuration
 
 ## Troubleshooting
 
 ### Common Issues
+- **Build Failures**: Check Java version and Gradle compatibility
+- **Test Failures**: Ensure all dependencies are available
+- **Runtime Errors**: Check classpath and resource loading
 
-1. **Formatting violations**
-   ```bash
-   ./gradlew spotlessApply
-   ```
-
-2. **Pre-commit hook failures**
-   ```bash
-   pre-commit run --all-files
-   ```
-
-3. **Commit message rejection**
-   - Follow conventional commits format
-   - Check commitlint rules
-
-4. **Build failures**
-   ```bash
-   ./gradlew clean build
-   ```
-
-### Getting Help
-
-- Check existing documentation
-- Review error messages carefully
-- Ask team members for guidance
-- Create GitHub issues for bugs
-
-## Tools and Dependencies
-
-### Development Tools
-
-- **Gradle**: Build system
-- **Spotless**: Code formatting
-- **Checkstyle**: Style checking
-- **PMD**: Static analysis
-- **Pre-commit**: Git hooks management
-- **Commitlint**: Commit message validation
-- **Husky**: Git hooks (via npm)
-
-### Runtime Dependencies
-
-- **Java 17**: Runtime environment
-- **JSoup**: HTML parsing
-- **LuaJ**: Lua scripting
-- **Gson**: JSON processing
-- **zip4j**: Archive handling
-- **RSyntaxTextArea**: Syntax highlighting
+### Debug Tools
+- **Logging**: Use application logging for debugging
+- **IDE Debugger**: Set breakpoints and inspect variables
+- **JVM Options**: Use `-Xdebug` for remote debugging
 
 ## Contributing
 
-1. **Fork the repository**
-2. **Follow development guidelines**
-3. **Write tests for new features**
-4. **Ensure all checks pass**
-5. **Submit pull request**
-6. **Participate in code review**
+### Getting Started
+1. Read this development guide
+2. Set up your development environment
+3. Choose an issue to work on
+4. Follow the development workflow
+5. Submit your contribution
+
+### Communication
+- **Issues**: Use GitHub issues for bug reports and feature requests
+- **Discussions**: Use GitHub discussions for questions and ideas
+- **Pull Requests**: Provide clear descriptions and context
 
 ---
 
-**Note**: This document is living documentation. Please keep it updated as the project evolves.
+For additional information, see the [README.md](README.md) and [API Documentation](docs/api/).
