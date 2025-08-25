@@ -44,7 +44,7 @@ jobs:
       run: ./gradlew spotbugsMain spotbugsTest --no-daemon
 
     - name: Upload quality reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: quality-reports
@@ -79,7 +79,7 @@ jobs:
       run: ./gradlew dependencyCheckAnalyze --no-daemon
 
     - name: Upload security report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: security-report
@@ -126,7 +126,7 @@ jobs:
         echo "Coverage threshold met: $COVERAGE%"
 
     - name: Upload coverage report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: coverage-report
@@ -164,7 +164,7 @@ jobs:
         ./gradlew distZip --no-daemon
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: build-artifacts
@@ -207,7 +207,7 @@ jobs:
         echo "No Javadoc warnings found"
 
     - name: Upload documentation
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: documentation
@@ -247,7 +247,7 @@ jobs:
         echo "Performance tests completed"
 
     - name: Upload performance results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: performance-results
@@ -298,7 +298,7 @@ jobs:
         echo "- Workflow: [Quality Gate #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> quality-summary.md
 
     - name: Upload quality summary
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: quality-summary
         path: quality-summary.md
