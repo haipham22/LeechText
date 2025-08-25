@@ -5,8 +5,8 @@ import javax.swing.*;
 import dark.leech.text.enities.BookEntity;
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.listeners.ChangeListener;
-import dark.leech.text.lua.loader.DetailLoader;
 import dark.leech.text.models.Properties;
+import dark.leech.text.plugin.lua.loader.DetailLoader;
 import dark.leech.text.util.SyntaxUtils;
 
 /** Created by Dark on 1/18/2017. */

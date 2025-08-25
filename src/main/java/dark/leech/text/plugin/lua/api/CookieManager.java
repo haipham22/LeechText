@@ -1,4 +1,4 @@
-package dark.leech.text.lua.api;
+package dark.leech.text.plugin.lua.api;
 
 import dark.leech.text.util.CookiesUtils;
 

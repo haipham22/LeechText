@@ -1,8 +1,6 @@
 package dark.leech.text.ui.main.plugin;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -16,7 +14,6 @@ import dark.leech.text.ui.material.JMScrollPane;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 
-/** Created by Long on 1/11/2017. */
 public class PluginUI extends JMDialog {
     private PanelTitle pnTitle;
     private JPanel pnList;
@@ -34,29 +31,21 @@ public class PluginUI extends JMDialog {
 
         pnTitle.setText("Plugins");
         pnTitle.addCloseListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        new Thread(
-                                        new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                for (PluginEntity pl :
-                                                        PluginManager.getManager().list()) {
-                                                    String path =
-                                                            AppUtils.curDir
-                                                                    + "/tools/plugins/"
-                                                                    + pl.getUuid()
-                                                                    + ".plugin";
-                                                    FileUtils.string2file(
-                                                            new Gson().toJson(pl), path);
-                                                }
-                                            }
-                                        })
-                                .start();
+                e -> {
+                    new Thread(
+                                    () -> {
+                                        for (PluginEntity pl : PluginManager.getManager().list()) {
+                                            String path =
+                                                    AppUtils.curDir
+                                                            + "/tools/plugins/"
+                                                            + pl.getUuid()
+                                                            + ".plugin";
+                                            FileUtils.string2file(new Gson().toJson(pl), path);
+                                        }
+                                    })
+                            .start();
 
-                        close();
-                    }
+                    close();
                 });
         container.add(pnTitle);
         pnTitle.setBounds(0, 0, 380, 45);
@@ -81,12 +70,9 @@ public class PluginUI extends JMDialog {
         gbc.weightx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         runOnUiThread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        for (PluginEntity pluginGetter : PluginManager.getManager().list())
-                            addItem(pluginGetter);
-                    }
+                () -> {
+                    for (PluginEntity pluginGetter : PluginManager.getManager().list())
+                        addItem(pluginGetter);
                 });
 
         setSize(380, 400);

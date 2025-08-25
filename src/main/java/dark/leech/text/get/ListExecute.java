@@ -9,10 +9,10 @@ import dark.leech.text.action.Log;
 import dark.leech.text.enities.ChapterEntity;
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.listeners.ChangeListener;
-import dark.leech.text.lua.loader.TocLoader;
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Pager;
 import dark.leech.text.models.Properties;
+import dark.leech.text.plugin.lua.loader.TocLoader;
 
 /** Created by Dark on 1/18/2017. */
 public class ListExecute extends SwingWorker {

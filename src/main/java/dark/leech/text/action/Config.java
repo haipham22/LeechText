@@ -1,7 +1,5 @@
 package dark.leech.text.action;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -9,10 +7,11 @@ import java.util.regex.Pattern;
 
 import javax.swing.*;
 
+import lombok.Setter;
+
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.get.ChapExecute;
 import dark.leech.text.listeners.BlurListener;
-import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.listeners.TableListener;
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Properties;
@@ -25,32 +24,35 @@ import dark.leech.text.util.SettingUtils;
 
 public class Config {
     private final List<Chapter> chapList;
-    private String path;
-    private TableListener tableListener;
+    @Setter private String path;
+    @Setter private TableListener tableListener;
     private int index;
     private PluginEntity pluginGetter;
-    private BlurListener blurListener;
+    @Setter private BlurListener blurListener;
     private int errorCount = 0;
 
     public Config(List<Chapter> chapList) {
         this.chapList = chapList;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
     public List<Chapter> checkError() {
         ArrayList<Chapter> imgErr = new ArrayList<Chapter>();
-        for (int i = 0; i < chapList.size(); i++)
-            if (chapList.get(i).isError()) imgErr.add(chapList.get(i));
+        for (Chapter chapter : chapList) {
+            if (!chapter.isError()) {
+                continue;
+            }
+            imgErr.add(chapter);
+        }
         return imgErr;
     }
 
     public List<Chapter> checkImg() {
         ArrayList<Chapter> imgList = new ArrayList<Chapter>();
-        for (int i = 0; i < chapList.size(); i++) {
-            if (chapList.get(i).isImageChapter()) imgList.add(chapList.get(i));
+        for (Chapter chapter : chapList) {
+            if (!chapter.isImageChapter()) {
+                continue;
+            }
+            imgList.add(chapter);
         }
         return imgList;
     }
@@ -98,7 +100,7 @@ public class Config {
 
     private String fixName(String name) {
         if (name == null) return "";
-        if (name.length() == 0) return name;
+        if (name.isEmpty()) return name;
         name =
                 name.replaceAll("Chương \\d+\\s*[:-]\\s*(Chương \\d+.*?$)", "$1")
                         .replaceAll("^([hH]ồi|[đĐ]ệ) (\\d+)", "Chương $1")
@@ -139,7 +141,7 @@ public class Config {
     }
 
     private String Optimize(String name) {
-        if (name.length() == 0) return name;
+        if (name.isEmpty()) return name;
         name = upperFirst(name);
         name = fixName(name);
         return name;
@@ -164,37 +166,34 @@ public class Config {
         new ChapExecute()
                 .plugin(pluginGetter)
                 .listener(
-                        new ChangeListener() {
-                            @Override
-                            public void doChanger() {
-                                if (chapter.isError()) {
-                                    errorCount++;
-                                } else {
-                                    chapter.setError(false);
-                                    tableListener.updateData(index, chapter);
-                                }
-                                index++;
-                                if (index >= chapList.size()) {
-                                    History.getHistory().save(properties);
-                                    if (errorCount > 0) {
-                                        final ConfirmDialog dialog = new ConfirmDialog();
-                                        dialog.setConfirmListener(
-                                                new ConfirmListener() {
-                                                    @Override
-                                                    public void confirm() {
-                                                        downloadChap(properties);
-                                                        dialog.close();
-                                                    }
-
-                                                    @Override
-                                                    public void cancel() {
-                                                        dialog.close();
-                                                    }
-                                                });
-                                        dialog.open();
-                                    }
-                                } else download(properties);
+                        () -> {
+                            if (chapter.isError()) {
+                                errorCount++;
+                            } else {
+                                chapter.setError(false);
+                                tableListener.updateData(index, chapter);
                             }
+                            index++;
+                            if (index >= chapList.size()) {
+                                History.getHistory().save(properties);
+                                if (errorCount > 0) {
+                                    final ConfirmDialog dialog = new ConfirmDialog();
+                                    dialog.setConfirmListener(
+                                            new ConfirmListener() {
+                                                @Override
+                                                public void confirm() {
+                                                    downloadChap(properties);
+                                                    dialog.close();
+                                                }
+
+                                                @Override
+                                                public void cancel() {
+                                                    dialog.close();
+                                                }
+                                            });
+                                    dialog.open();
+                                }
+                            } else download(properties);
                         })
                 .charset(properties.getCharset())
                 .path(properties.getSavePath())
@@ -251,10 +250,6 @@ public class Config {
         return math;
     }
 
-    public void setBlurListener(BlurListener blurListener) {
-        this.blurListener = blurListener;
-    }
-
     public void addTableListener(TableListener tableListener) {
         this.tableListener = tableListener;
     }
@@ -268,17 +263,11 @@ public class Config {
     class ConfirmDialog extends JMDialog {
         private BasicButton btConfirm;
         private BasicButton btCancel;
-        private ConfirmListener confirmListener;
+        @Setter private ConfirmListener confirmListener;
 
         public ConfirmDialog() {
             setSize(300, 150);
-            runOnUiThread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            onCreate();
-                        }
-                    });
+            runOnUiThread(this::onCreate);
         }
 
         @Override
@@ -302,25 +291,15 @@ public class Config {
             btCancel.setBounds(190, 100, 100, 35);
 
             btConfirm.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (confirmListener != null) confirmListener.confirm();
-                            close();
-                        }
+                    e -> {
+                        if (confirmListener != null) confirmListener.confirm();
+                        close();
                     });
             btCancel.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (confirmListener != null) confirmListener.cancel();
-                            close();
-                        }
+                    e -> {
+                        if (confirmListener != null) confirmListener.cancel();
+                        close();
                     });
-        }
-
-        public void setConfirmListener(ConfirmListener confirmListener) {
-            this.confirmListener = confirmListener;
         }
     }
 }

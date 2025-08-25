@@ -1,11 +1,11 @@
-package dark.leech.text.lua.loader;
+package dark.leech.text.plugin.lua.loader;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 
 import dark.leech.text.enities.PluginEntity;
-import dark.leech.text.lua.api.LuaScriptEngine;
+import dark.leech.text.plugin.lua.api.LuaScriptEngine;
 import dark.leech.text.util.TextUtils;
 
 public class TextLoader {

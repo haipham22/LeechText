@@ -42,8 +42,6 @@ public class SyntaxUtils {
     public static String CHAP_NAME;
     public static String PART_NAME;
 
-    private SyntaxUtils() {}
-
     // convert string
     public static String covertString(String source) {
         for (int i = 0; i < src.length; i++) source = source.replace(dau[i], src[i]);

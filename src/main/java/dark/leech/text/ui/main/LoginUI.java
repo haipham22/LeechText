@@ -75,13 +75,7 @@ public class LoginUI extends JMDialog {
         lbPass.setBounds(30, 135, 175, 25);
         // ---- btCancel ----
         btCancel.setText("Hủy");
-        btCancel.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        close();
-                    }
-                });
+        btCancel.addActionListener(e -> close());
         container.add(btCancel);
         btCancel.setBounds(35, 240, 75, 30);
 

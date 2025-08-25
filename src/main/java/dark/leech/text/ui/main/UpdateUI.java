@@ -9,6 +9,7 @@ import javax.swing.*;
 
 import org.json.JSONObject;
 
+import dark.leech.text.action.Log;
 import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
@@ -41,6 +42,7 @@ public class UpdateUI extends JMDialog {
             if (version > VERSION || (version == VERSION && time > TIME)) new UpdateUI(obj).open();
 
         } catch (Exception e) {
+            Log.add(e);
         }
     }
 

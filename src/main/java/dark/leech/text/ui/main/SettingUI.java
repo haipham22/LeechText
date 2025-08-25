@@ -22,8 +22,6 @@ import static dark.leech.text.util.SettingUtils.doDefault;
 import static dark.leech.text.util.SettingUtils.doSave;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -65,24 +63,11 @@ public class SettingUI extends JPanel {
 
     public SettingUI() {
         setLayout(null);
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        onCreate();
-                    }
-                });
+        SwingUtilities.invokeLater(this::onCreate);
     }
 
     public void load() {
-        new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                updateStatus();
-                            }
-                        })
-                .start();
+        new Thread(this::updateStatus).start();
     }
 
     private void onCreate() {
@@ -151,16 +136,13 @@ public class SettingUI extends JPanel {
         defaultButton = new BasicButton();
         defaultButton.setText("Khôi phục mặc định");
         defaultButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        doDefault();
-                        updateStatus();
-                        Toast.Build()
-                                .font(FontUtils.TITLE_NORMAL)
-                                .content("Đã khôi phục mặc định!")
-                                .open();
-                    }
+                e -> {
+                    doDefault();
+                    updateStatus();
+                    Toast.Build()
+                            .font(FontUtils.TITLE_NORMAL)
+                            .content("Đã khôi phục mặc định!")
+                            .open();
                 });
         add(defaultButton);
         defaultButton.setBounds(0, 495, 390, 35);

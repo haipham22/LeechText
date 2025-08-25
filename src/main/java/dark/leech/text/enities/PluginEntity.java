@@ -2,6 +2,13 @@ package dark.leech.text.enities;
 
 import com.google.gson.annotations.SerializedName;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
+@Builder
 public class PluginEntity {
 
     @SerializedName("uuid")
@@ -60,158 +67,6 @@ public class PluginEntity {
 
     @SerializedName("checked")
     private boolean checked;
-
-    public boolean isChecked() {
-        return checked;
-    }
-
-    public void setChecked(boolean checked) {
-        this.checked = checked;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getVersion() {
-        return version;
-    }
-
-    public void setVersion(double version) {
-        this.version = version;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getRegex() {
-        return regex;
-    }
-
-    public void setRegex(String regex) {
-        this.regex = regex;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getDescribe() {
-        return describe;
-    }
-
-    public void setDescribe(String describe) {
-        this.describe = describe;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    public String getChapGetter() {
-        return chapGetter;
-    }
-
-    public void setChapGetter(String chapGetter) {
-        this.chapGetter = chapGetter;
-    }
-
-    public String getTocGetter() {
-        return tocGetter;
-    }
-
-    public void setTocGetter(String tocGetter) {
-        this.tocGetter = tocGetter;
-    }
-
-    public String getPageGetter() {
-        return pageGetter;
-    }
-
-    public void setPageGetter(String pageGetter) {
-        this.pageGetter = pageGetter;
-    }
-
-    public String getSearchGetter() {
-        return searchGetter;
-    }
-
-    public void setSearchGetter(String searchGetter) {
-        this.searchGetter = searchGetter;
-    }
-
-    public String getDetailGetter() {
-        return detailGetter;
-    }
-
-    public void setDetailGetter(String detailGetter) {
-        this.detailGetter = detailGetter;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public boolean isSupportUpdate() {
-        return supportUpdate;
-    }
-
-    public void setSupportUpdate(boolean supportUpdate) {
-        this.supportUpdate = supportUpdate;
-    }
 
     public void apply(PluginEntity entity) {
         this.uuid = entity.uuid;

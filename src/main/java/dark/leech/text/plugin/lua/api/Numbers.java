@@ -1,4 +1,4 @@
-package dark.leech.text.lua.api;
+package dark.leech.text.plugin.lua.api;
 
 public class Numbers {
     public static int toInt(String text, int def) {

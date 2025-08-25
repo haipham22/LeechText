@@ -45,7 +45,7 @@ jobs:
       run: ./gradlew jacocoTestReport --no-daemon
 
     - name: Upload nightly build
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: nightly-build-${{ github.run_number }}
         path: |
@@ -80,7 +80,7 @@ jobs:
         ./gradlew dependencyUpdates --no-daemon
 
     - name: Upload dependency report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dependency-updates-${{ github.run_number }}
         path: build/reports/dependencyUpdates/
@@ -151,7 +151,7 @@ jobs:
         ./gradlew dependencyCheckAnalyze --no-daemon
 
     - name: Upload security report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: security-scan-${{ github.run_number }}
         path: build/reports/dependency-check-report.html
@@ -218,7 +218,7 @@ jobs:
         ./gradlew spotbugsMain --no-daemon
 
     - name: Upload quality reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: code-quality-${{ github.run_number }}
         path: |
@@ -254,7 +254,7 @@ jobs:
         ./gradlew jmh --no-daemon
 
     - name: Upload performance results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: performance-test-${{ github.run_number }}
         path: build/reports/jmh/
@@ -290,7 +290,7 @@ jobs:
         ./gradlew dependencyReport --no-daemon
 
     - name: Upload documentation
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: documentation-${{ github.run_number }}
         path: |
@@ -327,7 +327,7 @@ jobs:
         echo "- Triggered: ${{ github.event_name }}" >> summary.md
 
     - name: Upload summary report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: summary-report-${{ github.run_number }}
         path: summary.md

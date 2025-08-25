@@ -33,20 +33,12 @@ public class SyntaxDialog extends JMDialog {
     @Override
     protected void onCreate() {
         super.onCreate();
-        PanelTitle pnTitle = new PanelTitle();
         ok = new BasicButton();
         cancel = new BasicButton();
 
-        pnTitle.setText(title);
-        pnTitle.addCloseListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        close();
-                    }
-                });
+        PanelTitle pnTitle =
+                new PanelTitle().setText(title).addCloseListener(e -> close()).bound(0, 0, 360, 45);
         container.add(pnTitle);
-        pnTitle.setBounds(0, 0, 360, 45);
 
         ok.setText("OK");
         container.add(ok);

@@ -38,7 +38,6 @@ class JMScrollBar extends BasicScrollBarUI {
     private static final Color THUMB_COLOR = ColorUtils.THEME_COLOR;
     private final JButton b =
             new JButton() {
-
                 @Override
                 public Dimension getPreferredSize() {
                     return new Dimension(0, 0);

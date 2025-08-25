@@ -1,4 +1,4 @@
-package dark.leech.text.lua.api;
+package dark.leech.text.plugin.lua.api;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

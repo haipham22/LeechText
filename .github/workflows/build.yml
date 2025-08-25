@@ -67,7 +67,7 @@ jobs:
       run: ./gradlew javadoc --no-daemon
 
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results-${{ matrix.os }}-java${{ matrix.java }}
@@ -77,7 +77,7 @@ jobs:
         retention-days: 30
 
     - name: Upload Javadoc
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: javadoc-${{ matrix.os }}-java${{ matrix.java }}
@@ -139,7 +139,7 @@ jobs:
       run: ./gradlew dependencyCheckAnalyze --no-daemon
 
     - name: Upload dependency check report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: dependency-check-report
@@ -172,7 +172,7 @@ jobs:
       run: ./gradlew jacocoTestReport --no-daemon
 
     - name: Upload coverage report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: coverage-report
@@ -229,7 +229,7 @@ jobs:
         ./gradlew jpackage --no-daemon -Ptarget=linux
 
     - name: Upload release artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: release-artifacts
         path: |
@@ -281,7 +281,7 @@ jobs:
         ./gradlew distZip
 
     - name: Upload nightly build
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: nightly-build-${{ github.run_number }}
         path: build/distributions/

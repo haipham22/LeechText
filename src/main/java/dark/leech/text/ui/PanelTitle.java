@@ -14,12 +14,14 @@ public class PanelTitle extends JPanel {
     JLabel lbTitle = new JLabel();
     CloseButton btClose = new CloseButton();
 
-    public void setText(String text) {
+    public PanelTitle setText(String text) {
         lbTitle.setText(text);
+        return this;
     }
 
-    public void addCloseListener(ActionListener actionListener) {
+    public PanelTitle addCloseListener(ActionListener actionListener) {
         btClose.addActionListener(actionListener);
+        return this;
     }
 
     @Override
@@ -33,5 +35,10 @@ public class PanelTitle extends JPanel {
         lbTitle.setBounds(20, 0, width - 60, height);
         this.add(btClose);
         btClose.setBounds(width - 35, 10, height - 10 * 2, height - 10 * 2);
+    }
+
+    public PanelTitle bound(int x, int y, int width, int height) {
+        this.setBounds(x, y, width, height);
+        return this;
     }
 }

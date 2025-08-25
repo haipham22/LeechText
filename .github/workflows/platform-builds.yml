@@ -71,7 +71,7 @@ jobs:
         fi
 
     - name: Upload macOS artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: macos-build
         path: |
@@ -113,7 +113,7 @@ jobs:
         echo "Windows build completed"
 
     - name: Upload Windows artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: windows-build
         path: |
@@ -183,7 +183,7 @@ jobs:
         fi
 
     - name: Upload Linux artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: linux-build
         path: |
@@ -237,7 +237,7 @@ jobs:
         tar -czf LeechText-Universal.tar.gz dist/
 
     - name: Upload distribution packages
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: distribution-packages
         path: dist/
@@ -273,7 +273,7 @@ jobs:
           --push .
 
     - name: Upload Docker artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: docker-images
         path: |

@@ -7,6 +7,8 @@ import java.awt.image.RescaleOp;
 
 import javax.swing.*;
 
+import lombok.Setter;
+
 import dark.leech.text.image.GaussianBlurFilter;
 import dark.leech.text.listeners.BlurListener;
 import dark.leech.text.listeners.ChangeListener;
@@ -18,12 +20,12 @@ import dark.leech.text.util.GraphicsUtils;
 public abstract class JMDialog extends JDialog implements BlurListener {
     protected Container container;
     private Point pointLocation;
-    private BlurListener blurListener;
+    @Setter private BlurListener blurListener;
     private BufferedImage blurBuffer;
     private BufferedImage backBuffer;
-    private final float alpha = 1.0f;
-    private ChangeListener changeListener;
-    private Color borderColor;
+
+    @Setter private ChangeListener changeListener;
+    @Setter private Color borderColor;
 
     public JMDialog() {
         super(App.getMain());
@@ -51,30 +53,27 @@ public abstract class JMDialog extends JDialog implements BlurListener {
 
     public void open() {
         new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                blurListener.setBlur(true);
-                                setShape(
-                                        new RoundRectangle2D.Double(
-                                                0, 0, getWidth(), getHeight(), 5, 5));
-                                pointLocation = AppUtils.getLocation();
-                                int X = pointLocation.x + 390 / 2 - getWidth() / 2;
-                                X = X < 10 ? 10 : X;
-                                X =
-                                        (X + getWidth() > AppUtils.width)
-                                                ? AppUtils.width - getWidth() - 10
-                                                : X;
-                                int Y = pointLocation.y + 600 / 2 - getHeight() / 2;
-                                Y =
-                                        (Y + getHeight() > AppUtils.height)
-                                                ? AppUtils.height - getHeight() - 10
-                                                : Y;
-                                Y = Y < 10 ? 10 : Y;
-                                setLocation(X, Y);
-                                Animation.fadeIn(JMDialog.this);
-                                setVisible(true);
-                            }
+                        () -> {
+                            blurListener.setBlur(true);
+                            setShape(
+                                    new RoundRectangle2D.Double(
+                                            0, 0, getWidth(), getHeight(), 5, 5));
+                            pointLocation = AppUtils.getLocation();
+                            int X = pointLocation.x + 390 / 2 - getWidth() / 2;
+                            X = Math.max(X, 10);
+                            X =
+                                    (X + getWidth() > AppUtils.width)
+                                            ? AppUtils.width - getWidth() - 10
+                                            : X;
+                            int Y = pointLocation.y + 600 / 2 - getHeight() / 2;
+                            Y =
+                                    (Y + getHeight() > AppUtils.height)
+                                            ? AppUtils.height - getHeight() - 10
+                                            : Y;
+                            Y = Math.max(Y, 10);
+                            setLocation(X, Y);
+                            Animation.fadeIn(JMDialog.this);
+                            setVisible(true);
                         })
                 .start();
     }
@@ -87,18 +86,6 @@ public abstract class JMDialog extends JDialog implements BlurListener {
         blurListener.setBlur(false);
         if (changeListener != null) changeListener.doChanger();
         Animation.fadeOut(this);
-    }
-
-    public void setBorderColor(Color color) {
-        this.borderColor = color;
-    }
-
-    public void setChangeListener(ChangeListener changeListener) {
-        this.changeListener = changeListener;
-    }
-
-    public void setBlurListener(BlurListener blurListener) {
-        this.blurListener = blurListener;
     }
 
     public void setBlur(boolean blur) {
@@ -129,6 +116,7 @@ public abstract class JMDialog extends JDialog implements BlurListener {
             g2.setRenderingHint(
                     RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g2.drawImage(backBuffer, 0, 0, null);
+            float alpha = 1.0f;
             g2.setComposite(AlphaComposite.SrcOver.derive(alpha));
             g2.drawImage(blurBuffer, 0, 0, getWidth(), getHeight(), null);
         }

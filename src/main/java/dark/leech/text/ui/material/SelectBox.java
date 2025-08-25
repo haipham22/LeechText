@@ -8,13 +8,15 @@ import java.util.List;
 
 import javax.swing.*;
 
+import lombok.Getter;
+
 import dark.leech.text.listeners.BlurListener;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.StringUtils;
 
 public class SelectBox extends JMPanel {
-    private int selectIndex;
+    @Getter private int selectIndex;
     private String[] list;
     private final JLabel labelName;
     private BlurListener blurListener;
@@ -80,10 +82,6 @@ public class SelectBox extends JMPanel {
         dc.open();
     }
 
-    public int getSelectIndex() {
-        return selectIndex;
-    }
-
     public String getSelectText() {
         return list[selectIndex];
     }
@@ -91,7 +89,7 @@ public class SelectBox extends JMPanel {
 
 class JMDialogChooser extends JMDialog {
     private List<ChooserItem> listItem;
-    private int selectIndex;
+    @Getter private int selectIndex;
     private final String[] list;
     private final MouseAdapter mo =
             new MouseAdapter() {
@@ -118,8 +116,8 @@ class JMDialogChooser extends JMDialog {
         JPanel body = new JPanel();
         body.setBackground(Color.WHITE);
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
-        for (int i = 0; i < list.length; i++) {
-            ChooserItem ch = new ChooserItem(list[i]);
+        for (String s : list) {
+            ChooserItem ch = new ChooserItem(s);
             ch.addMouseListener(mo);
             listItem.add(ch);
             body.add(ch);
@@ -128,16 +126,12 @@ class JMDialogChooser extends JMDialog {
         container.add(body);
         pack();
     }
-
-    public int getSelectIndex() {
-        return selectIndex;
-    }
 }
 
 class ChooserItem extends JMPanel {
     private final JLabel labelName;
     private final JLabel labelSelect;
-    private boolean selected;
+    @Getter private boolean selected;
 
     public ChooserItem(String name) {
         setLayout(null);
@@ -153,10 +147,6 @@ class ChooserItem extends JMPanel {
         add(labelSelect);
         labelSelect.setBounds(150, 0, 40, 40);
         setPreferredSize(new Dimension(200, 40));
-    }
-
-    public boolean isSelected() {
-        return selected;
     }
 
     public void setSelected(boolean selected) {

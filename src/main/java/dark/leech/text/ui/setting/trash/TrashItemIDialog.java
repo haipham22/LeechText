@@ -1,8 +1,5 @@
 package dark.leech.text.ui.setting.trash;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.*;
 
 import dark.leech.text.models.Trash;
@@ -60,26 +57,17 @@ class TrashItemIDialog extends JMDialog {
         container.add(textTip);
         textTip.setBounds(10, 160, 280, 37);
         labelTip.setBounds(10, 135, 280, 25);
+
         ok.setText("XONG");
-        ok.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        check();
-                    }
-                });
+        ok.addActionListener(e -> check());
         container.add(ok);
         ok.setBounds(105, 210, 90, 30);
+
         cancel.setText("HỦY");
-        cancel.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        close();
-                    }
-                });
+        cancel.addActionListener(e -> close());
         container.add(cancel);
         cancel.setBounds(200, 210, 90, 30);
+
         this.setSize(300, 250);
     }
 

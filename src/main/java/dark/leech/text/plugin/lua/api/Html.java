@@ -1,4 +1,4 @@
-package dark.leech.text.lua.api;
+package dark.leech.text.plugin.lua.api;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

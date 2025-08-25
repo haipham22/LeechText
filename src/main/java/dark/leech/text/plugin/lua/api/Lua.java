@@ -1,4 +1,4 @@
-package dark.leech.text.lua.api;
+package dark.leech.text.plugin.lua.api;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;

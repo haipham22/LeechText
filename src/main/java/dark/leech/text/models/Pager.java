@@ -2,7 +2,11 @@ package dark.leech.text.models;
 
 import java.util.List;
 
-/** Created by Long on 9/15/2016. */
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Pager {
     private String url;
     private String name;
@@ -19,47 +23,11 @@ public class Pager {
         this.url = url;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public List<Chapter> getChapter() {
-        return chapter;
-    }
-
-    public void setChapter(List<Chapter> chapter) {
-        this.chapter = chapter;
-    }
-
-    public String getId() {
-        return id;
-    }
-
     public void setId(String id) {
         this.id = id;
     }
 
     public void setId(int id) {
         this.id = "P" + id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
     }
 }

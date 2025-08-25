@@ -1,12 +1,12 @@
 package dark.leech.text.ui.download;
 
+import static dark.leech.text.util.TextUtils.getClipboard;
+
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.*;
+
+import lombok.Setter;
 
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.listeners.AddListener;
@@ -25,10 +25,8 @@ public class AddURL extends JMDialog {
     private BasicButton btOk;
     private BasicButton btCancel;
     private JMTextField tfUrl;
-    private CircleButton btAddMul;
-    private JLabel lbUrl;
     private String url;
-    private AddListener addListener;
+    @Setter private AddListener addListener;
     private String cookies;
 
     public AddURL() {
@@ -40,24 +38,15 @@ public class AddURL extends JMDialog {
         super.onCreate();
         btOk = new BasicButton();
         btCancel = new BasicButton();
-        btAddMul = new CircleButton(StringUtils.ADD);
+        var btAddMul = new CircleButton(StringUtils.ADD);
         tfUrl = new JMTextField();
-        lbUrl = new JLabel();
+        var lbUrl = new JLabel();
         // ---- button1 ----
         btOk.setText("OK");
         btOk.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        url = tfUrl.getText();
-                        runOnUiThread(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        checkURL();
-                                    }
-                                });
-                    }
+                e -> {
+                    url = tfUrl.getText();
+                    runOnUiThread(this::checkURL);
                 });
 
         container.add(btOk);
@@ -65,13 +54,7 @@ public class AddURL extends JMDialog {
 
         // ---- button2 ----
         btCancel.setText("HỦY");
-        btCancel.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        close();
-                    }
-                });
+        btCancel.addActionListener(e -> close());
         container.add(btCancel);
         btCancel.setBounds(125, 75, 110, 35);
 
@@ -90,16 +73,13 @@ public class AddURL extends JMDialog {
         btAddMul.setBounds(220, 5, 25, 25);
         btAddMul.setForeground(SettingUtils.THEME_COLOR);
         btAddMul.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        if (tfUrl.getText() == null || tfUrl.getText().length() < 5)
-                            tfUrl.addError("Xin nhập URL!");
-                        else {
-                            AddOption lg = new AddOption();
-                            lg.setBlurListener(AddURL.this);
-                            lg.open();
-                        }
+                actionEvent -> {
+                    if (tfUrl.getText() == null || tfUrl.getText().length() < 5)
+                        tfUrl.addError("Xin nhập URL!");
+                    else {
+                        AddOption lg = new AddOption();
+                        lg.setBlurListener(AddURL.this);
+                        lg.open();
                     }
                 });
         container.add(btAddMul);
@@ -124,24 +104,6 @@ public class AddURL extends JMDialog {
         } else {
             tfUrl.addError("Plugin cho trang này đã bị tắt!");
         }
-    }
-
-    private String getClipboard() {
-        try {
-            Transferable transferable =
-                    Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            if (transferable != null
-                    && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                String result = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                if (result.toLowerCase().startsWith("http")) return result;
-            }
-        } catch (Exception e) {
-        }
-        return "";
-    }
-
-    public void setAddListener(AddListener addListener) {
-        this.addListener = addListener;
     }
 
     class AddOption extends JMDialog {
@@ -174,20 +136,11 @@ public class AddURL extends JMDialog {
             container.add(label);
 
             btOk.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent actionEvent) {
-                            cookies = tfCookies.getText();
-                            close();
-                        }
+                    actionEvent -> {
+                        cookies = tfCookies.getText();
+                        close();
                     });
-            btCancel.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent actionEvent) {
-                            close();
-                        }
-                    });
+            btCancel.addActionListener(actionEvent -> close());
         }
     }
 }
