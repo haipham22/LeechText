@@ -24,7 +24,6 @@ import dark.leech.text.ui.button.CloseButton;
 import dark.leech.text.ui.download.AddURL;
 import dark.leech.text.ui.download.DownloadUI;
 import dark.leech.text.ui.main.plugin.PluginUI;
-import dark.leech.text.ui.main.repository.RepositoryUI;
 import dark.leech.text.ui.material.JMMenuItem;
 import dark.leech.text.ui.material.JMPopupMenu;
 import dark.leech.text.util.AppUtils;
@@ -141,7 +140,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
      * based on screen dimensions.
      */
     public MainUI() {
-        //        setLocation(AppUtils.width - 420, AppUtils.height - 650);
+        // setLocation(AppUtils.width - 420, AppUtils.height - 650);
         setSize(390, 555);
         getRootPane().setBorder(new LineBorder(Color.LIGHT_GRAY, 1));
         setUndecorated(true);

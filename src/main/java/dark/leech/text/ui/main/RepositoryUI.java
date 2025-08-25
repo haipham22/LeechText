@@ -1,8 +1,8 @@
-package dark.leech.text.ui.main.repository;
+package dark.leech.text.ui.main;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -20,7 +20,7 @@ public class RepositoryUI extends JMDialog implements RemoveListener {
 
     private GridBagConstraints gbc;
 
-    private List<RepositoryEntity> repositoryList;
+    private Set<RepositoryEntity> repositoryList;
     private BasicButton add;
     private BasicButton ok;
     private BasicButton cancel;
@@ -29,7 +29,7 @@ public class RepositoryUI extends JMDialog implements RemoveListener {
 
     public RepositoryUI() {
         numRepository = 0;
-        this.repositoryList = new ArrayList<>();
+        this.repositoryList = new HashSet<>();
         add = new BasicButton();
         ok = new BasicButton();
         cancel = new BasicButton();
@@ -105,18 +105,14 @@ public class RepositoryUI extends JMDialog implements RemoveListener {
     private void addItem() {
         final AddRepositoriesDialog addRepositoriesDialog = new AddRepositoriesDialog();
         addRepositoriesDialog.setBlurListener(this);
-        addRepositoriesDialog.setChangeListener(
-                () -> {
-                    repositoryList.addAll(addRepositoriesDialog.getRepositoryList());
-                    load();
-                });
+        addRepositoriesDialog.setChangeListener(() -> {});
+
         addRepositoriesDialog.open();
     }
 
     private void addItem(RepositoryEntity repositoryEntity) {
         RepositoryTile repositoryTile = new RepositoryTile(repositoryEntity);
         repositoryTile.setRemoveListener(this);
-        repositoryTile.setBlurListener(this);
         body.add(repositoryTile, gbc, numRepository);
         body.updateUI();
         numRepository++;

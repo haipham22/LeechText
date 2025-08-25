@@ -1,14 +1,13 @@
 package dark.leech.text.ui.repository;
 
-import java.awt.Color;
+import java.awt.*;
 
-import javax.swing.JLabel;
+import javax.swing.*;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import dark.leech.text.enities.RepositoryEntity;
-import dark.leech.text.listeners.BlurListener;
 import dark.leech.text.listeners.RemoveListener;
 import dark.leech.text.ui.button.CircleButton;
 import dark.leech.text.ui.material.JMPanel;
@@ -23,7 +22,6 @@ public class RepositoryTile extends JMPanel {
     @Getter private RepositoryEntity repositoryEntity;
 
     @Setter private RemoveListener removeListener;
-    @Setter private BlurListener blurListener;
 
     public RepositoryTile(RepositoryEntity repositoryEntity) {
         this.repositoryEntity = repositoryEntity;

@@ -23,6 +23,7 @@ public abstract class JMDialog extends JDialog implements BlurListener {
     @Setter private BlurListener blurListener;
     private BufferedImage blurBuffer;
     private BufferedImage backBuffer;
+
     @Setter private ChangeListener changeListener;
     @Setter private Color borderColor;
 

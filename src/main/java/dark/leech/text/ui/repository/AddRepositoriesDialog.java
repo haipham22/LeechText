@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import dark.leech.text.enities.RepositoryEntity;
 import dark.leech.text.ui.button.BasicButton;
@@ -32,7 +31,7 @@ public class AddRepositoriesDialog extends JMDialog {
     private BasicButton ok;
     private BasicButton cancel;
 
-    @Getter @Setter private List<RepositoryEntity> repositoryList;
+    @Getter private List<RepositoryEntity> repositoryList;
 
     public AddRepositoriesDialog() {
         this(new ArrayList<>());
