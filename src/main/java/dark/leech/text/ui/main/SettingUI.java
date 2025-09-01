@@ -39,8 +39,6 @@ import dark.leech.text.util.ColorUtils;
 import dark.leech.text.util.FontUtils;
 
 public class SettingUI extends JPanel {
-    private JPanel body;
-    private JMScrollPane scrollPane;
     // connection
     private ItemConn maxConn;
     private ItemConn reConn;
@@ -59,8 +57,6 @@ public class SettingUI extends JPanel {
     private ToolPane workPath;
     private Theme theme;
 
-    private BasicButton defaultButton;
-
     public SettingUI() {
         setLayout(null);
         SwingUtilities.invokeLater(this::onCreate);
@@ -72,13 +68,13 @@ public class SettingUI extends JPanel {
 
     private void onCreate() {
         setBackground(Color.WHITE);
-        body = new JPanel(new GridBagLayout());
+        JPanel body = new JPanel(new GridBagLayout());
         body.setBackground(Color.white);
         GridBagConstraints gi = new GridBagConstraints();
         gi.gridwidth = GridBagConstraints.REMAINDER;
         gi.weightx = 1;
         gi.weighty = 1;
-        scrollPane = new JMScrollPane(body);
+        JMScrollPane scrollPane = new JMScrollPane(body);
 
         JPanel demo = new JPanel();
         demo.setBackground(Color.WHITE);
@@ -132,8 +128,7 @@ public class SettingUI extends JPanel {
         body.add(maxConn, gbc, 0);
         body.add(Label("Kết nối"), gbc, 0);
 
-        //
-        defaultButton = new BasicButton();
+        var defaultButton = new BasicButton();
         defaultButton.setText("Khôi phục mặc định");
         defaultButton.addActionListener(
                 e -> {

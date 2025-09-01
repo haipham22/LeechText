@@ -5,14 +5,18 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+import lombok.Setter;
+
 import dark.leech.text.util.ColorUtils;
 
 /** Created by Long on 9/30/2016. */
 class ButtonUI extends BasicButtonUI {
-    private boolean round;
-    private Color rolloverBackground;
-    private Color pressedBackground;
-    private Color defaultBackground;
+    private final boolean round;
+    private final Color defaultBackground;
+
+    @Setter private Color rolloverBackground;
+    @Setter private Color pressedBackground;
+
     private Dimension size;
 
     public ButtonUI() {
@@ -25,22 +29,6 @@ class ButtonUI extends BasicButtonUI {
         pressedBackground = new Color(bc.getRed(), bc.getGreen(), bc.getBlue(), 100);
         defaultBackground = new Color(bc.getRed(), bc.getGreen(), bc.getBlue(), 0);
         this.round = round;
-    }
-
-    public void setRound(boolean round) {
-        this.round = round;
-    }
-
-    public void setRolloverBackground(Color rolloverBackground) {
-        this.rolloverBackground = rolloverBackground;
-    }
-
-    public void setPressedBackground(Color pressedBackground) {
-        this.pressedBackground = pressedBackground;
-    }
-
-    public void setDefaultBackground(Color defaultBackground) {
-        this.defaultBackground = defaultBackground;
     }
 
     @Override

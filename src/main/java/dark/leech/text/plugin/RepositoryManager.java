@@ -22,16 +22,17 @@ public class RepositoryManager {
 
     private RepositoryManager() {
 
-        List<RepositoryEntity> repo = new ArrayList<>();
+        repositoryList = new ArrayList<>();
         try {
             var json = FileUtils.file2string(AppUtils.curDir + "/tools/repository.json");
             var type = TypeToken.getParameterized(List.class, RepositoryEntity.class).getType();
-            repo = gson.fromJson(json, type);
+            List<RepositoryEntity> repo = gson.fromJson(json, type);
+
+            if (CollectionUtils.isNotEmpty(repo)) repositoryList = repo;
+
         } catch (Exception e) {
             Log.add(e);
         }
-
-        if (CollectionUtils.isNotEmpty(repo)) repositoryList = repo;
     }
 
     public static RepositoryManager getManager() {

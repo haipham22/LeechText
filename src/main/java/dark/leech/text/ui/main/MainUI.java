@@ -277,6 +277,12 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         pnHeader.add(btBack);
         btBack.setBounds(5, 5, 45, 45);
 
+        // OK button for saving settings
+        btOk = new CircleButton(StringUtils.EDIT, 25f);
+        btOk.addActionListener(this);
+        pnHeader.add(btOk);
+        btOk.setBounds(340, 5, 45, 45);
+
         // Logo for header panel
         lbLogo = new JLabel();
         lbLogo.setText("Leech Text");
