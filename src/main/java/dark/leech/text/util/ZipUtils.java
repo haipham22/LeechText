@@ -85,6 +85,16 @@ public class ZipUtils {
         return new String(readInZipAsByte(zipfile, filepath), StandardCharsets.UTF_8);
     }
 
+    /** Extract a zip file to a destination directory */
+    public static void extract(String zipPath, String destPath) {
+        try {
+            ZipFile zipFile = new ZipFile(zipPath);
+            zipFile.extractAll(destPath);
+        } catch (Exception e) {
+            Log.add("Error extracting zip file: " + e);
+        }
+    }
+
     public static void setDefaultCompressionLevel(int level) {
         switch (level) {
             case 0:

@@ -60,4 +60,8 @@ public class PluginManager {
     public List<PluginEntity> list() {
         return pluginList;
     }
+
+    public PluginEntity getByUUID(String uuid) {
+        return pluginList.stream().filter(p -> p.getUuid().equals(uuid)).findFirst().orElse(null);
+    }
 }

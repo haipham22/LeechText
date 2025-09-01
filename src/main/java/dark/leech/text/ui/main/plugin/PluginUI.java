@@ -1,7 +1,6 @@
 package dark.leech.text.ui.main.plugin;
 
 import java.awt.*;
-import java.util.stream.Collectors;
 
 import javax.swing.*;
 
@@ -92,8 +91,7 @@ public class PluginUI extends JMDialog {
     private void getPlugin() {
         var repos = RepositoryManager.getManager().repositoryList();
 
-        var activatedRepos =
-                repos.stream().filter(RepositoryEntity::isEnabled).collect(Collectors.toList());
+        var activatedRepos = repos.stream().filter(RepositoryEntity::isEnabled).toList();
 
         for (RepositoryEntity repo : activatedRepos) {
             var plugins = repo.getLink();

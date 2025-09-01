@@ -186,6 +186,26 @@ public class FileUtils {
         }
     }
 
+    public static void deleteDirectory(String path) {
+        deleteDirectory(new File(validate(path)));
+    }
+
+    public static void deleteDirectory(File dir) {
+        if (dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectory(file);
+                    } else {
+                        file.delete();
+                    }
+                }
+            }
+            dir.delete();
+        }
+    }
+
     public static synchronized String validate(String path) {
         return path.replace("/", AppUtils.SEPARATOR);
     }
