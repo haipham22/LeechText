@@ -1,8 +1,8 @@
 # LeechText Build System
 # Simple Makefile for building native packages
 
-# Read version from build.gradle
-VERSION := $(shell grep "^version " build.gradle | awk -F"'" '{print $$2}')
+# Read version from gradle.properties (single source of truth)
+VERSION := $(shell grep "^app.version" gradle.properties | cut -d'=' -f2 | tr -d ' ')
 
 # Build configuration
 JAR_FILE := build/libs/leechtext-java-$(VERSION).jar
