@@ -110,7 +110,7 @@ jobs:
 
       - name: Publish Test Report
         if: always() && steps.check-tests.outputs.has-tests == 'true'
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         with:
           name: Test Results
           path: build/test-results/test/**/*.xml
