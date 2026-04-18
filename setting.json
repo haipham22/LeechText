@@ -4,14 +4,12 @@
     "theme_color": "#263238",
     "calibre": "",
     "kindlegen": "",
-    "trash": [
-      {
-        "src": "^Ch..ng \\d+.*?\\n",
-        "replace": false,
-        "tip": "Xóa chương trùng",
-        "to": ""
-      }
-    ]
+    "trash": [{
+      "src": "^Ch..ng \\d+.*?\\n",
+      "replace": false,
+      "tip": "Xóa chương trùng",
+      "to": ""
+    }]
   },
   "connection": {
     "num_conn": "5",

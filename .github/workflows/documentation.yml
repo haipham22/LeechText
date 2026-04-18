@@ -1,0 +1,100 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+      - 'CLAUDE.md'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+      - 'CLAUDE.md'
+
+jobs:
+  validate-docs:
+    name: Validate Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm install -g markdown-link-check
+          npm install -g markdownlint-cli
+
+      - name: Check documentation links
+        run: |
+          find docs -name "*.md" -exec markdown-link-check {} \;
+        continue-on-error: true
+
+      - name: Lint markdown files
+        run: |
+          markdownlint 'docs/**/*.md' 'README.md' 'CLAUDE.md' || true
+
+      - name: Check document size limits
+        run: |
+          bash -c '
+            MAX_LOC=800
+            violations=0
+            for file in docs/*.md; do
+              if [ -f "$file" ]; then
+                loc=$(wc -l < "$file")
+                if [ "$loc" -gt "$MAX_LOC" ]; then
+                  echo "❌ $file: $loc lines (exceeds $MAX_LOC)"
+                  violations=$((violations + 1))
+                else
+                  echo "✅ $file: $loc lines"
+                fi
+              fi
+            done
+            if [ $violations -gt 0 ]; then
+              echo "❌ $violations files exceed size limit"
+              exit 1
+            fi
+          '
+
+  build-docs:
+    name: Build Documentation Site
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate documentation index
+        run: |
+          cat > docs/INDEX.md << 'EOF'
+          # LeechText Documentation Index
+
+          Last updated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          ## Core Documentation
+
+          - [Project Overview](docs/project-overview-pdr.md)
+          - [Codebase Summary](docs/codebase-summary.md)
+          - [System Architecture](docs/system-architecture.md)
+          - [Code Standards](docs/code-standards.md)
+          - [Project Roadmap](docs/project-roadmap.md)
+
+          ## Additional Documentation
+
+          - [WebP Cover Image Fix](docs/fix-webp-cover-image-issue.md)
+
+          EOF
+
+      - name: Upload documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: docs/
