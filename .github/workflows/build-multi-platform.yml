@@ -93,10 +93,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get version from build.gradle
+      - name: Get version from gradle.properties
         id: version
         run: |
-          VERSION=$(grep "^version " build.gradle | awk -F"'" '{print $2}')
+          VERSION=$(grep "^app.version" gradle.properties | cut -d'=' -f2 | tr -d ' ')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Check if tag exists
