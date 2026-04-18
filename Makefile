@@ -111,12 +111,13 @@ package-mac: build $(PACKAGE_DIR)
 			--copyright "MIT License" \
 			--app-version "$(VERSION)" \
 			--type dmg \
-			--mac \
 			--icon src/main/resources/icons/leechtext.icns \
 			--input build/libs/ \
 			--main-jar leechtext-java-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
 			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
+			--java-options "--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED" \
+			--java-options "--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED" \
 			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
 	else \
 		jpackage \
@@ -126,11 +127,12 @@ package-mac: build $(PACKAGE_DIR)
 			--copyright "MIT License" \
 			--app-version "$(VERSION)" \
 			--type dmg \
-			--mac \
 			--input build/libs/ \
 			--main-jar leechtext-java-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
 			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
+			--java-options "--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED" \
+			--java-options "--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED" \
 			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
 		echo "$(COLOR_YELLOW)⚠ Using default Java icon (custom icon not found)$(COLOR_RESET)"; \
 	fi

@@ -307,10 +307,11 @@ public class AppUtils {
             Method setDockIconImageMethod =
                     applicationClass.getMethod("setDockIconImage", Image.class);
             setDockIconImageMethod.invoke(application, image);
-            System.out.println("macOS dock icon set successfully");
+            // Silent success - dock icon is set
         } catch (Exception e) {
-            System.err.println("Warning: Could not set macOS dock icon: " + e.getMessage());
-            // Continue anyway - this is not critical
+            // Silent failure - dock icon requires --add-opens JVM arg
+            // This is expected when running without proper JVM flags
+            // The window icon will still work, just not the dock icon
         }
     }
 }
