@@ -16,7 +16,7 @@ COLOR_GREEN := \033[32m
 COLOR_YELLOW := \033[33m
 COLOR_BLUE := \033[34m
 
-.PHONY: all build clean package package-mac package-windows package-linux help
+.PHONY: all build clean package package-mac package-windows package-linux help run run-native run-logs
 
 # Default target
 all: build
@@ -32,6 +32,37 @@ build:
 	@echo "$(COLOR_BLUE)Building LeechText v$(VERSION)...$(COLOR_RESET)"
 	$(GRADLEW) clean assemble jar -x test -x pmdMain -x pmdTest -x checkstyleMain -x checkstyleTest
 	@echo "$(COLOR_GREEN)✓ Build complete: $(JAR_FILE)$(COLOR_RESET)"
+
+# Run JAR directly
+run: build
+	@echo "$(COLOR_BLUE)Running LeechText from JAR...$(COLOR_RESET)"
+	java -jar $(JAR_FILE)
+
+# Run native app (macOS)
+run-native: package-mac
+	@echo "$(COLOR_BLUE)Running native LeechText app...$(COLOR_RESET)"
+	@if [ -d "/Applications/LeechText.app" ]; then \
+		open /Applications/LeechText.app; \
+	elif [ -f "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" ]; then \
+		echo "$(COLOR_YELLOW)Installing DMG first...$(COLOR_RESET)"; \
+		hdiutil attach "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" -quiet; \
+		cp -r /Volumes/LeechText/LeechText.app /Applications/; \
+		hdiutil detach /Volumes/LeechText -quiet; \
+		open /Applications/LeechText.app; \
+	else \
+		echo "$(COLOR_YELLOW)⚠ No native package found. Run 'make package-mac' first.$(COLOR_RESET)"; \
+	fi
+
+# Run native app with logging
+run-logs: package-mac
+	@echo "$(COLOR_BLUE)Running LeechText with verbose logging...$(COLOR_RESET)"
+	@if [ -d "/Applications/LeechText.app" ]; then \
+		LOG_FILE="$${HOME}/.leechtext/app.log"; \
+		echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
+		/Applications/LeechText.app/Contents/MacOS/LeechText 2>&1 | tee "$$LOG_FILE"; \
+	else \
+		echo "$(COLOR_YELLOW)⚠ Native app not installed. Run 'make package-mac' first.$(COLOR_RESET)"; \
+	fi
 
 # Clean build artifacts
 clean:
@@ -62,17 +93,33 @@ package: build $(PACKAGE_DIR)
 # Package for macOS
 package-mac: build $(PACKAGE_DIR)
 	@echo "$(COLOR_BLUE)Creating macOS DMG...$(COLOR_RESET)"
-	jpackage \
-		--name LeechText \
-		--vendor "LeechText Team" \
-		--description "Text extraction and ebook creation tool" \
-		--copyright "MIT License" \
-		--app-version "$(VERSION)" \
-		--type dmg \
-		--input build/libs/ \
-		--main-jar leechtext-java-$(VERSION).jar \
-		--main-class $(MAIN_CLASS) \
-		--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"
+	@if [ -f "src/main/resources/icons/leechtext.icns" ]; then \
+		jpackage \
+			--name LeechText \
+			--vendor "LeechText Team" \
+			--description "Text extraction and ebook creation tool" \
+			--copyright "MIT License" \
+			--app-version "$(VERSION)" \
+			--type dmg \
+			--icon src/main/resources/icons/leechtext.icns \
+			--input build/libs/ \
+			--main-jar leechtext-java-$(VERSION).jar \
+			--main-class $(MAIN_CLASS) \
+			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
+	else \
+		jpackage \
+			--name LeechText \
+			--vendor "LeechText Team" \
+			--description "Text extraction and ebook creation tool" \
+			--copyright "MIT License" \
+			--app-version "$(VERSION)" \
+			--type dmg \
+			--input build/libs/ \
+			--main-jar leechtext-java-$(VERSION).jar \
+			--main-class $(MAIN_CLASS) \
+			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
+		echo "$(COLOR_YELLOW)⚠ Using default Java icon (custom icon not found)$(COLOR_RESET)"; \
+	fi
 	@if [ -f "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" ]; then \
 		echo "$(COLOR_GREEN)✓ macOS package created: $(PACKAGE_DIR)/LeechText-$(VERSION).dmg$(COLOR_RESET)"; \
 	else \
@@ -109,19 +156,37 @@ package-windows: build $(PACKAGE_DIR)
 package-linux: build $(PACKAGE_DIR)
 	@echo "$(COLOR_BLUE)Creating Linux DEB...$(COLOR_RESET)"
 	@echo "$(COLOR_YELLOW)⚠ Linux packaging requires Linux OS$(COLOR_RESET)"
-	jpackage \
-		--name LeechText \
-		--vendor "LeechText Team" \
-		--description "Text extraction and ebook creation tool" \
-		--copyright "MIT License" \
-		--app-version "$(VERSION)" \
-		--type deb \
-		--input build/libs/ \
-		--main-jar leechtext-java-$(VERSION).jar \
-		--main-class $(MAIN_CLASS) \
-		--linux-shortcut \
-		--linux-package-name leechtext \
-		--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"
+	@if [ -f "src/main/resources/icons/leechtext.png" ]; then \
+		jpackage \
+			--name LeechText \
+			--vendor "LeechText Team" \
+			--description "Text extraction and ebook creation tool" \
+			--copyright "MIT License" \
+			--app-version "$(VERSION)" \
+			--type deb \
+			--icon src/main/resources/icons/leechtext.png \
+			--input build/libs/ \
+			--main-jar leechtext-java-$(VERSION).jar \
+			--main-class $(MAIN_CLASS) \
+			--linux-shortcut \
+			--linux-package-name leechtext \
+			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
+	else \
+		jpackage \
+			--name LeechText \
+			--vendor "LeechText Team" \
+			--description "Text extraction and ebook creation tool" \
+			--copyright "MIT License" \
+			--app-version "$(VERSION)" \
+			--type deb \
+			--input build/libs/ \
+			--main-jar leechtext-java-$(VERSION).jar \
+			--main-class $(MAIN_CLASS) \
+			--linux-shortcut \
+			--linux-package-name leechtext \
+			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
+		echo "$(COLOR_YELLOW)⚠ Using default Java icon (custom icon not found)$(COLOR_RESET)"; \
+	fi
 	@if [ -f "$(PACKAGE_DIR)/leechtext_$(VERSION)_amd64.deb" ]; then \
 		echo "$(COLOR_GREEN)✓ Linux package created: $(PACKAGE_DIR)/leechtext_$(VERSION)_amd64.deb$(COLOR_RESET)"; \
 	else \
@@ -140,6 +205,10 @@ help:
 	@echo "  $(COLOR_BLUE)make package-mac$(COLOR_RESET) - Create macOS DMG"
 	@echo "  $(COLOR_BLUE)make package-windows$(COLOR_RESET) - Create Windows EXE"
 	@echo "  $(COLOR_BLUE)make package-linux$(COLOR_RESET) - Create Linux DEB"
+	@echo "  $(COLOR_BLUE)make run$(COLOR_RESET)       - Run from JAR"
+	@echo "  $(COLOR_BLUE)make run-native$(COLOR_RESET) - Run installed native app"
+	@echo "  $(COLOR_BLUE)make run-logs$(COLOR_RESET)  - Run with verbose logging to console & file"
 	@echo "  $(COLOR_BLUE)make help$(COLOR_RESET)      - Show this help message"
 	@echo ""
 	@echo "$(COLOR_YELLOW)Version: $(VERSION)$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)Log file: $$HOME/.leechtext/app.log$(COLOR_RESET)"
