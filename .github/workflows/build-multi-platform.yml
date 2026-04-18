@@ -65,14 +65,17 @@ jobs:
             make package-linux
           fi
 
+      - name: Check package directory
+        shell: bash
+        run: |
+          echo "Package directory contents:"
+          ls -la build/jpackage/ || echo "Directory does not exist"
+
       - name: Upload native packages
         uses: actions/upload-artifact@v4
         with:
           name: leechtext-native-${{ matrix.platform }}
-          path: |
-            build/jpackage/*.dmg
-            build/jpackage/*.exe
-            build/jpackage/*.deb
+          path: build/jpackage/
           retention-days: 30
           if-no-files-found: warn
 
