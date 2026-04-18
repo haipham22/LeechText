@@ -63,6 +63,9 @@ local.properties
 # VS Code
 .vscode/
 
+# Jetbrains
+.idea/
+
 # Operating System
 .DS_Store
 .DS_Store?
@@ -106,6 +109,7 @@ cache/
 # Test results
 test-results/
 test-output/
+output/
 
 # Coverage reports
 coverage/
