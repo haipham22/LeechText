@@ -11,12 +11,15 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os:
+          - macos-latest
+#          - windows-latest
+          - ubuntu-latest
         include:
           - os: macos-latest
             platform: mac
-          - os: windows-latest
-            platform: windows
+#          - os: windows-latest
+#            platform: windows
           - os: ubuntu-latest
             platform: linux
 
