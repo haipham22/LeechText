@@ -37,6 +37,18 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           install: make
+          update: true
+          msystem: MINGW64
+
+      - name: Verify tools
+        shell: bash
+        run: |
+          echo "Java version:"
+          java -version
+          echo "Make version:"
+          make --version || echo "Make not found"
+          echo "jpackage check:"
+          jpackage --version || echo "jpackage not found"
 
       - name: Build JAR with Make
         run: make build
