@@ -90,7 +90,7 @@ package-windows: build $(PACKAGE_DIR)
 		--description "Text extraction and ebook creation tool" \
 		--copyright "MIT License" \
 		--app-version "$(VERSION)" \
-		--type exe \
+		--type msi \
 		--input build/libs/ \
 		--main-jar leechtext-java-$(VERSION).jar \
 		--main-class $(MAIN_CLASS) \
