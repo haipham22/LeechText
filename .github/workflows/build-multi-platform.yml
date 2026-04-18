@@ -75,7 +75,7 @@ jobs:
           ls -la build/jpackage/ || echo "Directory does not exist"
 
       - name: Upload native packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: leechtext-native-${{ matrix.platform }}
           path: build/jpackage/
@@ -188,7 +188,7 @@ jobs:
 
       - name: Upload dev build artifacts
         if: steps.check_tag.outputs.exists == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: leechtext-dev-${{ steps.version.outputs.version }}-${{ github.run_number }}
           path: artifacts/**/*
