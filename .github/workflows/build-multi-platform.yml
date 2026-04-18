@@ -1,0 +1,119 @@
+name: Build Multi-Platform
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        include:
+          - os: macos-latest
+            platform: mac
+            artifact_name: LeechText-mac.jar
+          - os: windows-latest
+            platform: windows
+            artifact_name: LeechText-windows.jar
+          - os: ubuntu-latest
+            platform: linux
+            artifact_name: LeechText-linux.jar
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        if: runner.os != 'Windows'
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test --no-daemon
+
+      - name: Run tests
+        run: ./gradlew test --no-daemon
+
+      - name: Create distribution directory
+        run: mkdir -p dist
+
+      - name: Copy JAR to distribution name
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" == "Windows" ]; then
+            cp build/libs/*.jar dist/${{ matrix.artifact_name }}
+          else
+            cp build/libs/*.jar dist/${{ matrix.artifact_name }}
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: leechtext-${{ matrix.platform }}
+          path: dist/${{ matrix.artifact_name }}
+          retention-days: 30
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.platform }}
+          path: build/test-results/test/
+          retention-days: 7
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create checksums
+        run: |
+          cd artifacts
+          for dir in */; do
+            cd "$dir"
+            for file in *.jar; do
+              if [ -f "$file" ]; then
+                sha256sum "$file" > "$file.sha256"
+                md5sum "$file" > "$file.md5"
+              fi
+            done
+            cd ..
+          done
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/leechtext-mac/*.jar
+            artifacts/leechtest-mac/*.sha256
+            artifacts/leechtest-mac/*.md5
+            artifacts/leechtest-windows/*.jar
+            artifacts/leechtest-windows/*.sha256
+            artifacts/leechtest-windows/*.md5
+            artifacts/leechtest-linux/*.jar
+            artifacts/leechtest-linux/*.sha256
+            artifacts/leechtest-linux/*.md5
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
