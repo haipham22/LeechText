@@ -104,9 +104,13 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         getRootPane().setBorder(new LineBorder(Color.LIGHT_GRAY, 1));
         setUndecorated(true);
         setTitle("LeechText");
-        setIconImage(
-                Toolkit.getDefaultToolkit()
-                        .getImage(getClass().getResource("/dark/leech/res/icon.png")));
+
+        // Load application icon using utility function
+        Image icon = AppUtils.loadApplicationIcon();
+        if (icon != null) {
+            setIconImage(icon);
+        }
+
         new Thread(this::onCreate).start();
     }
 

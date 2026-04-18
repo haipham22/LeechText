@@ -2,6 +2,7 @@ package dark.leech.text.util;
 
 import java.awt.*;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Properties;
 
 import javax.swing.*;
@@ -231,6 +232,85 @@ public class AppUtils {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
             // Silently handle thread interruption
+        }
+    }
+
+    /**
+     * Loads the application icon with multiple fallback strategies.
+     *
+     * <p>This method attempts to load the application icon from several sources in order:
+     *
+     * <ol>
+     *   <li>Classpath resource (works in JAR files)
+     *   <li>Direct file path (development mode)
+     * </ol>
+     *
+     * <p>On macOS, also sets the dock icon using reflection to avoid module access issues.
+     *
+     * @return The loaded Image, or null if loading fails
+     */
+    public static Image loadApplicationIcon() {
+        try {
+            // Strategy 1: Try loading from classpath (works in JAR)
+            java.net.URL iconUrl = AppUtils.class.getResource("/dark/leech/res/icon.png");
+
+            if (iconUrl != null) {
+                java.awt.image.BufferedImage image = javax.imageio.ImageIO.read(iconUrl);
+                if (image != null) {
+                    System.out.println("Icon loaded from classpath: " + iconUrl);
+
+                    // Set macOS dock icon using reflection (avoids module access issues)
+                    setMacOSDockIcon(image);
+
+                    return image;
+                }
+            }
+
+            // Strategy 2: Fallback to direct file path (development mode)
+            java.io.File iconFile = new java.io.File("src/main/resources/dark/leech/res/icon.png");
+            if (iconFile.exists()) {
+                java.awt.image.BufferedImage image = javax.imageio.ImageIO.read(iconFile);
+                if (image != null) {
+                    System.out.println("Icon loaded from file: " + iconFile.getAbsolutePath());
+
+                    // Set macOS dock icon using reflection
+                    setMacOSDockIcon(image);
+
+                    return image;
+                }
+            }
+
+            System.err.println("Warning: Could not load application icon from any source");
+
+        } catch (Exception e) {
+            System.err.println("Warning: Error loading application icon: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Sets the macOS dock icon using reflection to avoid Java module system restrictions.
+     *
+     * @param image The icon image to set
+     */
+    private static void setMacOSDockIcon(Image image) {
+        if (!System.getProperty("os.name").toLowerCase().contains("mac")) {
+            return; // Only applicable on macOS
+        }
+
+        try {
+            // Use reflection to access macOS-specific API
+            Class<?> applicationClass = Class.forName("com.apple.eawt.Application");
+            Object application = applicationClass.getMethod("getApplication").invoke(null);
+            Method setDockIconImageMethod =
+                    applicationClass.getMethod("setDockIconImage", Image.class);
+            setDockIconImageMethod.invoke(application, image);
+            System.out.println("macOS dock icon set successfully");
+        } catch (Exception e) {
+            System.err.println("Warning: Could not set macOS dock icon: " + e.getMessage());
+            // Continue anyway - this is not critical
         }
     }
 }

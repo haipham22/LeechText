@@ -15,6 +15,9 @@ public class App {
     private static MainUI mainFrame;
 
     public static void main(String[] args) {
+        // Load application icon (handles macOS dock icon automatically)
+        AppUtils.loadApplicationIcon();
+
         new Thread(
                         () -> {
                             try {

@@ -36,7 +36,11 @@ build:
 # Run JAR directly
 run: build
 	@echo "$(COLOR_BLUE)Running LeechText from JAR...$(COLOR_RESET)"
-	java -jar $(JAR_FILE)
+	java \
+		--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED \
+		--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED \
+		-Dapp.home.dir="$(HOME)/.leechtext" \
+		-jar $(JAR_FILE)
 
 # Run native app (macOS)
 run-native: package-mac

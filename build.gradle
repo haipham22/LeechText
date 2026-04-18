@@ -19,7 +19,10 @@ application {
     mainClass = 'dark.leech.text.ui.main.App'
     applicationDefaultJvmArgs = [
         '-Xmx1g',
-        "-Dapp.home.dir=${project.hasProperty('app.home.dir') ? project.getProperty('app.home.dir') : System.getProperty('user.dir')}"
+        "-Dapp.home.dir=${project.hasProperty('app.home.dir') ? project.getProperty('app.home.dir') : System.getProperty('user.dir')}",
+        // Add exports for macOS-specific APIs (for dock icon)
+        '--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED',
+        '--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED'
     ]
 }
 
@@ -140,10 +143,12 @@ jar {
         )
     }
 
-    // Include all dependencies in the JAR (fat JAR)
+    // Include resources and dependencies in the JAR (fat JAR)
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+    // Explicitly include source resources (prevents overwriting)
+    from sourceSets.main.output
 }
 
 // Configure compiler options
@@ -172,8 +177,13 @@ tasks.register('runDev', JavaExec) {
     systemProperty 'java.awt.headless', 'false'
     systemProperty 'swing.defaultlaf', 'javax.swing.plaf.metal.MetalLookAndFeel'
 
-    // Enable debugging
-    jvmArgs = ['-Xmx1g', '-Xms512m']
+    // Enable debugging and macOS dock icon support
+    jvmArgs = [
+        '-Xmx1g',
+        '-Xms512m',
+        '--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED',
+        '--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED'
+    ]
 }
 
 // Wrapper configuration
