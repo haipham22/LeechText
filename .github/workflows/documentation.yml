@@ -2,17 +2,15 @@ name: Documentation
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
     paths:
       - 'docs/**'
       - 'README.md'
-      - 'CLAUDE.md'
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
     paths:
       - 'docs/**'
       - 'README.md'
-      - 'CLAUDE.md'
 
 jobs:
   validate-docs:
@@ -40,7 +38,7 @@ jobs:
 
       - name: Lint markdown files
         run: |
-          markdownlint 'docs/**/*.md' 'README.md' 'CLAUDE.md' || true
+          markdownlint 'docs/**/*.md' 'README.md' || true
 
       - name: Check document size limits
         run: |
