@@ -2,74 +2,82 @@ package dark.leech.text.enities;
 
 import com.google.gson.annotations.SerializedName;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Setter
-@Getter
+/**
+ * Entity representing a plugin with metadata and getter classes. Used for plugin management,
+ * serialization, and updates.
+ */
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PluginEntity {
 
     @SerializedName("uuid")
-    private String uuid = "";
+    private String uuid;
 
     @SerializedName("name")
-    private String name; // Tên
+    private String name;
 
     @SerializedName("version")
-    private double version; // Phiên bản
+    private Double version;
 
     @SerializedName("url")
-    private String url; // Link plugin
+    private String url;
 
     @SerializedName("language")
-    private String language; // Ngôn ngữ (code: vi, en)
+    private String language;
 
     @SerializedName("icon")
-    private String icon; // Icon, base64
+    private String icon;
 
     @SerializedName("source")
-    private String source; // Trang nguồn
+    private String source;
 
     @SerializedName("regex")
-    private String regex; // Chuỗi khớp Http
+    private String regex;
 
     @SerializedName("author")
-    private String author; // Tác giả
+    private String author;
 
     @SerializedName("describe")
-    private String describe; // Mô tả
+    private String describe;
 
     @SerializedName("group")
-    private String group; // Nhóm: dich, convert, truyentranh
+    private String group;
 
     @SerializedName("data")
-    private String data; // Base64
+    private String data;
 
-    private boolean supportUpdate;
+    @Builder.Default private boolean supportUpdate = false;
 
-    // Class
     @SerializedName("chap")
-    private String chapGetter; // Nội dung chương
+    private String chapGetter;
 
     @SerializedName("toc")
-    private String tocGetter; // Danh sánh chương
+    private String tocGetter;
 
     @SerializedName("page")
-    private String pageGetter; // Dnah sách trang chương
+    private String pageGetter;
 
     @SerializedName("search")
-    private String searchGetter; // Tìm kiếm
+    private String searchGetter;
 
     @SerializedName("detail")
-    private String detailGetter; // Chi tiết
+    private String detailGetter;
 
-    @SerializedName("checked")
-    private boolean checked;
+    @Builder.Default private boolean checked = false;
 
+    /**
+     * Apply all fields from another entity, marking this entity as checked. Used for updating
+     * plugin metadata from remote sources.
+     */
     public void apply(PluginEntity entity) {
-        this.uuid = entity.uuid;
+        this.uuid = entity.uuid == null ? java.util.UUID.randomUUID().toString() : entity.uuid;
         this.name = entity.name;
         this.version = entity.version;
         this.url = entity.url;
@@ -80,6 +88,7 @@ public class PluginEntity {
         this.author = entity.author;
         this.describe = entity.describe;
         this.group = entity.group;
+        this.data = entity.data;
         this.supportUpdate = entity.supportUpdate;
         this.chapGetter = entity.chapGetter;
         this.tocGetter = entity.tocGetter;

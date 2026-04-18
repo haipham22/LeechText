@@ -96,6 +96,9 @@ public final class PluginPersistence {
                     filePath,
                     StandardCopyOption.ATOMIC_MOVE,
                     StandardCopyOption.REPLACE_EXISTING);
+
+            Log.add("Store plugin " + filename + " to " + tempPath);
+
         } catch (Exception e) {
             // Clean up temp file on failure
             try {

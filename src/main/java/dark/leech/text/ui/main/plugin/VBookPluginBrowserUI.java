@@ -3,7 +3,6 @@ package dark.leech.text.ui.main.plugin;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -136,10 +135,7 @@ public class VBookPluginBrowserUI extends JMDialog {
                                 extensionList = service.getAvailablePlugins();
                                 allExtensions = new ArrayList<>(extensionList);
 
-                                SwingUtilities.invokeLater(
-                                        () -> {
-                                            filterAndShowExtensions();
-                                        });
+                                SwingUtilities.invokeLater(this::filterAndShowExtensions);
 
                             } catch (VBookRegistryException e) {
                                 SwingUtilities.invokeLater(
@@ -202,7 +198,7 @@ public class VBookPluginBrowserUI extends JMDialog {
                                                                                 .toLowerCase()
                                                                                 .contains(
                                                                                         searchText)))
-                                        .collect(Collectors.toList());
+                                        .toList();
                     }
 
                     if (filteredExtensions.isEmpty()) {
@@ -235,7 +231,7 @@ public class VBookPluginBrowserUI extends JMDialog {
     }
 
     /** UI component for a single vBook extension. Matches LeechText UI style. */
-    private class VBookExtensionItem extends JMPanel {
+    private static class VBookExtensionItem extends JMPanel {
 
         private final VBookExtensionEntity extension;
         private SelectButton btInstall;
@@ -294,6 +290,12 @@ public class VBookPluginBrowserUI extends JMDialog {
             btInstall.setBounds(280, 22, 50, 30);
 
             // Delete/remove button (optional - closes the item)
+            CircleButton btClose = getCircleButton();
+            add(btClose);
+            btClose.setBounds(300, 25, 25, 25);
+        }
+
+        private CircleButton getCircleButton() {
             CircleButton btClose = new CircleButton(StringUtils.CLOSE, 15f);
             btClose.setForeground(ColorUtils.THEME_COLOR);
             btClose.addActionListener(
@@ -312,8 +314,7 @@ public class VBookPluginBrowserUI extends JMDialog {
                                 "Plugin Info",
                                 JOptionPane.INFORMATION_MESSAGE);
                     });
-            add(btClose);
-            btClose.setBounds(300, 25, 25, 25);
+            return btClose;
         }
 
         private void installExtension() {

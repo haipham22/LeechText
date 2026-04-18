@@ -29,6 +29,9 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !gradle/wrapper/gradle-wrapper.properties
 
+# Generated version properties (contains local paths)
+src/main/resources/version.properties
+
 # IntelliJ IDEA
 .idea/
 *.iws

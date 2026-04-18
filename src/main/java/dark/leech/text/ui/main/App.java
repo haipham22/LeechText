@@ -4,6 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import dark.leech.text.action.Log;
 import dark.leech.text.ui.Animation;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
@@ -23,6 +24,7 @@ public class App {
                             AppUtils.doLoad();
                             FileUtils.init();
                             SettingUtils.doLoad();
+                            Log.add("Home directory: " + AppUtils.curDir);
                             mainFrame = new MainUI();
                             Animation.fadeIn(mainFrame);
                             mainFrame.setVisible(true);

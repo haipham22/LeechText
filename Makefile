@@ -16,7 +16,7 @@ COLOR_GREEN := \033[32m
 COLOR_YELLOW := \033[33m
 COLOR_BLUE := \033[34m
 
-.PHONY: all build clean package package-mac package-windows package-linux help run run-native run-logs
+.PHONY: all build clean package package-mac package-windows package-linux help run run-native run-logs info
 
 # Default target
 all: build
@@ -30,7 +30,7 @@ GRADLEW := $(shell if [ "$(UNAME_S)" = "Linux" ] || [ "$(UNAME_S)" = "Darwin" ];
 # Build JAR file
 build:
 	@echo "$(COLOR_BLUE)Building LeechText v$(VERSION)...$(COLOR_RESET)"
-	$(GRADLEW) clean assemble jar -x test -x pmdMain -x pmdTest -x checkstyleMain -x checkstyleTest
+	$(GRADLEW) clean assemble jar -x test -x pmdMain -x pmdTest -x checkstyleMain -x checkstyleTest -Papp.home.dir="$(HOME)/.leechtext"
 	@echo "$(COLOR_GREEN)✓ Build complete: $(JAR_FILE)$(COLOR_RESET)"
 
 # Run JAR directly
@@ -42,13 +42,19 @@ run: build
 run-native: package-mac
 	@echo "$(COLOR_BLUE)Running native LeechText app...$(COLOR_RESET)"
 	@if [ -d "/Applications/LeechText.app" ]; then \
-		open /Applications/LeechText.app; \
+		LOG_FILE="$${HOME}/.leechtext/app.log"; \
+		echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
+		echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
+		/Applications/LeechText.app/Contents/MacOS/LeechText 2>&1 | tee "$$LOG_FILE"; \
 	elif [ -f "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" ]; then \
 		echo "$(COLOR_YELLOW)Installing DMG first...$(COLOR_RESET)"; \
 		hdiutil attach "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" -quiet; \
 		cp -r /Volumes/LeechText/LeechText.app /Applications/; \
 		hdiutil detach /Volumes/LeechText -quiet; \
-		open /Applications/LeechText.app; \
+		LOG_FILE="$${HOME}/.leechtext/app.log"; \
+		echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
+		echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
+		/Applications/LeechText.app/Contents/MacOS/LeechText 2>&1 | tee "$$LOG_FILE"; \
 	else \
 		echo "$(COLOR_YELLOW)⚠ No native package found. Run 'make package-mac' first.$(COLOR_RESET)"; \
 	fi
@@ -105,6 +111,7 @@ package-mac: build $(PACKAGE_DIR)
 			--input build/libs/ \
 			--main-jar leechtext-java-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
+			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
 			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
 	else \
 		jpackage \
@@ -117,6 +124,7 @@ package-mac: build $(PACKAGE_DIR)
 			--input build/libs/ \
 			--main-jar leechtext-java-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
+			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
 			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
 		echo "$(COLOR_YELLOW)⚠ Using default Java icon (custom icon not found)$(COLOR_RESET)"; \
 	fi
@@ -141,6 +149,7 @@ package-windows: build $(PACKAGE_DIR)
 		--input build/libs/ \
 		--main-jar leechtext-java-$(VERSION).jar \
 		--main-class $(MAIN_CLASS) \
+		--java-options "-Dapp.home.dir=%USERPROFILE%\.leechtext" \
 		--win-menu \
 		--win-dir-chooser \
 		--win-shortcut \
@@ -168,6 +177,7 @@ package-linux: build $(PACKAGE_DIR)
 			--input build/libs/ \
 			--main-jar leechtext-java-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
+			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
 			--linux-shortcut \
 			--linux-package-name leechtext \
 			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
@@ -182,6 +192,7 @@ package-linux: build $(PACKAGE_DIR)
 			--input build/libs/ \
 			--main-jar leechtext-java-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
+			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
 			--linux-shortcut \
 			--linux-package-name leechtext \
 			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
@@ -208,7 +219,46 @@ help:
 	@echo "  $(COLOR_BLUE)make run$(COLOR_RESET)       - Run from JAR"
 	@echo "  $(COLOR_BLUE)make run-native$(COLOR_RESET) - Run installed native app"
 	@echo "  $(COLOR_BLUE)make run-logs$(COLOR_RESET)  - Run with verbose logging to console & file"
+	@echo "  $(COLOR_BLUE)make info$(COLOR_RESET)      - Show system information and settings location"
 	@echo "  $(COLOR_BLUE)make help$(COLOR_RESET)      - Show this help message"
 	@echo ""
 	@echo "$(COLOR_YELLOW)Version: $(VERSION)$(COLOR_RESET)"
 	@echo "$(COLOR_YELLOW)Log file: $$HOME/.leechtext/app.log$(COLOR_RESET)"
+	@echo ""
+	@echo "$(COLOR_BLUE)Run 'make info' for more system information$(COLOR_RESET)"
+
+# Show system information
+info:
+	@echo "$(COLOR_BOLD)LeechText System Information$(COLOR_RESET)"
+	@echo ""
+	@echo "$(COLOR_GREEN)Application:$(COLOR_RESET)"
+	@echo "  Version: $(VERSION)"
+	@echo "  Build time: $(shell grep "^app.buildTime" gradle.properties | cut -d'=' -f2 | tr -d ' ')"
+	@echo "  Copyright: $(shell grep "^app.copyright" gradle.properties | cut -d'=' -f2 | tr -d ' ')"
+	@echo ""
+	@echo "$(COLOR_GREEN)Directories:$(COLOR_RESET)"
+	@echo "  Home: $$HOME/.leechtext"
+	@echo "  Working: $$(pwd)"
+	@echo "  Cache: $$HOME/.leechtext/cache"
+	@echo ""
+	@echo "$(COLOR_GREEN)Files:$(COLOR_RESET)"
+	@if [ -f "$$HOME/.leechtext/app.log" ]; then \
+		echo "  Log file: $$HOME/.leechtext/app.log ($$(wc -l < $$HOME/.leechtext/app.log) lines)"; \
+	else \
+		echo "  Log file: $$HOME/.leechtext/app.log (not created yet)"; \
+	fi
+	@if [ -d "$$HOME/.leechtext" ]; then \
+		echo "  Config dir exists: ✓"; \
+		echo "  Config dir size: $$(du -sh $$HOME/.leechtext 2>/dev/null | cut -f1)"; \
+	else \
+		echo "  Config dir exists: ✗ (will be created on first run)"; \
+	fi
+	@echo ""
+	@echo "$(COLOR_GREEN)Java:$(COLOR_RESET)"
+	@echo "  Version: $$(java -version 2>&1 | head -n 1)"
+	@echo "  Home: $$JAVA_HOME"
+	@echo ""
+	@echo "$(COLOR_GREEN)System:$(COLOR_RESET)"
+	@echo "  OS: $(UNAME_S)"
+	@echo "  User: $$USER"
+	@echo "  Architecture: $$(uname -m)"

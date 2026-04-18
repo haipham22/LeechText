@@ -101,6 +101,9 @@ public class VBookPluginService {
     public boolean installPlugin(VBookExtensionEntity extension) throws VBookPluginException {
         String pluginKey = extension.getName() + ":" + extension.getVersion();
 
+        // Ensure working directory exists
+        ensureWorkingDirectory();
+
         installationLock.lock();
         try {
             // Check if already installing (prevent duplicate installations)
@@ -226,6 +229,35 @@ public class VBookPluginService {
             }
         }
         return false;
+    }
+
+    /**
+     * Ensure the working directory exists and is writable. Creates directory if needed, throws
+     * exception if creation fails.
+     *
+     * @throws VBookPluginException if directory cannot be created or is not writable
+     */
+    private void ensureWorkingDirectory() throws VBookPluginException {
+        try {
+            String workingDir = FileUtils.validate("tools/plugins");
+
+            java.io.File dir = new java.io.File(workingDir);
+            if (!dir.exists()) {
+                boolean created = dir.mkdirs();
+                if (!created) {
+                    throw new VBookPluginException(
+                            "Failed to create plugins directory: " + workingDir);
+                }
+            }
+
+            // Verify directory is writable
+            if (!dir.canWrite()) {
+                throw new VBookPluginException("Plugins directory is not writable: " + workingDir);
+            }
+
+        } catch (Exception e) {
+            throw new VBookPluginException("Failed to ensure working directory exists", e);
+        }
     }
 
     /** Clear cached plugin files. */

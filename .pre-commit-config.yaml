@@ -4,7 +4,6 @@ repos:
   hooks:
   - id: "trailing-whitespace"
   - id: "end-of-file-fixer"
-  - id: "end-of-file-fixer"
   - id: "check-yaml"
   - id: "check-json"
   - id: "check-merge-conflict"
@@ -16,8 +15,8 @@ repos:
   - id: "mixed-line-ending"
 - repo: "local"
   hooks:
-  - id: "gradle-format"
-    name: "Gradle Format Check"
+  - id: "gradle-spotless"
+    name: "Gradle Spotless Format Check"
     entry: "gradle spotlessCheck"
     language: "system"
     files: "\\.java$"
@@ -25,18 +24,6 @@ repos:
   - id: "gradle-compile"
     name: "Gradle Compile Check"
     entry: "gradle compileJava"
-    language: "system"
-    files: "\\.java$"
-    pass_filenames: false
-  - id: "gradle-spotless"
-    name: "Gradle Spotless Format Check"
-    entry: "gradle spotlessCheck"
-    language: "system"
-    files: "\\.java$"
-    pass_filenames: false
-  - id: "gradle-spotless-fix"
-    name: "Gradle Spotless Auto-Fix"
-    entry: "gradle spotlessApply"
     language: "system"
     files: "\\.java$"
     pass_filenames: false

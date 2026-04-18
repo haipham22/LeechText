@@ -4,6 +4,8 @@ import java.awt.*;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.swing.*;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -111,39 +113,24 @@ public class AppUtils {
     /**
      * Determines the appropriate home directory for application data.
      *
-     * <p>This method detects whether the application is running as a native app (via jpackage) or
-     * as a standard JAR, and returns the appropriate directory for storing user data:
+     * <p>This method reads the home directory from system property "app.home.dir", which is set at
+     * build time or runtime. If not set, it defaults to the current working directory.
      *
-     * <ul>
-     *   <li><b>Native App:</b> Uses user's home directory ({@code ~/.leechtext})
-     *   <li><b>JAR:</b> Uses current working directory (for backward compatibility)
-     * </ul>
-     *
-     * <p>This is critical for jpackaged apps because Program Files and app bundles are read-only.
+     * <p>Build-time configuration (via Makefile): - macOS/Linux: ~/.leechtext - Windows: user's
+     * home directory
      *
      * @return The appropriate home directory path for storing application data
      */
     private static String getAppHomeDir() {
-        // Detect if running as native app (jpackage sets java.app.name)
-        boolean isNativeApp = System.getProperty("java.app.name") != null;
+        // First, try to read from system property (set at build time)
+        String homeDir = System.getProperty("app.home.dir");
 
-        if (isNativeApp) {
-            // Native app: use user home directory
-            // This ensures config is writable across all platforms
-            String userHome = System.getProperty("user.home");
-            String appHome = userHome + "/.leechtext";
-
-            // Create directory if it doesn't exist
-            java.io.File dir = new java.io.File(appHome);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-
-            return appHome;
-        } else {
-            // JAR: preserve existing behavior (current directory)
-            return System.getProperty("user.dir");
+        if (homeDir != null && !homeDir.isEmpty()) {
+            return homeDir;
         }
+
+        // Fallback to current directory (development mode)
+        return System.getProperty("user.dir");
     }
 
     /** Current location of the application window */
@@ -172,6 +159,8 @@ public class AppUtils {
     public static void doLoad() {
         try {
             // Normalize current directory path
+            curDir = getAppHomeDir();
+
             if (curDir.endsWith(SEPARATOR)) curDir = curDir.substring(0, curDir.length() - 1);
 
             // Load syntax configuration from JSON
