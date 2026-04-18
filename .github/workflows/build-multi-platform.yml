@@ -18,10 +18,13 @@ jobs:
         include:
           - os: macos-latest
             platform: mac
+            arch: universal
           - os: windows-latest
             platform: windows
+            arch: x64
           - os: ubuntu-latest
             platform: linux
+            arch: x64
 
     runs-on: ${{ matrix.os }}
 

@@ -102,7 +102,7 @@ package: build $(PACKAGE_DIR)
 
 # Package for macOS
 package-mac: build $(PACKAGE_DIR)
-	@echo "$(COLOR_BLUE)Creating macOS DMG...$(COLOR_RESET)"
+	@echo "$(COLOR_BLUE)Creating macOS Universal DMG...$(COLOR_RESET)"
 	@if [ -f "src/main/resources/icons/leechtext.icns" ]; then \
 		jpackage \
 			--name LeechText \
@@ -111,6 +111,7 @@ package-mac: build $(PACKAGE_DIR)
 			--copyright "MIT License" \
 			--app-version "$(VERSION)" \
 			--type dmg \
+			--mac \
 			--icon src/main/resources/icons/leechtext.icns \
 			--input build/libs/ \
 			--main-jar leechtext-java-$(VERSION).jar \
@@ -125,6 +126,7 @@ package-mac: build $(PACKAGE_DIR)
 			--copyright "MIT License" \
 			--app-version "$(VERSION)" \
 			--type dmg \
+			--mac \
 			--input build/libs/ \
 			--main-jar leechtext-java-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
