@@ -1,6 +1,8 @@
 package dark.leech.text.util;
 
 import java.awt.*;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,18 +19,75 @@ import org.json.JSONObject;
  * accessible throughout the application without instantiation.
  *
  * @author Long
- * @version 2019.03.30
+ * @version 1.0.2
  * @since 1.0
  * @see SyntaxUtils
  * @see FileUtils
  */
 public class AppUtils {
 
-    /** Current version of the application */
-    public static final String VERSION = "2019.03.30";
+    /** Current version of the application (loaded from gradle.properties at build time) */
+    public static final String VERSION = loadVersion();
 
-    /** Default time string used for initialization */
-    public static final String TIME = "00:00";
+    /**
+     * Loads the application version from the generated version.properties file.
+     *
+     * @return The application version, or "unknown" if loading fails
+     */
+    private static String loadVersion() {
+        try (InputStream is = AppUtils.class.getResourceAsStream("/version.properties")) {
+            if (is != null) {
+                Properties props = new Properties();
+                props.load(is);
+                return props.getProperty("app.version", "unknown");
+            }
+        } catch (Exception e) {
+            // Fallback to default version if loading fails
+        }
+        return "1.0.2"; // Fallback version
+    }
+
+    /** Build time of the application (loaded from gradle at build time) */
+    public static final String TIME = loadBuildTime();
+
+    /** Copyright year range (loaded from gradle at build time) */
+    public static final String COPYRIGHT = loadCopyright();
+
+    /**
+     * Loads the application build time from the generated version.properties file.
+     *
+     * @return The build time, or "00:00" if loading fails
+     */
+    private static String loadBuildTime() {
+        try (InputStream is = AppUtils.class.getResourceAsStream("/version.properties")) {
+            if (is != null) {
+                Properties props = new Properties();
+                props.load(is);
+                return props.getProperty("app.buildTime", "00:00");
+            }
+        } catch (Exception e) {
+            // Fallback to default time if loading fails
+        }
+        return "00:00"; // Fallback time
+    }
+
+    /**
+     * Loads the copyright year range from the generated version.properties file.
+     *
+     * @return The copyright years, or "2017" if loading fails
+     */
+    private static String loadCopyright() {
+        try (InputStream is = AppUtils.class.getResourceAsStream("/version.properties")) {
+            if (is != null) {
+                Properties props = new Properties();
+                props.load(is);
+                return props.getProperty("app.copyright", "2017");
+            }
+        } catch (Exception e) {
+            // Fallback to default copyright if loading fails
+        }
+        return "2017"; // Fallback copyright
+    }
 
     /** System-specific file separator character */
     public static final String SEPARATOR = System.getProperty("file.separator");
@@ -72,7 +131,15 @@ public class AppUtils {
             // Native app: use user home directory
             // This ensures config is writable across all platforms
             String userHome = System.getProperty("user.home");
-            return userHome + "/.leechtext";
+            String appHome = userHome + "/.leechtext";
+
+            // Create directory if it doesn't exist
+            java.io.File dir = new java.io.File(appHome);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            return appHome;
         } else {
             // JAR: preserve existing behavior (current directory)
             return System.getProperty("user.dir");

@@ -1,5 +1,5 @@
 [tools]
-java = "latest"
+java = "17"
 gradle = "8.4"
 
 "pre-commit" = "latest"
