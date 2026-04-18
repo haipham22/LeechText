@@ -8,7 +8,6 @@ on:
 jobs:
   create-release:
     runs-on: ubuntu-latest
-    if: github.repository == 'haipham22/LeechText'
     permissions:
       contents: write
 
