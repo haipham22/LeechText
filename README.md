@@ -363,10 +363,10 @@ java -Dleechtext.trace=true -jar LeechText.jar
 
 ### Upstream Project
 
-This project is based on the original **LeechText** by Long.
+This project is based on the original **LeechText** by Darkrai9x.
 
-- **Original Repository**: [LeechText Original](https://github.com/longlHD/LeechText)
-- **Original Author**: Long
+- **Original Repository**: [LeechText Original](https://github.com/Darkrai9x/LeechText)
+- **Original Author**: Darkrai9x
 - **License**: MIT License
 
 ### This Fork
