@@ -103,8 +103,13 @@ jobs:
           name: test-report
           path: build/reports/tests/test/
 
-      - name: Publish Test Report
+      - name: Check Test Results
+        id: check-tests
         if: always()
+        run: test -d build/test-results/test && ls build/test-results/test/*.xml >/dev/null 2>&1 && echo "has-tests=true" >> $GITHUB_OUTPUT || echo "has-tests=false" >> $GITHUB_OUTPUT
+
+      - name: Publish Test Report
+        if: always() && steps.check-tests.outputs.has-tests == 'true'
         uses: dorny/test-reporter@v1
         with:
           name: Test Results
