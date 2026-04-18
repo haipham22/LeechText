@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'dark.leech'
-version = '2026.04.18'
+version = '1.0.0'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17

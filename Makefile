@@ -83,6 +83,7 @@ package-mac: build $(PACKAGE_DIR)
 package-windows: build $(PACKAGE_DIR)
 	@echo "$(COLOR_BLUE)Creating Windows EXE...$(COLOR_RESET)"
 	@echo "$(COLOR_YELLOW)⚠ Windows packaging requires Windows OS$(COLOR_RESET)"
+	@ls -la build/libs/
 	jpackage \
 		--name LeechText \
 		--vendor "LeechText Team" \
@@ -96,7 +97,8 @@ package-windows: build $(PACKAGE_DIR)
 		--win-menu \
 		--win-dir-chooser \
 		--win-shortcut \
-		--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"
+		--dest $(PACKAGE_DIR)/
+	@ls -la $(PACKAGE_DIR)/
 	@if [ -f "$(PACKAGE_DIR)/LeechText-$(VERSION).exe" ]; then \
 		echo "$(COLOR_GREEN)✓ Windows package created: $(PACKAGE_DIR)/LeechText-$(VERSION).exe$(COLOR_RESET)"; \
 	else \
