@@ -1,0 +1,35 @@
+package dark.leech.text.ui.material;
+
+import java.awt.*;
+
+import javax.swing.*;
+
+import lombok.Getter;
+
+import dark.leech.text.util.ColorUtils;
+
+@Getter
+public class JMProgressBar extends JPanel {
+    private int percent;
+
+    public JMProgressBar() {
+        setBackground(Color.WHITE);
+    }
+
+    public void setPercent(int percent) {
+        this.percent = percent;
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        int w = getWidth();
+        int h = getHeight();
+        int loadw = percent * w / 100;
+        g.setColor(new Color(204, 204, 255));
+        g.fillRect(0, 0, w, h);
+        g.setColor(ColorUtils.THEME_COLOR);
+        g.fillRect(0, 0, loadw, h);
+    }
+}

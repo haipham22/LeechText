@@ -1,0 +1,222 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.13' apply false
+    id 'com.diffplug.spotless' version '6.23.3'
+    id 'checkstyle'
+    id 'pmd'
+}
+
+group = 'dark.leech'
+version = '2019.03.30'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+application {
+    mainClass = 'dark.leech.text.ui.main.App'
+}
+
+dependencies {
+    // JSoup for HTML parsing
+    implementation 'org.jsoup:jsoup:1.16.1'
+
+    // JSON processing
+    implementation 'org.json:json:20230618'
+
+    // Gson for JSON serialization
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Lombok for reducing boilerplate code
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testCompileOnly 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    // LuaJ for Lua scripting support (using newer version compatible with Java 17)
+    implementation('org.luaj:luaj-jse:3.0.1') {
+        exclude group: 'org.luaj', module: 'luaj-sources'
+    }
+
+    // Rhino JavaScript engine (for JavaScript extension support)
+    implementation 'org.mozilla:rhino:1.7.15'
+
+    // GraalVM JavaScript engine (replaced by Rhino - kept for rollback)
+    // implementation 'org.graalvm.polyglot:polyglot:23.1.0'
+    // implementation 'org.graalvm.polyglot:js:23.1.0'
+
+    // Monitoring for JavaScript engine performance
+    implementation 'io.micrometer:micrometer-core:1.11.0'
+
+    // Archive handling (equivalent to zt-zip)
+    implementation 'net.lingala.zip4j:zip4j:2.11.5'
+
+    // HTTP client
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+
+    // RSyntaxTextArea for syntax highlighting
+    implementation 'com.fifesoft:rsyntaxtextarea:3.3.4'
+
+    // StringUtils && CollectionUtils
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.apache.commons:commons-collections4:4.4'
+
+    // Testing dependencies
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:5.4.0'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+// Custom task to copy native libraries if needed
+tasks.register('copyNativeLibs', Copy) {
+    from configurations.runtimeClasspath
+    into layout.buildDirectory.dir('libs')
+    include '**/*.dll', '**/*.so', '**/*.dylib'
+}
+
+// Ensure native libraries are copied before running
+run.dependsOn copyNativeLibs
+
+// Configure the JAR task
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes(
+            'Main-Class': 'dark.leech.text.ui.main.App',
+            'Implementation-Title': 'LeechText',
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': 'LeechText Team'
+        )
+    }
+
+    // Include all dependencies in the JAR (fat JAR)
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+// Configure compiler options
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xlint:unchecked', '-Xlint:deprecation']
+}
+
+// Configure test execution
+test {
+    useJUnit()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+// Task to run the application in development
+tasks.register('runDev', JavaExec) {
+    group = 'application'
+    description = 'Run the application in development mode'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'dark.leech.text.ui.main.App'
+
+    // Set system properties for development
+    systemProperty 'java.awt.headless', 'false'
+    systemProperty 'swing.defaultlaf', 'javax.swing.plaf.metal.MetalLookAndFeel'
+
+    // Enable debugging
+    jvmArgs = ['-Xmx1g', '-Xms512m']
+}
+
+// Wrapper configuration
+wrapper {
+    gradleVersion = '8.4'
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+// Code formatting with Spotless
+spotless {
+    java {
+        target 'src/**/*.java'
+
+        // Use Google Java Format
+        googleJavaFormat('1.18.1').aosp().reflowLongStrings()
+
+        // Remove unused imports
+        removeUnusedImports()
+
+        // Import order configuration
+        importOrder('java', 'javax', 'org', 'com', '', 'dark.leech')
+
+        // Trim trailing whitespace
+        trimTrailingWhitespace()
+
+        // End files with newline
+        endWithNewline()
+
+        // Custom formatting rules
+        custom 'noWildcardImports', {
+            if (it.contains('import .*\\*;')) {
+                throw new AssertionError('Wildcard imports are not allowed')
+            }
+        }
+    }
+
+    json {
+        target '*.json', 'src/**/*.json'
+        simple().indentWithSpaces(2)
+    }
+
+    yaml {
+        target '*.yaml', '*.yml', 'src/**/*.yaml', 'src/**/*.yml'
+        jackson().yamlFeature('WRITE_DOC_START_MARKER', false)
+    }
+}
+
+// Checkstyle configuration
+checkstyle {
+    toolVersion = '10.12.5'
+    configFile = file('config/checkstyle/checkstyle.xml')
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
+// PMD configuration
+pmd {
+    toolVersion = '6.55.0'
+    ruleSetFiles = files('config/pmd/pmd-rules.xml')
+    ignoreFailures = false
+    consoleOutput = true
+}
+
+// Quality gate task
+tasks.register('qualityGate') {
+    group = 'verification'
+    description = 'Run all quality checks'
+    dependsOn 'spotlessCheck', 'checkstyleMain', 'pmdMain', 'test'
+}
+
+// Pre-commit task
+tasks.register('preCommit') {
+    group = 'verification'
+    description = 'Run pre-commit checks'
+    dependsOn 'spotlessApply', 'compileJava'
+}

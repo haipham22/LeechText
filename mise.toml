@@ -1,0 +1,24 @@
+[tools]
+java = "latest"
+gradle = "8.4"
+
+"pre-commit" = "latest"
+
+
+[tasks.dev]
+run = "gradle run"
+
+[tasks.test]
+run = "gradle test"
+
+[tasks.build]
+run = "gradle build"
+
+[tasks.clean]
+run = "gradle clean"
+
+[tasks.format]
+run = "gradle spotlessApply"
+
+[tasks.lint]
+run = "gradle spotlessCheck"
