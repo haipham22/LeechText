@@ -46,6 +46,10 @@ jobs:
             - Download `leechtext_${{ steps.version.outputs.version }}_amd64.deb`
             - Install with: `sudo dpkg -i leechtext_*.deb`
 
+            **Windows:**
+            - Download `LeechText.exe`
+            - Run installer and follow prompts
+
             ### What's New
 
             See commit history for changes since last release.
