@@ -1,0 +1,68 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [ main, dev ]
+  workflow_dispatch:
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    if: github.repository == 'haipham22/LeechText'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from build.gradle
+        id: version
+        run: |
+          # Extract version from build.gradle
+          VERSION=$(grep "^version " build.gradle | awk -F"'" '{print $2}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ steps.version.outputs.version }}"
+          name: "LeechText ${{ steps.version.outputs.version }}"
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## LeechText ${{ steps.version.outputs.version }}
+
+            Automated release based on version in build.gradle.
+
+            ### Installation
+
+            **macOS:**
+            - Download `LeechText.dmg`
+            - Open and drag to Applications
+
+            **Linux:**
+            - Download `leechtext_${{ steps.version.outputs.version }}_amd64.deb`
+            - Install with: `sudo dpkg -i leechtext_*.deb`
+
+            ### What's New
+
+            See commit history for changes since last release.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: leechtext-native-*
+          path: artifacts
+          merge-multiple: true
+
+      - name: Upload artifacts to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ steps.version.outputs.version }}"
+          files: artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
