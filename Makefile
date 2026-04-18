@@ -21,16 +21,22 @@ COLOR_BLUE := \033[34m
 # Default target
 all: build
 
+# Detect OS
+UNAME_S := $(shell uname -s 2>/dev/null || echo Windows)
+
+# Gradle wrapper command
+GRADLEW := $(shell if [ "$(UNAME_S)" = "Linux" ] || [ "$(UNAME_S)" = "Darwin" ]; then echo "./gradlew"; else echo "gradlew.bat"; fi)
+
 # Build JAR file
 build:
 	@echo "$(COLOR_BLUE)Building LeechText v$(VERSION)...$(COLOR_RESET)"
-	./gradlew clean assemble jar -x test -x pmdMain -x pmdTest -x checkstyleMain -x checkstyleTest
+	$(GRADLEW) clean assemble jar -x test -x pmdMain -x pmdTest -x checkstyleMain -x checkstyleTest
 	@echo "$(COLOR_GREEN)✓ Build complete: $(JAR_FILE)$(COLOR_RESET)"
 
 # Clean build artifacts
 clean:
 	@echo "$(COLOR_YELLOW)Cleaning build artifacts...$(COLOR_RESET)"
-	./gradlew clean
+	$(GRADLEW) clean
 	rm -rf $(PACKAGE_DIR)
 	@echo "$(COLOR_GREEN)✓ Clean complete$(COLOR_RESET)"
 
