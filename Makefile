@@ -24,8 +24,8 @@ all: build
 # Detect OS
 UNAME_S := $(shell uname -s 2>/dev/null || echo Windows)
 
-# Gradle wrapper command
-GRADLEW := $(shell if [ "$(UNAME_S)" = "Linux" ] || [ "$(UNAME_S)" = "Darwin" ]; then echo "./gradlew"; else echo "gradlew.bat"; fi)
+# Gradle wrapper command - use ./gradlew for all platforms (works on Windows too via bash)
+GRADLEW := ./gradlew
 
 # Build JAR file
 build:
