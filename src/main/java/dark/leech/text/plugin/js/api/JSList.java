@@ -113,7 +113,7 @@ public class JSList extends ArrayList<Object> {
             }
             Object item = get(i);
             if (item != null) {
-                sb.append(item.toString());
+                sb.append(org.mozilla.javascript.Context.toString(item));
             }
         }
         return sb.toString();

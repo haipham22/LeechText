@@ -9,12 +9,12 @@ import dark.leech.text.plugin.js.api.Html;
 import dark.leech.text.plugin.js.api.Http;
 
 /**
- * Shared vBook API setup helper for Rhino JavaScript loaders. Extracts duplicate setupVBookApi
- * logic from TextLoader, DetailLoader, and ListLoader.
+ * Shared vBook API setup helper for Rhino JavaScript loaders. Extracts duplicate setup logic from
+ * TextLoader, DetailLoader, and ListLoader.
  */
-public final class VBookApiSetup {
+public final class JsApiSetup {
 
-    private VBookApiSetup() {
+    private JsApiSetup() {
         // Utility class - prevent instantiation
     }
 
@@ -27,8 +27,7 @@ public final class VBookApiSetup {
      * @param baseUrl The base URL for the plugin source
      * @param targetUrl The target URL being processed
      */
-    public static void setupVBookApi(
-            Context ctx, Scriptable scope, String baseUrl, String targetUrl) {
+    public static void setup(Context ctx, Scriptable scope, String baseUrl, String targetUrl) {
         // Set BASE_URL variable
         ScriptableObject.putProperty(scope, "BASE_URL", baseUrl);
 
@@ -39,6 +38,11 @@ public final class VBookApiSetup {
         // Html object - Rhino automatically exposes public methods
         Html htmlApi = new Html(ctx, scope);
         ScriptableObject.putProperty(scope, "Html", htmlApi);
+        ctx.getWrapFactory().setJavaPrimitiveWrap(false);
+
+        // Http class - expose for static method calls like Http.get(), Http.post()
+        Http httpInstance = new Http(ctx, scope);
+        ScriptableObject.putProperty(scope, "Http", httpInstance);
         ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
         // Response object
@@ -67,8 +71,15 @@ public final class VBookApiSetup {
                         http.request(requestUrl);
                         return http;
                     }
+
+                    @Override
+                    public Object getDefaultValue(java.lang.Class<?> typeHint) {
+                        // Safe toString() implementation for plugin compatibility
+                        return "function fetch() { [native code] }";
+                    }
                 };
         ScriptableObject.putProperty(scope, "fetch", fetchFunc);
+        ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
         // Load function - no-op for config.js
         Object loadFunc =
@@ -80,12 +91,21 @@ public final class VBookApiSetup {
                             Scriptable thisObj,
                             Object[] args) {
                         String fileName =
-                                (args.length > 0 && args[0] != null) ? args[0].toString() : "";
+                                (args.length > 0 && args[0] != null)
+                                        ? JSResponse.getString(args[0])
+                                        : "";
                         Log.add("vBook load() called for: " + fileName);
                         return null;
                     }
+
+                    @Override
+                    public Object getDefaultValue(java.lang.Class<?> typeHint) {
+                        // Safe toString() implementation for plugin compatibility
+                        return "function load() { [native code] }";
+                    }
                 };
         ScriptableObject.putProperty(scope, "load", loadFunc);
+        ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
         // Sleep function (optional - only used by ListLoader)
         Object sleepFunc =
@@ -107,14 +127,22 @@ public final class VBookApiSetup {
                         }
                         return null;
                     }
+
+                    @Override
+                    public Object getDefaultValue(java.lang.Class<?> typeHint) {
+                        // Safe toString() implementation for plugin compatibility
+                        return "function sleep() { [native code] }";
+                    }
                 };
         ScriptableObject.putProperty(scope, "sleep", sleepFunc);
+        ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
         // Console API for plugin logging compatibility
         // Match trusted vBooks behavior: expose same logger object as both Console and console
         Object consoleApi = Context.javaToJS(new ConsoleApi(), scope);
         ScriptableObject.putProperty(scope, "Console", consoleApi);
         ScriptableObject.putProperty(scope, "console", consoleApi);
+        ctx.getWrapFactory().setJavaPrimitiveWrap(false);
     }
 
     /**

@@ -3,7 +3,8 @@ package dark.leech.text.plugin.js.loader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mozilla.javascript.*;
+import org.mozilla.javascript.NativeArray;
+import org.mozilla.javascript.NativeObject;
 
 import dark.leech.text.action.Log;
 import dark.leech.text.enities.ChapterEntity;
@@ -14,86 +15,33 @@ import dark.leech.text.plugin.js.api.JSList;
  * JavaScript chapter list loader for vBook plugins using Rhino. Executes the 'toc' script and
  * parses result into ChapterEntity list.
  */
-public class ListLoader {
-
-    private final PluginEntity plugin;
+public class ListLoader extends AbstractLoader<List<ChapterEntity>> {
 
     private ListLoader(PluginEntity plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     public static ListLoader with(PluginEntity plugin) {
         return new ListLoader(plugin);
     }
 
-    public List<ChapterEntity> load(String url) {
+    @Override
+    protected String getScript() {
+        return plugin.getTocGetter();
+    }
+
+    @Override
+    protected LoaderType getLoaderType() {
+        return LoaderType.LIST;
+    }
+
+    @Override
+    protected List<ChapterEntity> processResult(Object result, String url) {
         Log.add("[ListLoader] Loading chapters from: " + url);
-
-        if (plugin == null || plugin.getTocGetter() == null) {
-            Log.add(
-                    "[ListLoader] Plugin check failed: plugin="
-                            + plugin
-                            + ", tocGetter="
-                            + (plugin != null ? plugin.getTocGetter() : "null"));
-            return null;
-        }
-
-        Context ctx = null;
-        try {
-            // Enter Rhino context
-            ctx = Context.enter();
-            ctx.setOptimizationLevel(-1); // Interpretation mode for security
-            ctx.setLanguageVersion(200); // ES6 support for vBook plugins
-            Scriptable scope = ctx.initStandardObjects();
-
-            // Extract base URL from plugin source
-            String baseUrl = plugin.getSource();
-            if (baseUrl == null || baseUrl.isEmpty()) {
-                baseUrl = VBookApiSetup.extractBaseUrl(url);
-            }
-            Log.add("[ListLoader] Base URL: " + baseUrl);
-
-            // Setup vBook API bindings
-            VBookApiSetup.setupVBookApi(ctx, scope, baseUrl, url);
-
-            // Get the toc script
-            String tocScript = plugin.getTocGetter();
-            Log.add("[ListLoader] Executing toc script...");
-
-            // Execute the toc script
-            ctx.evaluateString(scope, tocScript, "tocGetter", 1, null);
-
-            // Call the execute function
-            Object functionObj = scope.get("execute", scope);
-            if (!(functionObj instanceof Function)) {
-                Log.add("[ListLoader] ERROR: execute function not found or not executable");
-                return null;
-            }
-
-            Log.add("[ListLoader] Calling execute() with URL: " + url);
-            Object result = ((Function) functionObj).call(ctx, scope, scope, new Object[] {url});
-
-            if (result == null || result == org.mozilla.javascript.Undefined.instance) {
-                Log.add(
-                        "[ListLoader] ERROR: execute() returned null - response failed or no"
-                                + " chapters found");
-                return null;
-            }
-
-            Log.add("[ListLoader] Result type: " + result.getClass().getName());
-            List<ChapterEntity> chapters = extractChapterList(result);
-            Log.add("[ListLoader] Extracted " + chapters.size() + " chapters");
-
-            return chapters;
-
-        } catch (Exception e) {
-            Log.add("JavaScript execution error in list loader: " + e.getMessage());
-            return null;
-        } finally {
-            if (ctx != null) {
-                Context.exit();
-            }
-        }
+        Log.add("[ListLoader] Result type: " + result.getClass().getName());
+        List<ChapterEntity> chapters = extractChapterList(result);
+        Log.add("[ListLoader] Extracted " + chapters.size() + " chapters");
+        return chapters;
     }
 
     @SuppressWarnings("unchecked")
@@ -197,17 +145,22 @@ public class ListLoader {
         if (chapterValue instanceof NativeObject obj) {
 
             Object name = obj.get("name", obj);
-            if (name != null && name != org.mozilla.javascript.Undefined.instance) {
-                entity.setName(name.toString());
+            String nameStr = JSResponse.getString(name);
+            if (nameStr != null) {
+                entity.setName(nameStr);
             }
 
             Object url = obj.get("url", obj);
-            if (url != null && url != org.mozilla.javascript.Undefined.instance) {
-                entity.setUrl(url.toString());
+            String urlStr = JSResponse.getString(url);
+            if (urlStr != null) {
+                entity.setUrl(urlStr);
             }
         } else {
             // String format - just the name
-            entity.setName(chapterValue.toString());
+            String nameStr = JSResponse.getString(chapterValue);
+            if (nameStr != null) {
+                entity.setName(nameStr);
+            }
         }
 
         return entity;

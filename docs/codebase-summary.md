@@ -2,11 +2,12 @@
 
 ## Project Statistics
 
-- **Total Java Files**: ~135+ files (updated to include JavaScript engine)
-- **Total Lines of Code**: ~14,500+ lines (updated to include recent additions)
+- **Total Java Files**: ~140+ files (including JavaScript engine components)
+- **Total Lines of Code**: ~15,000+ lines (including recent additions)
 - **Main Package**: `dark.leech.text`
 - **Build System**: Gradle 8.4
 - **Java Version**: 17
+- **Application Version**: 1.0.5
 
 ## Package Structure
 
@@ -16,17 +17,17 @@ src/main/java/dark/leech/text/
 ├── animation/       # UI animation system (8 files, 380 LOC)
 ├── enities/         # Data entities (4 files, 171 LOC)
 ├── get/             # Content retrieval logic (6 files, 343 LOC)
-├── image/           # Image processing (4 files, 831 LOC)
+├── image/           # Image processing with WebP support (4 files, 831 LOC)
 ├── listeners/       # Event listeners (7 files, 48 LOC)
-├── lua/             # Lua script engine integration (16 files)
 ├── models/          # Data models (7 files, 327 LOC)
-├── plugin/          # Plugin management (19+ files, 1263+ LOC)
-│   ├── js/          # JavaScript engine with vBook API support (18 files)
+├── plugin/          # Plugin management with dual-engine support (19+ files, 1263+ LOC)
+│   ├── js/          # JavaScript (Rhino) engine with vBook API compatibility (18 files)
 │   ├── security/    # Plugin security validation (7 files)
 │   ├── validation/  # Plugin scanning and validation (2 files)
-│   └── sandbox/     # Sandboxed execution environment
-├── ui/              # User interface (55 files, 7069 LOC)
-└── util/            # Utility classes (17 files, 2127+ LOC)
+│   ├── sandbox/     # Sandboxed execution environment with resource limits
+│   └── vbook/       # vBook plugin support
+├── ui/              # User interface (55+ files, 7069 LOC)
+└── util/            # Utility classes including ImageConverter, HtmlSanitizer (17+ files, 2127+ LOC)
 ```
 
 ## Package Details
@@ -85,7 +86,7 @@ src/main/java/dark/leech/text/
 | `api/Http.java` | HTTP requests with method chaining |
 | `api/Json.java` | JSON parsing and serialization |
 | `api/JSList.java` | Array-like operations for vBook compatibility |
-| `api/JsScriptEngine.java` | Rhino JavaScript engine wrapper |
+| `JsScriptEngine.java` | Rhino JavaScript engine wrapper |
 | `loader/TextLoader.java` | Text content loading with vBook API setup |
 | `loader/DetailLoader.java` | Detail page loading |
 | `loader/ListLoader.java` | Chapter list extraction |
@@ -278,23 +279,205 @@ net/java/balloontip/          # Balloon tip library
 ## Dependencies Overview
 
 ### Core Dependencies
-- **JSoup**: HTML parsing and scraping
-- **Gson**: JSON serialization/deserialization
-- **LuaJ**: Lua script execution
-- **Zip4j**: EPUB creation and ZIP handling
-- **HttpClient5**: HTTP communication
-- **RSyntaxTextArea**: Code editing
-- **Lombok**: Annotation-based code generation
+- **JSoup 1.16.1**: HTML parsing and scraping
+- **Gson 2.10.1**: JSON serialization/deserialization
+- **Rhino 1.7.15**: JavaScript engine with vBook API compatibility
+- **Zip4j 2.11.5**: EPUB creation and ZIP handling
+- **HttpClient5 5.2.1**: HTTP communication
+- **RSyntaxTextArea 3.3.4**: Code editing and syntax highlighting
+- **Lombok 1.18.30**: Annotation-based code generation
+- **Micrometer Core 1.11.0**: JavaScript engine monitoring
+- **Apache Commons**: Lang3 (3.12.0), Collections4 (4.4) for utility functions
 
 ### Quality Tools
-- **Spotless**: Code formatting
-- **Checkstyle**: Style checking
-- **PMD**: Code quality
-- **JUnit**: Unit testing
-- **Mockito**: Mocking
+- **Spotless**: Code formatting (Google Java Format 1.18.1)
+- **Checkstyle**: Style checking with 10.12.5
+- **PMD**: Code quality with 6.55.0
+- **JUnit 4.13.2**: Unit testing
+- **Mockito 5.4.0**: Mocking framework
 
-### Recent Enhancements
-- **Rhino JavaScript Engine**: GraalVM-based JavaScript support with vBook API compatibility
+### Recent Enhancements (v1.0.5)
+- **Rhino JavaScript Engine**: Native JavaScript support with vBook API compatibility (replaced GraalVM)
 - **WebP Image Converter**: Automatic conversion of WebP covers to JPEG for EPUB compatibility
 - **Plugin Security Validation**: Network, regex, and archive security scanning
-- **HTML Sanitizer**: EPUB XML validation and tag cleanup
+- **HTML Sanitizer**: EPUB XML validation and tag cleanup utilities
+
+## Build Configuration
+
+### Gradle Properties
+```properties
+# Project configuration
+org.gradle.jvmargs=-Xmx2g -Xms512m -XX:MaxMetaspaceSize=512m
+org.gradle.parallel=true
+org.gradle.caching=true
+org.gradle.configureondemand=true
+
+# Java configuration
+java.sourceCompatibility=17
+java.targetCompatibility=17
+
+# Application properties
+app.name=LeechText
+app.version=1.0.5
+app.mainClass=dark.leech.text.ui.main.App
+```
+
+### Application Configuration
+```properties
+# JVM arguments for the application
+-Xmx1g
+-Dapp.home.dir=${project.hasProperty('app.home.dir') ? project.getProperty('app.home.dir') : System.getProperty('user.dir')}
+--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED
+--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED
+```
+
+## Key Features
+
+### 1. Dual Plugin Engine System
+- **Lua Engine**: Traditional Lua script support for content extraction
+- **JavaScript Engine**: Rhino-based JavaScript with vBook API compatibility
+- **Auto-detection**: Automatic plugin selection based on URL patterns
+- **Security Validation**: Comprehensive plugin scanning and sandboxing
+
+### 2. Advanced Export Capabilities
+- **EPUB Generation**: Structured ebook creation with WebP→JPEG conversion
+- **HTML Sanitization**: Automatic cleanup for EPUB XML validation
+- **Multiple Formats**: Plain text, structured text, custom formats
+- **Metadata Support**: Chapter information, cover images, table of contents
+
+### 3. Modern UI Framework
+- **Material Design**: Custom Swing components with Material-inspired design
+- **Theme Support**: Dark/light theme switching
+- **Animation System**: Smooth transitions and visual feedback
+- **Responsive Layout**: Adaptive design for different screen sizes
+
+### 4. Robust Plugin Security
+- **Network Validation**: HTTPS enforcement and content-type checking
+- **Regex Security**: Pattern validation to prevent malicious plugins
+- **Archive Scanning**: ZIP file security validation for plugin packages
+- **Resource Limits**: Execution time and memory constraints for plugins
+
+### 5. Multi-Platform Support
+- **macOS**: Native application support with dock integration
+- **Windows**: Native executable support
+- **Linux**: Debian package support
+- **Cross-Platform**: Java-based architecture for consistent behavior
+
+## Development Workflow
+
+### Build Commands
+```bash
+# Clean build
+./gradlew clean build
+
+# Build distribution
+./gradlew jar
+
+# Run application
+./gradlew run
+
+# Run with custom configuration
+./gradlew runDev
+```
+
+### Quality Assurance
+```bash
+# Code formatting
+./gradlew spotlessApply
+
+# Format check
+./gradlew spotlessCheck
+
+# Style checks
+./gradlew checkstyleMain
+
+# Code quality analysis
+./gradlew pmdMain
+
+# All quality checks
+./gradlew qualityGate
+```
+
+## Performance Optimizations
+
+### Concurrency
+- Multi-threaded download engine (configurable thread count)
+- Parallel plugin execution
+- Connection pooling for HTTP requests
+
+### Memory Management
+- Stream-based content processing
+- Lazy loading of large content
+- Proper resource cleanup and garbage collection
+
+### Caching
+- Plugin repository caching
+- Download history persistence
+- Settings lazy loading
+
+## Integration Points
+
+### Plugin System
+- Plugin discovery and auto-loading
+- JSON configuration validation
+- Script execution with error handling
+- API exposure (HTTP, HTML, JSON, Regex)
+
+### Export System
+- EPUB generation with proper structure
+- HTML sanitization for XML compliance
+- Image format conversion (WebP→JPEG)
+- Metadata preservation and formatting
+
+### UI Framework
+- Material Design components
+- Event-driven architecture
+- Animation system with timing framework
+- Theme and styling system
+
+## Technical Debt
+
+### Known Issues
+1. **Package Naming**: `enities` should be `entities`
+2. **Test Coverage**: Currently minimal, needs comprehensive suite
+3. **Thread Safety**: Some areas may need additional synchronization
+4. **Memory Management**: Potential leaks in long-running operations
+
+### Future Improvements
+1. **Java 21 Migration**: Upgrade to latest LTS version
+2. **Native Packaging**: Use jpackage for native installers
+3. **Enhanced Testing**: Unit and integration test coverage
+4. **Performance Profiling**: Optimize hot paths and memory usage
+
+## Version History
+
+### v1.0.5 (Current)
+- Added Rhino JavaScript engine with vBook API compatibility
+- Implemented WebP to JPEG conversion for EPUB covers
+- Created comprehensive plugin security validation system
+- Added HTML sanitization for EPUB XML validation
+- Updated build system and dependencies
+
+### v1.0.0
+- Gradle 8.4 migration
+- Java 17 upgrade
+- Code quality improvements with Spotless, Checkstyle, PMD
+- Multi-platform CI/CD pipeline
+
+## Continuous Integration
+
+### GitHub Actions Workflows
+- **Multi-platform builds**: Automated builds for macOS, Windows, Linux
+- **Code quality**: Automated checks for style, formatting, quality
+- **Documentation validation**: Automated documentation updates
+- **Release automation**: Automated releases on version tags
+
+### Build Artifacts
+- `LeechText-mac.jar`: macOS application
+- `LeechText-windows.jar`: Windows application
+- `LeechText-linux.jar`: Linux application
+- All artifacts include checksums for verification
+
+---
+
+This documentation provides a comprehensive overview of the LeechText codebase structure, components, and architecture. For more detailed information on specific areas, refer to the related documentation files in the `docs/` directory.

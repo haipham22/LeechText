@@ -119,7 +119,10 @@ public abstract class JsApiWrapper {
         Map<String, Object> map = new HashMap<>();
         Object[] ids = scriptable.getIds();
         for (Object id : ids) {
-            String key = id.toString();
+            String key =
+                    (id instanceof Number)
+                            ? String.valueOf(((Number) id).intValue())
+                            : String.valueOf(id);
             Object value = scriptable.get(key, scriptable);
             map.put(key, toJava(value));
         }

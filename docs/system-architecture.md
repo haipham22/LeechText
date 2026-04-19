@@ -21,7 +21,7 @@ LeechText follows a **layered architecture** with clear separation of concerns, 
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
 │                       Content Retrieval Layer                  │
-│              (HTTP, Parsing, Plugin Execution)                 │
+│              (HTTP, Parsing, Dual Plugin Execution)           │
 ├─────────────────────────────────────────────────────────────────┤
 │  PageGetter  │  ChapExecute  │  ListExecute  │  PluginManager  │
 └─────────────────────────────────────────────────────────────────┘

@@ -3,6 +3,8 @@ package dark.leech.text.plugin.js.api;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import dark.leech.text.action.Log;
+
 /**
  * Rhino wrapper for JSoup Element. Simple Java class - public methods automatically exposed to
  * JavaScript.
@@ -17,12 +19,23 @@ public class JSElement {
     /** Select child elements using CSS selector. Returns JSElements collection for chaining. */
     public JSElements select(String selector) {
         try {
+            if (element == null) {
+                Log.add(
+                        "WARNING: JSElement.select() called on null element with selector: "
+                                + selector);
+                return new JSElements(new Elements());
+            }
             if (selector == null || selector.isEmpty()) {
                 return new JSElements(new Elements());
             }
             Elements results = element.select(selector);
             return new JSElements(results);
         } catch (Exception e) {
+            Log.add(
+                    "ERROR: JSElement.select() failed for selector '"
+                            + selector
+                            + "': "
+                            + e.getMessage());
             return new JSElements(new Elements());
         }
     }

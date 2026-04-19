@@ -30,6 +30,8 @@ public class VBookPluginBrowserUI extends JMDialog {
     private List<VBookExtensionEntity> extensionList;
     private List<VBookExtensionEntity> allExtensions;
     private JMTextField textSearch;
+    private String selectedType = "all";
+    private SelectButton btAll, btNovel, btComic;
 
     public VBookPluginBrowserUI() {
         onCreate();
@@ -53,6 +55,79 @@ public class VBookPluginBrowserUI extends JMDialog {
         textSearch.setFont(FontUtils.TEXT_THIN);
         container.add(textSearch);
         textSearch.setBounds(10, 50, 360, 30);
+
+        // Type filter buttons
+        JPanel filterPanel = new JPanel();
+        filterPanel.setLayout(null);
+        filterPanel.setBackground(Color.WHITE);
+        filterPanel.setBounds(10, 85, 360, 25);
+        container.add(filterPanel);
+
+        // All filter
+        JLabel lbAll = new JLabel("Tất cả");
+        lbAll.setFont(FontUtils.TEXT_NORMAL);
+        filterPanel.add(lbAll);
+        lbAll.setBounds(0, 0, 60, 25);
+
+        btAll = new SelectButton();
+        btAll.setSelected(true);
+        btAll.setFont(FontUtils.ICON_NORMAL);
+        btAll.addChangeListener(
+                e -> {
+                    if (btAll.isSelected()) {
+                        selectedType = "all";
+                        btNovel.setSelected(false);
+                        btComic.setSelected(false);
+                        btAll.setSelected(true);
+                        filterAndShowExtensions();
+                    }
+                });
+        filterPanel.add(btAll);
+        btAll.setBounds(65, 0, 25, 25);
+
+        // Novel filter
+        JLabel lbNovel = new JLabel("Novel");
+        lbNovel.setFont(FontUtils.TEXT_NORMAL);
+        filterPanel.add(lbNovel);
+        lbNovel.setBounds(100, 0, 60, 25);
+
+        btNovel = new SelectButton();
+        btNovel.setSelected(false);
+        btNovel.setFont(FontUtils.ICON_NORMAL);
+        btNovel.addChangeListener(
+                e -> {
+                    if (btNovel.isSelected()) {
+                        selectedType = "novel";
+                        btAll.setSelected(false);
+                        btComic.setSelected(false);
+                        btNovel.setSelected(true);
+                        filterAndShowExtensions();
+                    }
+                });
+        filterPanel.add(btNovel);
+        btNovel.setBounds(165, 0, 25, 25);
+
+        // Comic filter
+        JLabel lbComic = new JLabel("Comic");
+        lbComic.setFont(FontUtils.TEXT_NORMAL);
+        filterPanel.add(lbComic);
+        lbComic.setBounds(200, 0, 60, 25);
+
+        btComic = new SelectButton();
+        btComic.setSelected(false);
+        btComic.setFont(FontUtils.ICON_NORMAL);
+        btComic.addChangeListener(
+                e -> {
+                    if (btComic.isSelected()) {
+                        selectedType = "comic";
+                        btAll.setSelected(false);
+                        btNovel.setSelected(false);
+                        btComic.setSelected(true);
+                        filterAndShowExtensions();
+                    }
+                });
+        filterPanel.add(btComic);
+        btComic.setBounds(265, 0, 25, 25);
 
         textSearch
                 .getDocument()
@@ -84,7 +159,7 @@ public class VBookPluginBrowserUI extends JMDialog {
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
         container.add(scrollPane);
-        scrollPane.setBounds(0, 90, 380, 260);
+        scrollPane.setBounds(0, 115, 380, 235);
 
         gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -185,19 +260,40 @@ public class VBookPluginBrowserUI extends JMDialog {
                     String searchText = textSearch.getText().trim().toLowerCase();
                     List<VBookExtensionEntity> filteredExtensions = allExtensions;
 
-                    if (!searchText.isEmpty()) {
+                    // Apply type filter first
+                    if (!"all".equals(selectedType)) {
+                        final String typeFilter = selectedType;
                         filteredExtensions =
-                                allExtensions.stream()
+                                filteredExtensions.stream()
+                                        .filter(e -> typeFilter.equals(e.getType()))
+                                        .toList();
+                    }
+
+                    // Then apply text search filter
+                    if (!searchText.isEmpty()) {
+                        final String finalSearchText = searchText;
+                        filteredExtensions =
+                                filteredExtensions.stream()
                                         .filter(
                                                 e ->
                                                         e.getName()
                                                                         .toLowerCase()
-                                                                        .contains(searchText)
+                                                                        .contains(finalSearchText)
                                                                 || (e.getAuthor() != null
                                                                         && e.getAuthor()
                                                                                 .toLowerCase()
                                                                                 .contains(
-                                                                                        searchText)))
+                                                                                        finalSearchText))
+                                                                || (e.getSource() != null
+                                                                        && e.getSource()
+                                                                                .toLowerCase()
+                                                                                .contains(
+                                                                                        finalSearchText))
+                                                                || (e.getPath() != null
+                                                                        && e.getPath()
+                                                                                .toLowerCase()
+                                                                                .contains(
+                                                                                        finalSearchText)))
                                         .toList();
                     }
 

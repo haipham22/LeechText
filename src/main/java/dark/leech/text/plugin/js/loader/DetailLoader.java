@@ -1,8 +1,7 @@
 package dark.leech.text.plugin.js.loader;
 
-import org.mozilla.javascript.*;
+import org.mozilla.javascript.NativeObject;
 
-import dark.leech.text.action.Log;
 import dark.leech.text.enities.BookEntity;
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.util.TextUtils;
@@ -11,67 +10,33 @@ import dark.leech.text.util.TextUtils;
  * JavaScript detail loader for vBook plugins using Rhino. Sets up vBook API environment (BASE_URL,
  * load, fetch, Response, Html).
  */
-public class DetailLoader {
-
-    private final PluginEntity plugin;
+public class DetailLoader extends AbstractLoader<BookEntity> {
 
     private DetailLoader(PluginEntity plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     public static DetailLoader with(PluginEntity plugin) {
         return new DetailLoader(plugin);
     }
 
-    public BookEntity load(String url) {
-        if (!TextUtils.isEmpty(plugin.getDetailGetter())) {
-            Context ctx = null;
-            try {
-                // Enter Rhino context
-                ctx = Context.enter();
-                ctx.setOptimizationLevel(-1); // Interpretation mode for security
-                ctx.setLanguageVersion(200); // ES6 support for vBook plugins
-                Scriptable scope = ctx.initStandardObjects();
+    @Override
+    protected String getScript() {
+        return TextUtils.isEmpty(plugin.getDetailGetter()) ? null : plugin.getDetailGetter();
+    }
 
-                // Extract base URL from plugin source
-                String baseUrl = plugin.getSource();
-                if (baseUrl == null || baseUrl.isEmpty()) {
-                    baseUrl = VBookApiSetup.extractBaseUrl(url);
-                }
+    @Override
+    protected LoaderType getLoaderType() {
+        return LoaderType.DETAIL;
+    }
 
-                // Setup vBook API bindings
-                VBookApiSetup.setupVBookApi(ctx, scope, baseUrl, url);
-
-                // Execute the detail script
-                ctx.evaluateString(scope, plugin.getDetailGetter(), "detailGetter", 1, null);
-
-                // Call the execute function
-                Object functionObj = scope.get("execute", scope);
-                if (!(functionObj instanceof Function function)) {
-                    return null;
-                }
-
-                // Defensive: ensure URL is valid before calling execute
-                String safeUrl =
-                        (url == null || url.isEmpty() || url.contains("NOT_FOUND")) ? baseUrl : url;
-                Object result = function.call(ctx, scope, scope, new Object[] {safeUrl});
-
-                if (result == null || result == org.mozilla.javascript.Undefined.instance) {
-                    return null;
-                }
-
-                return extractBookEntity(result, url);
-
-            } catch (Exception e) {
-                Log.add("JavaScript execution error in detail loader: " + e.getMessage());
-                return null;
-            } finally {
-                if (ctx != null) {
-                    Context.exit();
-                }
-            }
-        }
-        return null;
+    @Override
+    protected BookEntity processResult(Object result, String url) {
+        // Defensive: ensure URL is valid before calling execute
+        String baseUrl = plugin.getSource();
+        String safeUrl =
+                (url == null || url.isEmpty() || url.contains("NOT_FOUND")) ? baseUrl : url;
+        return extractBookEntity(result, safeUrl);
     }
 
     private BookEntity extractBookEntity(Object result, String fallbackUrl) {
@@ -119,7 +84,10 @@ public class DetailLoader {
             }
         } else if (result != null) {
             // Handle plain string result
-            entity.setDetail(result.toString());
+            String detailStr = JSResponse.getString(result);
+            if (detailStr != null) {
+                entity.setDetail(detailStr);
+            }
         }
 
         entity.setWebSource(plugin.getName());

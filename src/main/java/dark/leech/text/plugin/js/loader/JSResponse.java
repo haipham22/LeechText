@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.NativeObject;
@@ -32,7 +33,11 @@ public final class JSResponse {
         Map<String, Object> map = new LinkedHashMap<>();
         for (Object key : nativeObject.keySet()) {
             Object value = nativeObject.get(key);
-            map.put(key.toString(), convertValue(value));
+            String keyStr =
+                    (key instanceof Number)
+                            ? String.valueOf(((Number) key).intValue())
+                            : String.valueOf(key);
+            map.put(keyStr, convertValue(value));
         }
         return map;
     }
@@ -91,13 +96,40 @@ public final class JSResponse {
             return object.toString();
         }
 
+        if (obj instanceof Function) {
+            // Functions can't be safely converted to strings
+            return null;
+        }
+
         if (obj instanceof NativeJavaObject object) {
             // Unwrap to get the actual Java object instead of "[object Object]"
             Object unwrapped = object.unwrap();
             return unwrapped != null ? unwrapped.toString() : null;
         }
 
-        return obj.toString();
+        // UNIVERSAL PATTERN: Use Context.toString() for all Rhino object conversions
+        // This is the SAFE way to convert ANY JavaScript object to string
+        try {
+            return org.mozilla.javascript.Context.toString(obj);
+        } catch (Exception e) {
+            // Final fallback - if Context.toString() fails, return null
+            return null;
+        }
+    }
+
+    /**
+     * UNIVERSAL STRING CONVERSION UTILITY
+     *
+     * <p>Use this method for ALL JavaScript-to-Java string conversions. This is the meta-pattern
+     * solution for toString() errors across all JavaScript APIs.
+     *
+     * <p>Meta-Pattern: JavaScript objects (especially Functions) cannot use Java's .toString()
+     * Solution: Always use Context.toString() for Rhino object string conversion
+     *
+     * <p>Usage: Replace all obj.toString() calls with JSResponse.safeToString(obj)
+     */
+    public static String safeToString(Object obj) {
+        return getString(obj);
     }
 
     /**

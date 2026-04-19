@@ -17,6 +17,9 @@ public class JSDocument {
     /** Select elements using CSS selector. Returns JSElements collection for chaining. */
     public JSElements select(String selector) {
         try {
+            if (document == null) {
+                return new JSElements(new Elements());
+            }
             if (selector == null || selector.isEmpty()) {
                 return new JSElements(new Elements());
             }

@@ -2,7 +2,12 @@
 
 ## Overview
 
-LeechText uses GitHub Actions CI/CD for automated multi-platform builds and releases.
+LeechText uses GitHub Actions CI/CD for automated multi-platform builds and releases. Version 1.0.5 includes enhanced JavaScript engine support and vBook compatibility.
+
+**Current Version**: 1.0.5
+**Java Version**: 17
+**Build System**: Gradle 8.4
+**Platforms**: macOS, Windows, Linux
 
 ## CI/CD Pipeline
 
@@ -19,7 +24,7 @@ LeechText uses GitHub Actions CI/CD for automated multi-platform builds and rele
 ### Build Process
 
 **Triggered by:**
-- Push to `main` or `develop` branches
+- Push to `main` or `dev` branches
 - Pull requests
 - Manual dispatch
 - Tag push (for releases)
@@ -122,9 +127,9 @@ git push origin v1.0.0
 5. Publishes GitHub release
 
 **Artifacts:**
-- `LeechText-mac.jar` + checksums
-- `LeechText-windows.jar` + checksums
-- `LeechText-linux.jar` + checksums
+- `LeechText-mac.jar` + checksums (includes JavaScript engine, WebP conversion)
+- `LeechText-windows.jar` + checksums (includes JavaScript engine, WebP conversion)
+- `LeechText-linux.jar` + checksums (includes JavaScript engine, WebP conversion)
 
 ### Manual Releases
 
@@ -156,6 +161,7 @@ gh run download --name leechtest-linux
 - Java 17+ JRE or JDK
 - 512MB RAM minimum (1GB recommended)
 - 100MB disk space
+- Optional: ffmpeg/ImageMagick for WebP image conversion (fallback included)
 
 **macOS/Linux:**
 ```bash

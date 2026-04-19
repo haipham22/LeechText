@@ -97,13 +97,6 @@ public class PluginUpdate {
         int downloadCount = 0;
 
         for (Repository.Plugin pluginMeta : repository.getPlugins()) {
-            Log.add(
-                    "[PluginUpdate] Processing vBook plugin: "
-                            + pluginMeta.getName()
-                            + " v"
-                            + pluginMeta.getVersion()
-                            + " path: "
-                            + pluginMeta.getPath());
 
             try {
                 var existingPlugin = PluginManager.getManager().get(pluginMeta.getPath());
@@ -126,14 +119,6 @@ public class PluginUpdate {
                                         + " v"
                                         + existingPlugin.getVersion());
                     }
-                } else {
-                    // New plugin - skip auto-download, let user install manually via browser
-                    Log.add(
-                            "[PluginUpdate] NEW PLUGIN: "
-                                    + pluginMeta.getName()
-                                    + " v"
-                                    + pluginMeta.getVersion());
-                    downloadCount++;
                 }
 
             } catch (Exception e) {
@@ -163,12 +148,6 @@ public class PluginUpdate {
             String pluginUuid = obj.getString("uuid");
             String pluginName = obj.getString("name");
             double remoteVersion = obj.getDouble("version");
-
-            Log.add(
-                    "[PluginUpdate] Processing legacy plugin: "
-                            + pluginName
-                            + " v"
-                            + remoteVersion);
 
             try {
                 boolean found = false;

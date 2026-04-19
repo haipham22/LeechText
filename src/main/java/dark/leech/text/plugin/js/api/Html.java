@@ -109,8 +109,8 @@ public class Html extends JsApiWrapper {
         if (tags != null) {
             for (Object tag : tags) {
                 if (tag != null) {
-                    String tagStr = tag.toString();
-                    if (!tagStr.isEmpty()) {
+                    String tagStr = org.mozilla.javascript.Context.toString(tag);
+                    if (tagStr != null && !tagStr.isEmpty()) {
                         doc.select(tagStr).remove();
                     }
                 }

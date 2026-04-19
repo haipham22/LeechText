@@ -16,7 +16,10 @@ public class ConsoleApi {
      */
     public void log(Object msg) {
         if (msg != null) {
-            Log.add(msg.toString());
+            String msgStr = JSResponse.getString(msg);
+            if (msgStr != null) {
+                Log.add(msgStr);
+            }
         }
     }
 }

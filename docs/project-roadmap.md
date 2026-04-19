@@ -2,9 +2,9 @@
 
 ## Current Status
 
-**Version**: 2019.03.30
+**Version**: 1.0.5
 **Status**: Stable Release
-**Last Update**: Gradle migration completed, code style improvements applied
+**Last Update**: Gradle migration completed, code style improvements applied, JavaScript engine and vBook compatibility implemented
 
 ## Development Phases
 
@@ -41,11 +41,30 @@
 - ✅ Code style improvements
 - ✅ Remove unused code
 - ✅ Refactor duplicated variables
-- ✅ JavaScript API Layer implementation with vBook compatibility
+- ✅ JavaScript API Layer implementation with vBook compatibility (Rhino engine)
 - ✅ WebP cover image conversion fix
 - ✅ Plugin security validation system
 - ✅ HTML sanitization for EPUB
 - ✅ Comprehensive documentation updates
+
+### Phase 5: Feature Enhancements ✅ COMPLETED
+**Status**: Completed (April 2026)
+**Deliverables**:
+- ✅ JavaScript Plugin System (Rhino engine with vBook API compatibility)
+- ✅ WebP Cover Image Fix (automatic JPEG conversion)
+- ✅ Plugin Security Validation (network, regex, archive scanning)
+- ✅ HTML Sanitization Utilities (EPUB XML validation)
+- ✅ JavaScript API Layer implementation
+- ✅ Dual plugin engine support (Lua + JavaScript)
+
+**Completions (April 2026)**:
+- Added Rhino JavaScript engine with vBook API compatibility (replaced GraalVM)
+- Implemented WebP to JPEG conversion for EPUB cover images
+- Created comprehensive plugin security validation system
+- Added HTML sanitization for EPUB XML validation
+- Updated build system and dependencies
+
+**Estimated Timeline**: Completed Q2 2026
 
 **Completed Features**:
 - **WebP Image Converter**: Automatic conversion of WebP covers to JPEG for EPUB compatibility
@@ -53,37 +72,16 @@
 - **Plugin Security**: Network validation, regex scanning, and archive security
 - **HTML Sanitizer**: EPUB XML validation and tag cleanup utilities
 
-### Phase 5: Feature Enhancements 📋 IN PROGRESS
-**Status**: In Progress (20% complete)
-**Deliverables**:
-- ✅ JavaScript Plugin System (completed April 2026)
-- ✅ WebP Cover Image Fix (completed April 2026)
-- ✅ Plugin Security Validation (completed April 2026)
-- ✅ HTML Sanitization Utilities (completed April 2026)
-- ⏳ Multi-language UI support (Vietnamese, English)
-- ⏳ Cloud sync for settings
-- ⏳ Advanced content editor
-- ⏳ Batch download improvements
-- ⏳ Custom plugin repository browser
-
-**Recent Completions (April 2026)**:
-- Added Rhino JavaScript engine with vBook API compatibility
-- Implemented WebP to JPEG conversion for EPUB cover images
-- Created comprehensive plugin security validation system
-- Added HTML sanitization for EPUB XML validation
-
-**Estimated Timeline**: Q2-Q3 2026
-
 ### Phase 6: Platform Expansion 📋 PLANNED
 **Status**: Planned
-**Priority**: Low
+**Priority**: Medium
 **Deliverables**:
 - ⏳ Web-based interface
 - ⏳ Mobile companion app
 - ⏳ CLI interface
-- ⏳ Headless mode for servers
+- ⏳ Enhanced plugin marketplace
 
-**Estimated Timeline**: Q3-Q4 2026
+**Estimated Timeline**: Q3 2026 - Q1 2027
 
 ## Short-Term Goals (Next 1-2 Months)
 
@@ -156,26 +154,29 @@
 
 ## Release Schedule
 
-### v2025.1.0 (Planned - Q1 2025)
-**Focus**: Testing and Documentation
-- Comprehensive test suite
-- Complete API documentation
-- Plugin development guide
-- Bug fixes and stability improvements
-
-### v2025.2.0 (Planned - Q2 2025)
-**Focus**: Feature Enhancements
-- Multi-language UI support
-- Advanced content editor
-- Improved plugin management
+### v1.1.0 (Planned - Q3 2026)
+**Focus**: Advanced Features & Multi-language Support
+- Multi-language UI support (Vietnamese, English)
+- Advanced content editor with preview
+- Improved plugin management and marketplace
 - Performance optimizations
+- Enhanced error handling and debugging
 
-### v2026.1.0 (Planned - Q3 2026)
-**Focus**: Platform Expansion
-- Web-based interface
-- Mobile companion apps
-- CLI interface
-- Cloud sync beta
+### v1.2.0 (Planned - Q1 2027)
+**Focus**: Platform Expansion & Integration
+- Web-based interface (LeechText Web)
+- Mobile companion apps (iOS/Android)
+- CLI interface for power users
+- Enhanced plugin marketplace
+- Cloud sync for settings and downloads
+
+### v2.0.0 (Planned - Q3 2027)
+**Focus**: Major Architectural Update
+- Java 21 migration (LTS)
+- Native packaging with jpackage
+- Enhanced AI integration features
+- Advanced content analysis and summarization
+- Collaborative editing features
 
 ## Success Metrics
 

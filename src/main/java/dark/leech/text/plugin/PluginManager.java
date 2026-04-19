@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 
 import dark.leech.text.action.Log;
 import dark.leech.text.enities.PluginEntity;
-import dark.leech.text.plugin.vbook.VBookPluginService;
 import dark.leech.text.util.AppUtils;
 import dark.leech.text.util.FileUtils;
 
@@ -141,51 +140,6 @@ public class PluginManager {
                 pluginList.add(plugin);
                 notifyListeners();
             }
-        }
-    }
-
-    /**
-     * Load and install a plugin from a vBook ZIP file.
-     *
-     * @param zipPath Path to the plugin.zip file
-     * @return true if installation succeeded
-     */
-    public boolean addFromZip(String zipPath) {
-        try {
-            VBookPluginService vbookService = new VBookPluginService();
-            // Convert file path to file:// URL
-            String fileUrl = "file://" + new File(zipPath).getAbsolutePath();
-            PluginEntity plugin = vbookService.downloadAndConvert(fileUrl);
-            add(plugin);
-            return true;
-        } catch (Exception e) {
-            Log.add(e);
-            return false;
-        }
-    }
-
-    /**
-     * Download and install a plugin from a vBook repository.
-     *
-     * @param repositoryUrl URL to the plugin.json registry
-     * @param pluginName Name of the plugin to install
-     * @return true if installation succeeded
-     */
-    public boolean addFromVBookRepository(String repositoryUrl, String pluginName) {
-        try {
-            VBookPluginService vbookService = new VBookPluginService();
-            var extensions = vbookService.getAvailablePlugins(repositoryUrl);
-
-            for (var extension : extensions) {
-                if (pluginName.equals(extension.getName())) {
-                    return vbookService.installPlugin(extension);
-                }
-            }
-
-            return false;
-        } catch (Exception e) {
-            Log.add(e);
-            return false;
         }
     }
 

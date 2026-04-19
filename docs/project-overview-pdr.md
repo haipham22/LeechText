@@ -5,7 +5,7 @@
 ### Project Identity
 
 **Name**: LeechText
-**Version**: 2019.03.30
+**Version**: 1.0.5
 **Type**: Desktop Application
 **Language**: Java 17
 **License**: MIT
@@ -25,17 +25,18 @@ LeechText is a powerful Java-based text extraction and ebook creation applicatio
 - Dual plugin system: Lua and JavaScript engines with vBook compatibility
 
 #### Export Formats
-- **EPUB**: Create ebooks with proper chapter structure and WebP cover conversion
+- **EPUB**: Create ebooks with proper chapter structure, WebP cover conversion, and HTML sanitization
 - **Plain Text**: Simple text output with basic formatting
 - **Table of Contents**: Generate structured content outlines
 - Custom format support via extensible export system
-- **HTML Sanitization**: Automatic cleanup for EPUB XML validation
+- **HTML Sanitization**: Automatic cleanup for EPUB XML validation (fixes unclosed tags, orphaned closing tags)
 
 #### Plugin System
 - Extensible architecture with custom extraction plugins
-- Lua script engine for advanced content processing
-- Plugin repository management
-- Automatic plugin updates
+- Dual engine support: Lua and JavaScript (Rhino) with vBook API compatibility
+- Plugin repository management with auto-update
+- Comprehensive security validation: network, regex, and archive scanning
+- Sandbox execution environment with resource limits
 
 #### User Interface
 - Modern Material Design-inspired components
@@ -47,20 +48,23 @@ LeechText is a powerful Java-based text extraction and ebook creation applicatio
 ### Technical Requirements
 
 #### Core Dependencies
-- **JSoup 1.16.1**: HTML parsing
-- **Gson 2.10.1**: JSON serialization
-- **LuaJ 3.0.1**: Lua scripting support
-- **Zip4j 2.11.5**: Archive handling
-- **HttpClient5 5.2.1**: HTTP client
-- **RSyntaxTextArea 3.3.4**: Syntax highlighting
-- **Lombok 1.18.30**: Boilerplate reduction
+- **JSoup 1.16.1**: HTML parsing and scraping
+- **Gson 2.10.1**: JSON serialization/deserialization
+- **Rhino 1.7.15**: JavaScript engine with vBook API compatibility
+- **Zip4j 2.11.5**: EPUB creation and ZIP handling
+- **HttpClient5 5.2.1**: HTTP communication
+- **RSyntaxTextArea 3.3.4**: Code editing and syntax highlighting
+- **Lombok 1.18.30**: Annotation-based code generation
+- **Micrometer Core 1.11.0**: JavaScript engine monitoring
 
 #### Build System
 - **Gradle 8.4**: Build automation
 - **Java 17**: Target runtime
-- **Spotless**: Code formatting (Google Java Format)
+- **Spotless**: Code formatting (Google Java Format 1.18.1)
 - **Checkstyle**: Code style checking
 - **PMD**: Code quality analysis
+- **JUnit 4.13.2**: Unit testing
+- **Mockito 5.4.0**: Mocking framework
 
 ### Architecture Overview
 

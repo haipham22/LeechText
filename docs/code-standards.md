@@ -74,7 +74,7 @@ dark.leech.text
 ├── listeners/      # Event listeners
 ├── lua/            # Lua integration
 ├── models/         # Data models
-├── plugin/         # Plugin system (includes js/, security/ subpackages)
+├── plugin/         # Plugin system (includes js/, security/, validation/, sandbox/, vbook/ subpackages)
 ├── ui/             # User interface
 └── util/           # Utilities (includes ImageConverter, HtmlSanitizer)
 ```

@@ -45,6 +45,12 @@ public class Http extends JsApiWrapper {
         this.connection =
                 Jsoup.connect(url)
                         .header("User-Agent", SettingUtils.USER_AGENT)
+                        //                        .header("Accept",
+                        // "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                        //                        .header("Accept-Language",
+                        // "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7")
+                        //                        .header("Accept-Encoding", "gzip, deflate, br")
+                        //                        .header("Connection", "keep-alive")
                         .followRedirects(true)
                         .ignoreContentType(true)
                         .ignoreHttpErrors(true)
@@ -126,7 +132,10 @@ public class Http extends JsApiWrapper {
             Map<?, ?> map = (Map<?, ?>) params;
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 if (entry.getKey() instanceof String) {
-                    String strValue = entry.getValue() != null ? entry.getValue().toString() : "";
+                    String strValue =
+                            entry.getValue() != null
+                                    ? org.mozilla.javascript.Context.toString(entry.getValue())
+                                    : "";
                     connection.data((String) entry.getKey(), strValue);
                 }
             }
@@ -155,7 +164,10 @@ public class Http extends JsApiWrapper {
             Map<?, ?> map = (Map<?, ?>) data;
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 if (entry.getKey() instanceof String) {
-                    String strValue = entry.getValue() != null ? entry.getValue().toString() : "";
+                    String strValue =
+                            entry.getValue() != null
+                                    ? org.mozilla.javascript.Context.toString(entry.getValue())
+                                    : "";
 
                     if (formBody.length() > 0) {
                         formBody.append("&");
@@ -181,7 +193,10 @@ public class Http extends JsApiWrapper {
             Map<?, ?> map = (Map<?, ?>) params;
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 if (entry.getKey() instanceof String) {
-                    String strValue = entry.getValue() != null ? entry.getValue().toString() : "";
+                    String strValue =
+                            entry.getValue() != null
+                                    ? org.mozilla.javascript.Context.toString(entry.getValue())
+                                    : "";
 
                     if (query.length() > 0) {
                         query.append("&");
