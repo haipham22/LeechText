@@ -36,36 +36,136 @@ public class Json extends JsApiWrapper {
     }
 
     /**
-     * Parse JSON string to Java object (automatically converted to JS by Rhino). Handles objects,
-     * arrays, primitives, null. Usage: json.parse('{"key": "value"}')
+     * Parse JSON string to JavaScript object using Rhino's NativeJSON (matches vBooks behavior).
+     * Returns NativeObject for proper JavaScript property access like json.chap_list. Usage:
+     * json.parse('{"key": "value"}')
      */
     public Object parse(String jsonString) {
         if (jsonString == null || jsonString.isEmpty()) {
+            Log.add("[Json.parse()] Input is null or empty");
             return null;
         }
 
         String trimmed = jsonString.trim();
         if (trimmed.isEmpty()) {
+            Log.add("[Json.parse()] Trimmed input is empty");
             return null;
         }
 
         try {
+            Log.add("[Json.parse()] Parsing JSON (first 200 chars): " + (trimmed.length() > 200 ? trimmed.substring(0, 200) : trimmed));
+
+            // Use wrapper's context and scope for NativeJSON.parse()
+            org.mozilla.javascript.Context ctx = getContext();
+            org.mozilla.javascript.Scriptable scope = getScope();
+
+            // Create null callable for NativeJSON.parse()
+            org.mozilla.javascript.Callable nullCallable = new org.mozilla.javascript.Callable() {
+                @Override
+                public Object call(org.mozilla.javascript.Context cx, org.mozilla.javascript.Scriptable scope,
+                                   org.mozilla.javascript.Scriptable thisObj, Object[] args) {
+                    return args[1]; // Return value as-is
+                }
+            };
+
+            Object result = org.mozilla.javascript.NativeJSON.parse(ctx, scope, jsonString, nullCallable);
+
+            // Log the result type
+            if (result instanceof org.mozilla.javascript.NativeObject) {
+                org.mozilla.javascript.NativeObject nativeObj = (org.mozilla.javascript.NativeObject) result;
+                Object[] keys = nativeObj.getIds();
+                Log.add("[Json.parse()] Parsed as NativeObject with " + keys.length + " keys: " + java.util.Arrays.toString(keys));
+
+                // Log all properties and their types
+                for (Object key : keys) {
+                    if (key instanceof String) {
+                        Object value = nativeObj.get((String) key, nativeObj);
+                        String valueStr = String.valueOf(value);
+                        if (valueStr.length() > 50) {
+                            valueStr = valueStr.substring(0, 50) + "...";
+                        }
+                        Log.add("[Json.parse()]   - " + key + ": " + valueStr + " (type: " + (value != null ? value.getClass().getSimpleName() : "null") + ")");
+                    }
+                }
+
+                // Check for common field names
+                if (nativeObj.has("chap_list", nativeObj)) {
+                    Log.add("[Json.parse()] ✓ Found 'chap_list' field in NativeObject");
+                } else if (nativeObj.has("chapters", nativeObj)) {
+                    Log.add("[Json.parse()] ✓ Found 'chapters' field in NativeObject (not 'chap_list')");
+                } else if (nativeObj.has("data", nativeObj)) {
+                    Log.add("[Json.parse()] ✓ Found 'data' field in NativeObject (might contain nested data)");
+                } else if (nativeObj.has("html", nativeObj)) {
+                    Log.add("[Json.parse()] ✓ Found 'html' field in NativeObject (not 'chap_list')");
+                } else {
+                    Log.add("[Json.parse()] ✗ No 'chap_list', 'chapters', 'data', or 'html' field found in NativeObject");
+                }
+            } else if (result instanceof org.mozilla.javascript.NativeArray) {
+                org.mozilla.javascript.NativeArray nativeArr = (org.mozilla.javascript.NativeArray) result;
+                Log.add("[Json.parse()] Parsed as NativeArray with length: " + nativeArr.getLength());
+            } else {
+                Log.add("[Json.parse()] Parsed as: " + (result != null ? result.getClass().getName() : "null"));
+            }
+
+            return result;
+
+        } catch (Exception e) {
+            Log.add("[Json.parse()] NativeJSON parsing failed: " + e.getMessage() + ", trying manual parsing");
+            return parseManual(jsonString);
+        }
+    }
+
+    /** Fallback manual parsing method. */
+    private Object parseManual(String jsonString) {
+        try {
+            String trimmed = jsonString.trim();
+
             // Try as object first
             if (trimmed.startsWith("{")) {
                 JSONObject obj = new JSONObject(jsonString);
-                return convertObject(obj);
+                Map<String, Object> result = convertObject(obj);
+
+                // Log all available keys and sample values
+                Log.add("[Json.parse()] Manual parse - object with " + result.size() + " keys:");
+                for (String key : result.keySet()) {
+                    Object value = result.get(key);
+                    String valueStr = String.valueOf(value);
+                    if (valueStr.length() > 50) {
+                        valueStr = valueStr.substring(0, 50) + "...";
+                    }
+                    Log.add("[Json.parse()]   - " + key + ": " + valueStr + " (type: " + (value != null ? value.getClass().getSimpleName() : "null") + ")");
+                }
+
+                // Check for common field name variations
+                if (result.containsKey("chap_list")) {
+                    Log.add("[Json.parse()] ✓ Found 'chap_list' field");
+                } else if (result.containsKey("chapters")) {
+                    Log.add("[Json.parse()] ✓ Found 'chapters' field (not 'chap_list')");
+                } else if (result.containsKey("data")) {
+                    Log.add("[Json.parse()] ✓ Found 'data' field (might contain nested data)");
+                } else if (result.containsKey("html")) {
+                    Log.add("[Json.parse()] ✓ Found 'html' field (not 'chap_list')");
+                } else {
+                    Log.add("[Json.parse()] ✗ No 'chap_list', 'chapters', 'data', or 'html' field found");
+                }
+
+                return result;
             }
             // Try as array
             else if (trimmed.startsWith("[")) {
                 JSONArray arr = new JSONArray(jsonString);
-                return convertArray(arr);
+                List<Object> result = convertArray(arr);
+                Log.add("[Json.parse()] Manual parse - array with " + result.size() + " elements");
+                return result;
             }
             // Try as primitive
             else {
-                return parsePrimitive(trimmed);
+                Object result = parsePrimitive(trimmed);
+                Log.add("[Json.parse()] Manual parse - primitive: " + result);
+                return result;
             }
         } catch (Exception e) {
-            Log.add("JSON parsing failed: " + e.getMessage());
+            Log.add("[Json.parse()] Manual parsing failed: " + e.getMessage());
             return null;
         }
     }

@@ -1,5 +1,6 @@
 package dark.leech.text.plugin.js.api;
 
+import dark.leech.text.action.Log;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -17,15 +18,23 @@ public class JSDocument {
     /** Select elements using CSS selector. Returns JSElements collection for chaining. */
     public JSElements select(String selector) {
         try {
+            Log.add("[JSDocument.select()] Called with selector: " + selector + ", document: " + document);
+
             if (document == null) {
+                Log.add("[JSDocument.select()] Document is null, returning empty JSElements");
                 return new JSElements(new Elements());
             }
             if (selector == null || selector.isEmpty()) {
+                Log.add("[JSDocument.select()] Selector is null/empty, returning empty JSElements");
                 return new JSElements(new Elements());
             }
+
             Elements results = document.select(selector);
+            Log.add("[JSDocument.select()] Found " + results.size() + " elements matching selector: " + selector);
+
             return new JSElements(results);
         } catch (Exception e) {
+            Log.add("[JSDocument.select()] Exception: " + e.getMessage());
             return new JSElements(new Elements());
         }
     }

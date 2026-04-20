@@ -224,12 +224,19 @@ public class Http extends JsApiWrapper {
      */
     public JSDocument html() {
         try {
+            Log.add("[Http.html()] Fetching URL: " + this.url);
             Response response = execute();
             String html = response.body().string();
+
+            Log.add("[Http.html()] Response length: " + html.length() + " bytes");
+            Log.add("[Http.html()] First 200 chars: " + (html.length() > 200 ? html.substring(0, 200) : html));
+
             org.jsoup.nodes.Document doc = org.jsoup.Jsoup.parse(html, this.url);
+            Log.add("[Http.html()] Parsed document, title: " + doc.title());
+
             return new JSDocument(doc);
         } catch (IOException e) {
-            Log.add("Failed to get HTML document: " + e.getMessage());
+            Log.add("[Http.html()] Failed to get HTML document: " + e.getMessage());
             return new JSDocument(org.jsoup.Jsoup.parse(""));
         }
     }
@@ -281,9 +288,24 @@ public class Http extends JsApiWrapper {
                 return null;
             }
             Json jsonApi = new Json();
-            return jsonApi.parse(body);
+            Object parsed = jsonApi.parse(body);
+
+            // If parsing returned a String (HTML content), wrap it in NativeObject for plugin compatibility
+            if (parsed instanceof String) {
+                String trimmed = body.trim();
+                if (trimmed.startsWith("<!DOCTYPE html>") || trimmed.startsWith("<html") || trimmed.startsWith("<HTML")) {
+                    // Create NativeObject for proper JavaScript property access
+                    org.mozilla.javascript.NativeObject wrapper = new org.mozilla.javascript.NativeObject();
+                    wrapper.put("chap_list", wrapper, parsed);
+                    wrapper.put("status", wrapper, 200);
+                    Log.add("[Http.json()] Wrapped HTML in NativeObject with chap_list field");
+                    return wrapper;
+                }
+            }
+
+            return parsed;
         } catch (Exception e) {
-            Log.add("Failed to parse JSON: " + e.getMessage());
+            Log.add("[Http.json()] Failed to parse JSON: " + e.getMessage());
             return null;
         }
     }
@@ -342,9 +364,12 @@ public class Http extends JsApiWrapper {
 
     /** Execute the HTTP request with cookie handling. */
     private Response execute() throws IOException {
+        Log.add("[Http.execute()] Executing request: " + method + " " + this.url);
+
         // Add User-Agent if not already set
         if (requestBuilder.build().header("User-Agent") == null) {
             requestBuilder.header("User-Agent", SettingUtils.USER_AGENT);
+            Log.add("[Http.execute()] Added default User-Agent: " + SettingUtils.USER_AGENT);
         }
 
         // Cookie handling
@@ -352,6 +377,7 @@ public class Http extends JsApiWrapper {
             String cookies = CookiesUtils.getCookies(url);
             if (cookies != null && !cookies.isEmpty()) {
                 requestBuilder.header("Cookie", cookies);
+                Log.add("[Http.execute()] Added cookies: " + cookies.substring(0, Math.min(50, cookies.length())));
             }
         }
 
@@ -363,7 +389,11 @@ public class Http extends JsApiWrapper {
             request = requestBuilder.method(method, null).build();
         }
 
+        Log.add("[Http.execute()] Request headers: " + request.headers());
         response = OK_HTTP_CLIENT.newCall(request).execute();
+
+        int statusCode = response.code();
+        Log.add("[Http.execute()] Response status: " + statusCode + " " + response.message());
 
         // Sync response cookies
         if (syncCookie) {
