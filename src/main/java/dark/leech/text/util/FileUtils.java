@@ -168,10 +168,7 @@ public class FileUtils {
     }
 
     public static void url2file(String url, String savePath) {
-        try {
-            byte2file(Http.connect(url).execute().bodyAsBytes(), savePath);
-        } catch (IOException e) {
-        }
+        byte2file(Http.connect(url).execute().bodyAsBytes(), savePath);
     }
 
     /**

@@ -2,7 +2,6 @@ package dark.leech.text.ui.main;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import javax.swing.*;
@@ -14,14 +13,13 @@ import dark.leech.text.ui.PanelTitle;
 import dark.leech.text.ui.button.BasicButton;
 import dark.leech.text.ui.material.JMDialog;
 import dark.leech.text.util.AppUtils;
-import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.FontUtils;
 import dark.leech.text.util.Http;
 
 /** Created by Dark on 2/25/2017. */
 public class UpdateUI extends JMDialog {
     private static final String URL =
-            "https://dl.dropboxusercontent.com/s/c701wrrsbhl63l2/update.json?dl=1";
+            "https://raw.githubusercontent.com/haipham22/LeechText/main/gradle.properties";
     private final JSONObject obj;
 
     public UpdateUI(JSONObject obj) {
@@ -31,15 +29,32 @@ public class UpdateUI extends JMDialog {
 
     public static void checkUpdate() {
         final int VERSION = Integer.parseInt(AppUtils.VERSION.replace(".", ""));
-        final int TIME = Integer.parseInt(AppUtils.TIME.replace(":", ""));
         try {
-            String update =
+            String properties =
                     new String(Http.connect(URL).execute().bodyAsBytes(), StandardCharsets.UTF_8);
-            JSONObject obj = new JSONObject(update);
-            int version = Integer.parseInt(obj.getString("version").replace(".", ""));
-            int time = Integer.parseInt(obj.getString("time").replace(":", ""));
 
-            if (version > VERSION || (version == VERSION && time > TIME)) new UpdateUI(obj).open();
+            // Parse gradle.properties format: "app.version=1.1.0"
+            String latestVersion = "0";
+            String versionString = "0.0.0";
+            for (String line : properties.split("\n")) {
+                if (line.startsWith("app.version=")) {
+                    versionString = line.substring("app.version=".length());
+                    latestVersion = versionString.replace(".", "");
+                    break;
+                }
+            }
+
+            int version = Integer.parseInt(latestVersion);
+
+            if (version > VERSION) {
+                // Create a minimal JSONObject for the update dialog
+                JSONObject updateInfo = new JSONObject();
+                updateInfo.put("tag_name", "v" + versionString);
+                updateInfo.put("name", "Latest Release");
+                updateInfo.put(
+                        "html_url", "https://github.com/haipham22/LeechText/releases/latest");
+                new UpdateUI(updateInfo).open();
+            }
 
         } catch (Exception e) {
             Log.add(e);
@@ -54,10 +69,10 @@ public class UpdateUI extends JMDialog {
         BasicButton btCancel = new BasicButton();
         JLabel lbInfo =
                 new JLabel(
-                        "Có bản update mới! v"
-                                + obj.getString("version")
-                                + " "
-                                + obj.getString("time"));
+                        "Có bản update mới! "
+                                + obj.getString("tag_name")
+                                + " - "
+                                + obj.getString("name"));
 
         lbInfo.setFont(FontUtils.TEXT_NORMAL);
         container.add(lbInfo);
@@ -100,17 +115,16 @@ public class UpdateUI extends JMDialog {
     }
 
     private void update() {
-        String cmd = FileUtils.validate("java -jar tools/update.jar ");
-        cmd +=
-                "\""
-                        + obj.getString("url")
-                        + "\" \""
-                        + FileUtils.validate(AppUtils.curDir + "/tools/LeechText.jar")
-                        + "\"";
         try {
-            Runtime.getRuntime().exec(cmd);
-        } catch (IOException e) {
+            // Get the browser download URL from GitHub release
+            String htmlUrl = obj.getString("html_url"); // GitHub release page
+
+            // Open browser to download the update
+            java.awt.Desktop.getDesktop().browse(java.net.URI.create(htmlUrl));
+
+        } catch (Exception e) {
+            Log.add("Error opening update URL: " + e.getMessage());
         }
-        System.exit(0);
+        close();
     }
 }

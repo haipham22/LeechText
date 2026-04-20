@@ -239,7 +239,7 @@ public class VBookPluginService {
      */
     private void ensureWorkingDirectory() throws VBookPluginException {
         try {
-            String workingDir = FileUtils.validate("tools/plugins");
+            String workingDir = FileUtils.validate(PLUGINS_DIR);
 
             java.io.File dir = new java.io.File(workingDir);
             if (!dir.exists()) {

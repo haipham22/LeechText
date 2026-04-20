@@ -121,10 +121,10 @@ public class SettingUtils {
         MAX_CONN = 5;
         RE_CONN = 3;
         DELAY = 10;
-        TIMEOUT = 30000;
+        TIMEOUT = 90000;
         USER_AGENT =
-                "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15"
-                        + " (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1";
+                "Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X) AppleWebKit/605.1.15"
+                        + " (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1";
 
         // Style defaults
         IS_CSS_SELECTED = false;

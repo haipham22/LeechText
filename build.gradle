@@ -28,7 +28,7 @@ application {
 
 dependencies {
     // JSoup for HTML parsing
-    implementation 'org.jsoup:jsoup:1.16.1'
+    implementation 'org.jsoup:jsoup:1.22.1'
 
     // JSON processing
     implementation 'org.json:json:20230618'
@@ -57,6 +57,9 @@ dependencies {
 
     // HTTP client
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+
+    // OkHttp3 for JavaScript plugin HTTP API (matches vBooks Android implementation)
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
     // RSyntaxTextArea for syntax highlighting
     implementation 'com.fifesoft:rsyntaxtextarea:3.3.4'
