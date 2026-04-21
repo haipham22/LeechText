@@ -12,7 +12,10 @@ public enum LoaderType {
     DETAIL("detail", "detailGetter"),
 
     /** Text loader - loads chapter content */
-    TEXT("text", "chapGetter");
+    TEXT("text", "chapGetter"),
+
+    /** Page loader - discovers all page URLs for a novel */
+    PAGE("page", "pageGetter");
 
     private final String type;
     private final String scriptName;

@@ -49,10 +49,10 @@ import dark.leech.text.util.*;
  *
  * @author LeechText Development Team
  * @version 1.0
- * @since 1.0
  * @see DownloadUI
  * @see SettingUI
  * @see PluginUI
+ * @since 1.0
  */
 public class MainUI extends JFrame implements BlurListener, ActionListener {
     private DownloadUI downloadUI;
@@ -357,7 +357,7 @@ public class MainUI extends JFrame implements BlurListener, ActionListener {
         time.start();
 
         PluginManager.getManager();
-        // UpdateUI.checkUpdate();
+        UpdateUI.checkUpdate();
         time.stop();
         timer.start();
     }

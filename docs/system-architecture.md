@@ -144,9 +144,10 @@ JavaScript API (Available to Scripts)
 ```
 
 #### JavaScript Loaders
-- **JsDetailLoader**: Load detail page information with vBook API setup
-- **JsTocLoader**: Load table of contents
-- **JsTextLoader**: Load chapter text content
+- **DetailLoader**: Load detail page information with vBook API setup
+- **ListLoader**: Load table of contents
+- **TextLoader**: Load chapter text content
+- **GenLoader**: Load paginated lists (novels, search results) with cursor/token pagination
 
 #### Context Management
 
@@ -413,6 +414,140 @@ Plugin Execution Flow
 - **Performance**: Optimized execution with GraalVM
 - **Extensibility**: Easy to extend and customize
 - **Maintainability**: Clear separation of concerns and proper error handling
+- **Pagination Support**: Built-in cursor/token pagination for infinite scrolling content
+
+## Pagination Feature (NEW)
+
+### Overview
+
+LeechText now supports pagination for JavaScript plugins using the `gen` loader type. This enables extraction of paginated content like novel chapters, search results, and multi-page lists.
+
+### Key Components
+
+#### GenLoader
+- **Purpose**: Handles paginated content extraction
+- **Usage**: `Response.success(data, next)` pattern for returning both items and next page token
+- **Type**: `LoaderType.GEN`
+- **Script**: Uses `genGetter` script from PluginEntity
+
+#### PaginationResult
+- **Generic Model**: `PaginationResult<T>` holds items list and next page metadata
+- **Builder Pattern**: Easy construction with `PaginationResult.builder()`
+- **Empty Result**: `PaginationResult.empty()` for no content
+- **Pagination Metadata**: `hasNext()` and `getNextPage()` methods
+
+#### Response Overloads
+- **Single Argument**: `Response.success(data)` - returns items only
+- **Two Arguments**: `Response.success(data, next)` - returns items with pagination token
+
+### Pagination Flow
+
+```
+JavaScript Plugin Execution (GenLoader)
+┌─────────────────────────────────┐
+│  Execute Pagination Script      │
+├─────────────────────────────────┤
+│  - Call Response.success(data)  │
+│  - Or Response.success(data, next)│
+└─────────────────────────────────┘
+          ↓
+┌─────────────────────────────────┐
+│  GenLoader Processes Result     │
+├─────────────────────────────────┤
+│  - Convert to PaginationResult  │
+│  - Extract items and next page  │
+└─────────────────────────────────┘
+          ↓
+┌─────────────────────────────────┐
+│  Application Uses Result       │
+├─────────────────────────────────┤
+│  - Iterate through pages       │
+│  - Load next page when hasNext()│
+│  - Process items list         │
+└─────────────────────────────────┘
+```
+
+### JavaScript Plugin Implementation
+
+```javascript
+// Example pagination plugin
+function execute(url, page) {
+    // Make HTTP request for current page
+    const response = http.get(url + (page ? '?page=' + page : ''));
+    const html = response.string();
+    
+    // Parse HTML and extract items
+    const items = html.parse(html)
+        .select('.chapter-list li')
+        .map(function(chapter) {
+            return {
+                title: chapter.select('a').text(),
+                url: chapter.select('a').attr('href')
+            };
+        });
+    
+    // Get next page link or token
+    const nextPage = html.parse(html)
+        .select('.pagination .next')
+        .attr('href');
+    
+    // Return both items and next page
+    return Response.success(items, nextPage);
+}
+```
+
+### Plugin Configuration
+
+```json
+{
+  "name": "Example Pagination Plugin",
+  "version": "1.0",
+  "regex": "example\\.com",
+  "gen": "pagination script",
+  "javascript": true
+}
+```
+
+### Usage Patterns
+
+#### Basic Pagination
+```javascript
+// Single page load
+const result = loader.load(url, null);
+const items = result.getItems();
+const hasNext = result.hasNext();
+
+// Load next page
+if (hasNext) {
+    const nextPage = result.getNextPage();
+    const nextResult = loader.load(url, nextPage);
+    // Process nextResult.getItems()
+}
+```
+
+#### Batch Processing
+```javascript
+// Collect all pages
+let allItems = [];
+let currentPage = null;
+let result = loader.load(url, currentPage);
+
+while (result.hasNext()) {
+    allItems.addAll(result.getItems());
+    currentPage = result.getNextPage();
+    result = loader.load(url, currentPage);
+}
+
+allItems.addAll(result.getItems()); // Add final page
+```
+
+### Benefits
+
+- **Seamless Integration**: Works with existing vBook plugin patterns
+- **Type Safety**: Generic `PaginationResult<T>` for type-safe item processing
+- **Error Handling**: Graceful handling of empty results and errors
+- **Performance**: Efficient pagination with minimal overhead
+- **Flexibility**: Supports various pagination schemes (URL-based, token-based, cursor-based)
 
 ### 5. Data Layer
 

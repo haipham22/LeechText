@@ -13,6 +13,16 @@ import dark.leech.text.models.Post;
 import dark.leech.text.util.FileUtils;
 import dark.leech.text.util.SyntaxUtils;
 
+/**
+ * Legacy executor for Java-based page pagination.
+ *
+ * @deprecated Use {@link dark.leech.text.plugin.js.loader.PageLoader} with JavaScript page.js scripts
+ *             instead. This class uses reflection and is no longer recommended.
+ * @since 1.0
+ * @see PageLoader
+ * @see PageGetter
+ */
+@Deprecated
 /** Created by Dark on 1/21/2017. */
 public class PageExecute extends SwingWorker<ArrayList<Post>, Void> {
     private PageGetter pageGetter;
@@ -21,7 +31,8 @@ public class PageExecute extends SwingWorker<ArrayList<Post>, Void> {
     private String chset = "utf-8";
     private String savepath;
 
-    public PageExecute() {}
+    public PageExecute() {
+    }
 
     @Override
     protected ArrayList<Post> doInBackground() throws Exception {

@@ -45,11 +45,6 @@ public class PluginUpdate {
             executor.submit(
                     () -> {
                         try {
-                            Log.add(
-                                    "Checking update for repository: "
-                                            + repo.getLink()
-                                            + "  thread: "
-                                            + Thread.currentThread().getName());
                             checkUpdate(repo.getLink());
                         } catch (Exception e) {
                             Log.add(e);
@@ -60,15 +55,12 @@ public class PluginUpdate {
     }
 
     public void checkUpdate(String repositoryLink) {
-        Log.add("[PluginUpdate] Checking update from: " + repositoryLink);
-
         try {
             String js = Http.request(repositoryLink).string();
             if (js == null || js.isEmpty()) {
                 Log.add("[PluginUpdate] Empty or null response from repository");
                 return;
             }
-            Log.add("[PluginUpdate] Repository response received, length: " + js.length());
 
             // Try vBook Repository format first
             Repository repository = gson.fromJson(js, Repository.class);
@@ -93,8 +85,6 @@ public class PluginUpdate {
 
     /** Check updates for vBook format plugins. */
     private void checkUpdateVBook(Repository repository) {
-        int updateCount = 0;
-        int downloadCount = 0;
 
         for (Repository.Plugin pluginMeta : repository.getPlugins()) {
 
@@ -111,7 +101,6 @@ public class PluginUpdate {
                                         + existingPlugin.getVersion()
                                         + " -> v"
                                         + pluginMeta.getVersion());
-                        updateCount++;
                     } else {
                         Log.add(
                                 "[PluginUpdate] UP-TO-DATE: "
@@ -129,13 +118,6 @@ public class PluginUpdate {
                                 + e.getMessage());
             }
         }
-
-        Log.add(
-                "[PluginUpdate] vBook update complete: "
-                        + updateCount
-                        + " updates, "
-                        + downloadCount
-                        + " new plugins");
     }
 
     /** Check updates for legacy format plugins. */

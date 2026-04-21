@@ -7,6 +7,7 @@ import org.mozilla.javascript.ScriptableObject;
 import dark.leech.text.action.Log;
 import dark.leech.text.plugin.js.api.Html;
 import dark.leech.text.plugin.js.api.Http;
+import dark.leech.text.plugin.js.api.Json;
 
 /**
  * Shared vBook API setup helper for Rhino JavaScript loaders. Extracts duplicate setup logic from
@@ -43,6 +44,11 @@ public final class JsApiSetup {
         // Http class - expose for static method calls like Http.get(), Http.post()
         Http httpInstance = new Http(ctx, scope);
         ScriptableObject.putProperty(scope, "Http", httpInstance);
+        ctx.getWrapFactory().setJavaPrimitiveWrap(false);
+
+        // Json class - expose for JSON parsing (vBook compatibility)
+        Json jsonApi = new Json(ctx, scope);
+        ScriptableObject.putProperty(scope, "Json", jsonApi);
         ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
         // Response object

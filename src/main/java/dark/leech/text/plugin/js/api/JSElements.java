@@ -8,27 +8,37 @@ import org.jsoup.select.Elements;
 
 /**
  * Rhino wrapper for JSoup Elements (collection). Simple Java class - public methods automatically
- * exposed to JavaScript.
+ * exposed to JavaScript. Supports array-like access via get(int) method.
  */
 public class JSElements {
     private final Elements elements;
 
+    /** Public length property for vBook compatibility - matches JSElements in vBooks Android */
+    public int length;
+
     public JSElements(Elements elements) {
         this.elements = elements != null ? elements : new Elements();
+        this.length = this.elements.size();
     }
 
-    /**
-     * Select from current elements using CSS selector. Returns new JSElements collection for
+    /** Select from current elements using CSS selector. Returns new JSElements collection for
      * chaining.
      */
     public JSElements select(String selector) {
         try {
+            dark.leech.text.action.Log.add("[JSElements.select()] Called with selector: " + selector);
+
             if (selector == null || selector.isEmpty()) {
+                dark.leech.text.action.Log.add("[JSElements.select()] Selector is null/empty, returning empty JSElements");
                 return new JSElements(new Elements());
             }
+
             Elements results = elements.select(selector);
+            dark.leech.text.action.Log.add("[JSElements.select()] Found " + results.size() + " elements matching selector: " + selector);
+
             return new JSElements(results);
         } catch (Exception e) {
+            dark.leech.text.action.Log.add("[JSElements.select()] Exception: " + e.getMessage());
             return new JSElements(new Elements());
         }
     }
@@ -48,7 +58,7 @@ public class JSElements {
         return elements.outerHtml();
     }
 
-    /** Get element at index. */
+    /** Get element at index - enables array-like access: links.get(0) */
     public JSElement get(int index) {
         if (index >= 0 && index < elements.size()) {
             return new JSElement(elements.get(index));
@@ -75,6 +85,7 @@ public class JSElements {
 
     /** Get number of elements. */
     public int size() {
+        dark.leech.text.action.Log.add("[JSElements.size()] Called, returning: " + elements.size());
         return elements.size();
     }
 
@@ -123,22 +134,30 @@ public class JSElements {
         }
     }
 
-    /** Map - transform each element, returns array. */
-    public Object[] map(Object callback) {
+    /** Map - transform each element, returns JSList for vBook compatibility (matches vBook Android). */
+    public JSList map(Object callback) {
+        dark.leech.text.action.Log.add("[JSElements.map()] Starting map operation, elements.size(): " + elements.size());
+
+        JSList results = new JSList();
         if (callback instanceof org.mozilla.javascript.Function) {
             org.mozilla.javascript.Function func = (org.mozilla.javascript.Function) callback;
             org.mozilla.javascript.Context ctx = org.mozilla.javascript.Context.getCurrentContext();
             org.mozilla.javascript.Scriptable scope = func.getParentScope();
 
-            List<Object> results = new ArrayList<>();
             for (int i = 0; i < elements.size(); i++) {
                 JSElement element = new JSElement(elements.get(i));
                 Object result = func.call(ctx, scope, scope, new Object[] {element, i});
                 results.add(result);
+
+                dark.leech.text.action.Log.add("[JSElements.map()] Processed element " + i + ", result: " + (result != null ? result.getClass().getName() : "null"));
             }
-            return results.toArray();
+
+            dark.leech.text.action.Log.add("[JSElements.map()] Completed map operation, JSList.size(): " + results.size());
+        } else {
+            dark.leech.text.action.Log.add("[JSElements.map()] Callback is not a Function: " + (callback != null ? callback.getClass().getName() : "null"));
         }
-        return new Object[0];
+
+        return results;
     }
 
     /** Convert to JavaScript array. */

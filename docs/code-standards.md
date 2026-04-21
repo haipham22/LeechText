@@ -546,6 +546,52 @@ JavaScript plugins use the same `.plugin` configuration format as Lua plugins, w
 }
 ```
 
+#### Pagination Guidelines (NEW)
+
+For plugins that need to handle paginated content (search results, chapter lists across multiple pages):
+
+**Use GenLoader Type:**
+```javascript
+// Plugin configuration includes gen field
+{
+  "name": "Pagination Plugin",
+  "regex": "example\\.com",
+  "gen": "pagination extraction script",
+  "javascript": true
+}
+```
+
+**Return PaginatedResponse:**
+```javascript
+function execute(url, page) {
+    // Fetch current page content
+    const items = getItems(url, page);
+    
+    // Get next page identifier (URL, number, token, etc.)
+    const nextPage = getNextPageIdentifier(url, page);
+    
+    // Return both data and pagination info
+    return Response.success(items, nextPage);
+}
+```
+
+**Handle Pagination Metadata:**
+- Always return consistent page identifiers (URL paths, page numbers, tokens)
+- Return `null` or `undefined` for next page when reaching final page
+- Ensure items are always an array or object (not null)
+
+**Consume Paginated Results:**
+```javascript
+const result = loader.load(url, null); // First page
+const items = result.getItems();
+const nextPage = result.getNextPage();
+
+if (result.hasNext()) {
+    // Load next page with nextPage identifier
+    const nextResult = loader.load(url, nextPage);
+}
+```
+
 #### Best Practices
 
 1. **Keep plugins focused**: Each plugin should handle a specific website or type of content
@@ -556,6 +602,7 @@ JavaScript plugins use the same `.plugin` configuration format as Lua plugins, w
 6. **Follow existing patterns**: Consistent with other plugins in the codebase
 7. **Document usage**: Include comments explaining plugin functionality
 8. **Handle encoding properly**: Use proper character encoding for text processing
+9. **Plan for pagination**: Design extraction scripts to support multi-page content when applicable
 
 #### Common Patterns
 

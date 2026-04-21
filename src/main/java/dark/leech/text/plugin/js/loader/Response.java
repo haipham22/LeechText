@@ -33,16 +33,4 @@ public class Response {
     public Object success(Object data) {
         return data;
     }
-
-    /**
-     * Overloaded success method for two arguments (data, next). Used for pagination scenarios where
-     * both data and next page token are returned. Returns the data argument (first parameter).
-     *
-     * @param data The data to return
-     * @param next The next page token (ignored in return value)
-     * @return The data object
-     */
-    public Object success(Object data, Object next) {
-        return data;
-    }
 }

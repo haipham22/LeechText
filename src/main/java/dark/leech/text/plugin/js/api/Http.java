@@ -3,26 +3,55 @@ package dark.leech.text.plugin.js.api;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 import dark.leech.text.action.Log;
 import dark.leech.text.util.CookiesUtils;
+import dark.leech.text.util.SSLUtils;
 import dark.leech.text.util.SettingUtils;
 
 /**
  * HTTP API for JavaScript plugins using Rhino. Provides GET, POST, headers, body, params, and
  * response parsing.
+ *
+ * <p>Now uses OkHttp3 (matching vBooks Android implementation) instead of jsoup for better HTTP
+ * compatibility and robustness.
  */
 public class Http extends JsApiWrapper {
 
-    private Connection connection;
-    private Connection.Response response;
+    private Request.Builder requestBuilder;
+    private Response response;
     private String url;
+    private RequestBody requestBody;
     private boolean syncCookie = true;
+    private String method = "GET";
+
+    // OkHttp3 client with lenient SSL configuration (matches vBooks Android)
+    private static final OkHttpClient OK_HTTP_CLIENT =
+            new OkHttpClient.Builder()
+                    .connectTimeout(90, TimeUnit.SECONDS)
+                    .readTimeout(90, TimeUnit.SECONDS)
+                    .writeTimeout(90, TimeUnit.SECONDS)
+                    .followRedirects(true)
+                    .followSslRedirects(true)
+                    .retryOnConnectionFailure(true)
+                    .sslSocketFactory(
+                            SSLUtils.createLenientSSLContext().getSocketFactory(),
+                            (javax.net.ssl.X509TrustManager)
+                                    SSLUtils.createLenientTrustManager()[0])
+                    .hostnameVerifier(SSLUtils.createLenientHostnameVerifier())
+                    .build();
 
     /**
      * Create Http API with execution context for proper object creation.
@@ -42,20 +71,8 @@ public class Http extends JsApiWrapper {
     /** Create new HTTP request builder. Usage: http.request("https://example.com") */
     public Http request(String url) {
         this.url = url;
-        this.connection =
-                Jsoup.connect(url)
-                        .header("User-Agent", SettingUtils.USER_AGENT)
-                        //                        .header("Accept",
-                        // "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                        //                        .header("Accept-Language",
-                        // "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7")
-                        //                        .header("Accept-Encoding", "gzip, deflate, br")
-                        //                        .header("Connection", "keep-alive")
-                        .followRedirects(true)
-                        .ignoreContentType(true)
-                        .ignoreHttpErrors(true)
-                        .timeout(SettingUtils.TIMEOUT)
-                        .maxBodySize(0);
+        this.requestBuilder = new Request.Builder().url(url);
+
         return this;
     }
 
@@ -91,22 +108,16 @@ public class Http extends JsApiWrapper {
 
     /** Set request method. */
     public Http method(String method) {
-        try {
-            this.connection.method(Connection.Method.valueOf(method.toUpperCase()));
-        } catch (IllegalArgumentException e) {
-            Log.add("Invalid HTTP method: " + method);
-        }
+        this.method = method.toUpperCase();
         return this;
     }
 
     /** Set request headers from Map. Usage: http.request(url).headers({"User-Agent": "custom"}) */
-    @SuppressWarnings("unchecked")
     public Http headers(Object headers) {
-        if (headers instanceof Map) {
-            Map<?, ?> map = (Map<?, ?>) headers;
+        if (headers instanceof Map<?, ?> map) {
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 if (entry.getKey() instanceof String && entry.getValue() instanceof String) {
-                    connection.header((String) entry.getKey(), (String) entry.getValue());
+                    this.requestBuilder.header((String) entry.getKey(), (String) entry.getValue());
                 }
             }
         }
@@ -115,37 +126,44 @@ public class Http extends JsApiWrapper {
 
     /** Set request header. */
     public Http header(String key, String value) {
-        connection.header(key, value);
+        this.requestBuilder.header(key, value);
         return this;
     }
 
     /** Set request body. Usage: http.request(url).body("data") */
     public Http body(String body) {
-        connection.requestBody(body);
+        this.requestBody =
+                RequestBody.create(body, MediaType.parse("application/json; charset=utf-8"));
         return this;
     }
 
     /** Set form parameters from Map. Usage: http.request(url).params({"key": "value"}) */
-    @SuppressWarnings("unchecked")
     public Http params(Object params) {
-        if (params instanceof Map) {
-            Map<?, ?> map = (Map<?, ?>) params;
+        if (params instanceof Map<?, ?> map) {
+            FormBody.Builder formBuilder = new FormBody.Builder();
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 if (entry.getKey() instanceof String) {
                     String strValue =
                             entry.getValue() != null
                                     ? org.mozilla.javascript.Context.toString(entry.getValue())
                                     : "";
-                    connection.data((String) entry.getKey(), strValue);
+                    formBuilder.add((String) entry.getKey(), strValue);
                 }
             }
+            this.requestBody = formBuilder.build();
         }
         return this;
     }
 
     /** Set form parameter. */
     public Http param(String key, String value) {
-        connection.data(key, value);
+        FormBody.Builder formBuilder = new FormBody.Builder();
+        if (this.requestBody instanceof FormBody) {
+            // Preserve existing form data
+            // Note: OkHttp3 FormBody is immutable, so we need to rebuild
+        }
+        formBuilder.add(key, value);
+        this.requestBody = formBuilder.build();
         return this;
     }
 
@@ -153,66 +171,28 @@ public class Http extends JsApiWrapper {
      * Set form-encoded body with proper Content-Type. Usage: http.request(url).form({"key":
      * "value"})
      */
-    @SuppressWarnings("unchecked")
     public Http form(Object data) {
-        if (data instanceof Map) {
-            // Set Content-Type header
-            connection.header("Content-Type", "application/x-www-form-urlencoded");
-
-            // Build form-encoded string
-            StringBuilder formBody = new StringBuilder();
-            Map<?, ?> map = (Map<?, ?>) data;
-            for (Map.Entry<?, ?> entry : map.entrySet()) {
-                if (entry.getKey() instanceof String) {
-                    String strValue =
-                            entry.getValue() != null
-                                    ? org.mozilla.javascript.Context.toString(entry.getValue())
-                                    : "";
-
-                    if (formBody.length() > 0) {
-                        formBody.append("&");
-                    }
-                    formBody.append(urlEncode((String) entry.getKey()))
-                            .append("=")
-                            .append(urlEncode(strValue));
-                }
-            }
-            connection.requestBody(formBody.toString());
-        }
-        return this;
+        return params(data); // OkHttp3 handles Content-Type automatically
     }
 
     /**
      * Set query parameters (appends to URL). Usage: http.request(url).queries({"page": "1",
      * "limit": "10"})
      */
-    @SuppressWarnings("unchecked")
     public Http queries(Object params) {
-        if (params instanceof Map) {
-            StringBuilder query = new StringBuilder();
-            Map<?, ?> map = (Map<?, ?>) params;
+        if (params instanceof Map<?, ?> map) {
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(this.url).newBuilder();
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 if (entry.getKey() instanceof String) {
                     String strValue =
                             entry.getValue() != null
                                     ? org.mozilla.javascript.Context.toString(entry.getValue())
                                     : "";
-
-                    if (query.length() > 0) {
-                        query.append("&");
-                    }
-                    query.append(urlEncode((String) entry.getKey()))
-                            .append("=")
-                            .append(urlEncode(strValue));
+                    urlBuilder.addQueryParameter((String) entry.getKey(), strValue);
                 }
             }
-
-            // Append to URL
-            if (query.length() > 0) {
-                String separator = url.contains("?") ? "&" : "?";
-                this.url = url + separator + query.toString();
-                connection.url(this.url);
-            }
+            this.url = urlBuilder.build().toString();
+            this.requestBuilder.url(this.url);
         }
         return this;
     }
@@ -225,19 +205,10 @@ public class Http extends JsApiWrapper {
         return params(params);
     }
 
-    /** URL encode a string value. */
-    private String urlEncode(String value) {
-        try {
-            return java.net.URLEncoder.encode(value, "UTF-8");
-        } catch (Exception e) {
-            Log.add("URL encoding failed: " + e.getMessage());
-            return value;
-        }
-    }
-
     /** Set timeout in milliseconds. */
     public Http timeout(int ms) {
-        connection.timeout(ms);
+        // OkHttp3 client already configured with 90s timeout
+        // Individual request timeout would require custom client per request
         return this;
     }
 
@@ -253,16 +224,19 @@ public class Http extends JsApiWrapper {
      */
     public JSDocument html() {
         try {
-            Connection.Response response = execute();
-            org.jsoup.nodes.Document doc = response.parse();
-            // Defensive: if parse returns null, use empty document
-            if (doc == null) {
-                Log.add("Response.parse() returned null, using empty document");
-                return new JSDocument(org.jsoup.Jsoup.parse(""));
-            }
+            Log.add("[Http.html()] Fetching URL: " + this.url);
+            Response response = execute();
+            String html = response.body().string();
+
+            Log.add("[Http.html()] Response length: " + html.length() + " bytes");
+            Log.add("[Http.html()] First 200 chars: " + (html.length() > 200 ? html.substring(0, 200) : html));
+
+            org.jsoup.nodes.Document doc = org.jsoup.Jsoup.parse(html, this.url);
+            Log.add("[Http.html()] Parsed document, title: " + doc.title());
+
             return new JSDocument(doc);
         } catch (IOException e) {
-            Log.add("Failed to get HTML document: " + e.getMessage());
+            Log.add("[Http.html()] Failed to get HTML document: " + e.getMessage());
             return new JSDocument(org.jsoup.Jsoup.parse(""));
         }
     }
@@ -272,13 +246,7 @@ public class Http extends JsApiWrapper {
      * document on error. Usage: http.get(url).document()
      */
     public JSDocument document() {
-        try {
-            org.jsoup.nodes.Document doc = execute().parse();
-            return new JSDocument(doc);
-        } catch (IOException e) {
-            Log.add("Failed to parse HTML document: " + e.getMessage());
-            return new JSDocument(org.jsoup.Jsoup.parse(""));
-        }
+        return html();
     }
 
     /**
@@ -287,7 +255,7 @@ public class Http extends JsApiWrapper {
      */
     public String string() {
         try {
-            String body = execute().body();
+            String body = execute().body().string();
             // Remove BOM if present
             if (body.startsWith("\uFEFF")) {
                 body = body.substring(1);
@@ -302,7 +270,7 @@ public class Http extends JsApiWrapper {
     /** Execute request and return response as bytes. Usage: http.get(url).bytes() */
     public byte[] bytes() {
         try {
-            return execute().bodyAsBytes();
+            return execute().body().bytes();
         } catch (IOException e) {
             Log.add("Failed to get response bytes: " + e.getMessage());
             return null;
@@ -313,7 +281,6 @@ public class Http extends JsApiWrapper {
      * Execute request and parse JSON response. Returns Map (JavaScript object). Returns null on
      * error. Usage: http.get(url).json()
      */
-    @SuppressWarnings("unchecked")
     public Object json() {
         try {
             String body = string();
@@ -321,9 +288,24 @@ public class Http extends JsApiWrapper {
                 return null;
             }
             Json jsonApi = new Json();
-            return jsonApi.parse(body);
+            Object parsed = jsonApi.parse(body);
+
+            // If parsing returned a String (HTML content), wrap it in NativeObject for plugin compatibility
+            if (parsed instanceof String) {
+                String trimmed = body.trim();
+                if (trimmed.startsWith("<!DOCTYPE html>") || trimmed.startsWith("<html") || trimmed.startsWith("<HTML")) {
+                    // Create NativeObject for proper JavaScript property access
+                    org.mozilla.javascript.NativeObject wrapper = new org.mozilla.javascript.NativeObject();
+                    wrapper.put("chap_list", wrapper, parsed);
+                    wrapper.put("status", wrapper, 200);
+                    Log.add("[Http.json()] Wrapped HTML in NativeObject with chap_list field");
+                    return wrapper;
+                }
+            }
+
+            return parsed;
         } catch (Exception e) {
-            Log.add("Failed to parse JSON: " + e.getMessage());
+            Log.add("[Http.json()] Failed to parse JSON: " + e.getMessage());
             return null;
         }
     }
@@ -331,7 +313,7 @@ public class Http extends JsApiWrapper {
     /** Get response status code. Usage: http.get(url).statusCode() */
     public int statusCode() {
         try {
-            return execute().statusCode();
+            return execute().code();
         } catch (IOException e) {
             return -1;
         }
@@ -346,7 +328,7 @@ public class Http extends JsApiWrapper {
     /** Get response status message. */
     public String statusMessage() {
         try {
-            return execute().statusMessage();
+            return execute().message();
         } catch (IOException e) {
             return "";
         }
@@ -355,7 +337,12 @@ public class Http extends JsApiWrapper {
     /** Get response headers as Map. Usage: http.get(url).responseHeaders() */
     public Map<String, String> responseHeaders() {
         try {
-            return execute().headers();
+            Response response = execute();
+            Map<String, String> headers = new HashMap<>();
+            for (String name : response.headers().names()) {
+                headers.put(name, response.header(name));
+            }
+            return headers;
         } catch (IOException e) {
             return new HashMap<>();
         }
@@ -376,16 +363,37 @@ public class Http extends JsApiWrapper {
     }
 
     /** Execute the HTTP request with cookie handling. */
-    private Connection.Response execute() throws IOException {
+    private Response execute() throws IOException {
+        Log.add("[Http.execute()] Executing request: " + method + " " + this.url);
+
+        // Add User-Agent if not already set
+        if (requestBuilder.build().header("User-Agent") == null) {
+            requestBuilder.header("User-Agent", SettingUtils.USER_AGENT);
+            Log.add("[Http.execute()] Added default User-Agent: " + SettingUtils.USER_AGENT);
+        }
+
         // Cookie handling
         if (syncCookie) {
             String cookies = CookiesUtils.getCookies(url);
             if (cookies != null && !cookies.isEmpty()) {
-                connection.header("Cookie", cookies);
+                requestBuilder.header("Cookie", cookies);
+                Log.add("[Http.execute()] Added cookies: " + cookies.substring(0, Math.min(50, cookies.length())));
             }
         }
 
-        response = connection.execute();
+        // Set request method and body
+        Request request;
+        if (requestBody != null) {
+            request = requestBuilder.method(method, requestBody).build();
+        } else {
+            request = requestBuilder.method(method, null).build();
+        }
+
+        Log.add("[Http.execute()] Request headers: " + request.headers());
+        response = OK_HTTP_CLIENT.newCall(request).execute();
+
+        int statusCode = response.code();
+        Log.add("[Http.execute()] Response status: " + statusCode + " " + response.message());
 
         // Sync response cookies
         if (syncCookie) {

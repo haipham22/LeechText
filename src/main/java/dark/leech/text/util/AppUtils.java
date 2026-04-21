@@ -95,15 +95,33 @@ public class AppUtils {
     /** System-specific file separator character */
     public static final String SEPARATOR = System.getProperty("file.separator");
 
-    /** Graphics device for screen information */
-    private static final GraphicsDevice gd =
-            GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    /** Graphics device for screen information (null in headless mode) */
+    private static final GraphicsDevice gd;
 
-    /** Width of the primary display in pixels */
-    public static final int width = gd.getDisplayMode().getWidth();
+    /** Width of the primary display in pixels (default to 1920 in headless mode) */
+    public static final int width;
 
-    /** Height of the primary display in pixels */
-    public static final int height = gd.getDisplayMode().getHeight();
+    /** Height of the primary display in pixels (default to 1080 in headless mode) */
+    public static final int height;
+
+    static {
+        GraphicsDevice tempGd = null;
+        int tempWidth = 1920;
+        int tempHeight = 1080;
+
+        try {
+            tempGd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            tempWidth = tempGd.getDisplayMode().getWidth();
+            tempHeight = tempGd.getDisplayMode().getHeight();
+        } catch (HeadlessException | AWTError e) {
+            // Running in headless mode (no display) - use defaults
+            System.out.println("[AppUtils] Running in headless mode, using default screen dimensions");
+        }
+
+        gd = tempGd;
+        width = tempWidth;
+        height = tempHeight;
+    }
 
     /** Current working directory of the application */
     public static String curDir = getAppHomeDir();
@@ -115,23 +133,31 @@ public class AppUtils {
      * Determines the appropriate home directory for application data.
      *
      * <p>This method reads the home directory from system property "app.home.dir", which is set at
-     * build time or runtime. If not set, it defaults to the current working directory.
+     * build time or runtime. If not set (development mode), it uses the current working directory.
+     * For native apps where app.home.dir is not set, it falls back to ~/.leech.
      *
-     * <p>Build-time configuration (via Makefile): - macOS/Linux: ~/.leechtext - Windows: user's
-     * home directory
+     * <p>Build-time configuration (via build.gradle): Development mode uses user.dir
      *
      * @return The appropriate home directory path for storing application data
      */
     private static String getAppHomeDir() {
-        // First, try to read from system property (set at build time)
+        // First, try to read from system property (set at build time or runtime)
         String homeDir = System.getProperty("app.home.dir");
 
         if (homeDir != null && !homeDir.isEmpty()) {
             return homeDir;
         }
 
-        // Fallback to current directory (development mode)
-        return System.getProperty("user.dir");
+        // Development mode: use current directory
+        // This is set in build.gradle for development builds
+        String userDir = System.getProperty("user.dir");
+        if (userDir != null && !userDir.isEmpty()) {
+            return userDir;
+        }
+
+        // Fallback: use ~/.leech (should rarely reach here)
+        String userHome = System.getProperty("user.home");
+        return userHome + "/.leech";
     }
 
     /** Current location of the application window */

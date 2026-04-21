@@ -64,6 +64,9 @@ public class PluginEntity {
     @SerializedName("page")
     private String pageGetter;
 
+    @SerializedName("gen")
+    private String genGetter;
+
     @SerializedName("search")
     private String searchGetter;
 
@@ -93,6 +96,7 @@ public class PluginEntity {
         this.chapGetter = entity.chapGetter;
         this.tocGetter = entity.tocGetter;
         this.pageGetter = entity.pageGetter;
+        this.genGetter = entity.genGetter;
         this.searchGetter = entity.searchGetter;
         this.detailGetter = entity.detailGetter;
         this.checked = true;
