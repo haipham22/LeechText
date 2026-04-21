@@ -140,7 +140,7 @@ public class PluginZipExtractor {
         entity.setRawMetadata(pluginJson);
 
         // Validate required scripts
-        if (!scriptContents.containsKey("chap") && !scriptContents.containsKey("toc")) {
+        if (!scriptContents.containsKey("chap") && !scriptContents.containsKey("toc") && !scriptContents.containsKey("gen")) {
             throw new VBookPluginException("Plugin must have at least chap.js or toc.js");
         }
 

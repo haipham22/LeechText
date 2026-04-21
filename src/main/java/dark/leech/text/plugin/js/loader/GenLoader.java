@@ -41,11 +41,22 @@ public class GenLoader extends AbstractLoader<PaginationResult<Object>> {
             return PaginationResult.empty();
         }
 
+        // Unwrap NativeJavaObject if present (Rhino wraps Java objects)
+        if (result instanceof org.mozilla.javascript.NativeJavaObject) {
+            org.mozilla.javascript.NativeJavaObject nativeJavaObj = (org.mozilla.javascript.NativeJavaObject) result;
+            result = nativeJavaObj.unwrap();
+        }
+
         // Check if result is PaginatedResponse (from Response.success(data, next))
         if (result instanceof PaginatedResponse) {
             PaginatedResponse paginated = (PaginatedResponse) result;
             Object data = paginated.getData();
             Object next = paginated.getNext();
+
+            // Unwrap data if it's also wrapped
+            if (data instanceof org.mozilla.javascript.NativeJavaObject) {
+                data = ((org.mozilla.javascript.NativeJavaObject) data).unwrap();
+            }
 
             // Convert data to List
             List<Object> items = convertToList(data);
@@ -127,7 +138,7 @@ public class GenLoader extends AbstractLoader<PaginationResult<Object>> {
     }
 
     /**
-     * Convert object to List. Handles NativeArray, NativeObject, and raw arrays.
+     * Convert object to List. Handles NativeArray, NativeObject, NativeJavaObject, and raw arrays.
      */
     private List<Object> convertToList(Object data) {
         if (data == null) {
@@ -152,6 +163,28 @@ public class GenLoader extends AbstractLoader<PaginationResult<Object>> {
             // Single object, wrap in list
             List<Object> list = new ArrayList<>(1);
             list.add(data);
+            return list;
+        }
+
+        if (data instanceof org.mozilla.javascript.NativeJavaObject) {
+            // Unwrap the Java object
+            org.mozilla.javascript.NativeJavaObject nativeJavaObj = (org.mozilla.javascript.NativeJavaObject) data;
+            Object unwrapped = nativeJavaObj.unwrap();
+            if (unwrapped instanceof List) {
+                return (List<Object>) unwrapped;
+            }
+            if (unwrapped != null && unwrapped.getClass().isArray()) {
+                // Handle Java arrays
+                Object[] array = (Object[]) unwrapped;
+                List<Object> list = new ArrayList<>(array.length);
+                for (Object item : array) {
+                    list.add(item);
+                }
+                return list;
+            }
+            // Single object, wrap in list
+            List<Object> list = new ArrayList<>(1);
+            list.add(unwrapped);
             return list;
         }
 

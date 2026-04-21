@@ -59,6 +59,9 @@ public class VBookToLeechTextConverter {
             if (contents.containsKey("page")) {
                 entity.pageGetter(contents.get("page"));
             }
+            if (contents.containsKey("gen")) {
+                entity.genGetter(contents.get("gen"));
+            }
             if (contents.containsKey("search")) {
                 entity.searchGetter(contents.get("search"));
             }
