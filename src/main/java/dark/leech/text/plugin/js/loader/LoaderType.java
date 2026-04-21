@@ -12,7 +12,10 @@ public enum LoaderType {
     DETAIL("detail", "detailGetter"),
 
     /** Text loader - loads chapter content */
-    TEXT("text", "chapGetter");
+    TEXT("text", "chapGetter"),
+
+    /** Gen loader - loads paginated lists (novels, search results) */
+    GEN("gen", "genGetter");
 
     private final String type;
     private final String scriptName;

@@ -4,6 +4,15 @@ This document tracks all significant changes, features, and fixes in the LeechTe
 
 ## [Unreleased]
 
+### Features
+- **NEW**: Pagination support for JavaScript plugins (GenLoader) - (2026-04-21)
+  - Introduced `GenLoader` for handling paginated content (search results, chapter lists)
+  - Added `PaginationResult<T>` generic result model with builder pattern
+  - Enhanced `Response` class with overloaded `success(data, next)` method for pagination
+  - Added support for `LoaderType.GEN` with isolated JavaScript context
+  - Enabled cursor-based, token-based, and URL-based pagination patterns
+  - See `docs/system-architecture.md` → "Pagination Feature" for details
+
 ### Dependencies
 - **UPGRADED**: jsoup from 1.16.1 to 1.22.1 (2026-04-20)
   - **Breaking Changes**:

@@ -37,6 +37,8 @@ LeechText is a powerful Java-based text extraction and ebook creation applicatio
 - Plugin repository management with auto-update
 - Comprehensive security validation: network, regex, and archive scanning
 - Sandbox execution environment with resource limits
+- Pagination support for JavaScript plugins (GenLoader) with cursor/token-based pagination
+- Multiple loader types: LIST, DETAIL, TEXT, GEN for different content types
 
 #### User Interface
 - Modern Material Design-inspired components
@@ -126,7 +128,13 @@ LeechText is a powerful Java-based text extraction and ebook creation applicatio
 - **Lua API**: HTTP, Text, HTML, JSON, Cloudflare utilities
 - **JavaScript Engine**: Rhino-based JavaScript with vBook API compatibility
 - **Security Validation**: Network, regex, and archive security scanning
-- **Loaders**: Detail, Text, and ToC content loaders (both Lua and JavaScript)
+- **Loaders**: Detail, Text, ToC (LIST), and paginated content (GEN) loaders
+  - **DetailLoader**: Book metadata and information
+  - **ListLoader**: Chapter lists and table of contents
+  - **TextLoader**: Chapter content extraction
+  - **GenLoader**: Paginated lists (novels, search results)
+- **Response Model**: `Response.success(data)` and `Response.success(data, next)` for pagination
+- **PaginationResult**: Generic model for paginated responses with items and next page metadata
 
 ### User Workflows
 
