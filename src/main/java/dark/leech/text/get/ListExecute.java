@@ -11,20 +11,20 @@ import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Properties;
-import dark.leech.text.plugin.js.loader.GenLoader;
+import dark.leech.text.plugin.js.loader.PageLoader;
 import dark.leech.text.plugin.js.loader.ListLoader;
 
 /** Created by Dark on 1/18/2017. */
 public class ListExecute extends SwingWorker {
     private ListLoader loader;
-    private GenLoader genLoader;
+    private PageLoader pageLoader;
     private ChangeListener changeListener;
     private Properties properties;
     private boolean success;
 
     public ListExecute plugin(PluginEntity plugin) {
         loader = ListLoader.with(plugin);
-        genLoader = GenLoader.with(plugin);
+        pageLoader = PageLoader.with(plugin);
         return this;
     }
 
@@ -43,41 +43,38 @@ public class ListExecute extends SwingWorker {
         try {
             List<Chapter> chapters = new ArrayList<>();
             String url = properties.getUrl();
-            String page = null;
 
-            // Pagination loop - load all pages
-            do {
-                var pageResult = genLoader.load(url, page);
+            // Try page discovery first (page.js pattern)
+            List<String> pageUrls = pageLoader.load(url);
 
-                if (pageResult != null && pageResult.getItems() != null && !pageResult.getItems().isEmpty()) {
-                    // Convert pagination items (NativeObject from JavaScript) to chapters
-                    for (Object item : pageResult.getItems()) {
-                        try {
-                            ChapterEntity chap = convertToChapterEntity(item);
-                            if (chap != null && chap.getName() != null && chap.getUrl() != null) {
-                                chapters.add(new Chapter(chap.getUrl(), chap.getName()));
+            if (pageUrls != null && !pageUrls.isEmpty()) {
+                // Page discovery succeeded - use discovered URLs
+                Log.add("[ListExecute] Discovered " + pageUrls.size() + " page URLs");
+                for (String pageUrl : pageUrls) {
+                    try {
+                        // Load each discovered page URL to get chapter list
+                        List<ChapterEntity> chapterList = loader.load(pageUrl);
+                        if (chapterList != null) {
+                            for (ChapterEntity chap : chapterList) {
+                                if (chap.getName() != null && chap.getUrl() != null) {
+                                    chapters.add(new Chapter(chap.getUrl(), chap.getName()));
+                                }
                             }
-                        } catch (Exception e) {
-                            Log.add("[ListExecute] Failed to convert item: " + e.getMessage());
                         }
+                    } catch (Exception e) {
+                        Log.add("[ListExecute] Failed to load page " + pageUrl + ": " + e.getMessage());
                     }
-
-                    // Get next page identifier
-                    page = pageResult.getNextPage();
-
-                    Log.add("[ListExecute] Loaded " + pageResult.getItems().size() +
-                           " items, next page: " + (page != null ? page : "none"));
-                } else {
-                    // No pagination result, try direct list loading (legacy mode)
-                    List<ChapterEntity> chapterList = loader.load(url);
-                    if (chapterList != null) {
-                        for (ChapterEntity chap : chapterList) {
-                            chapters.add(new Chapter(chap.getUrl(), chap.getName()));
-                        }
-                    }
-                    break;
                 }
-            } while (page != null && !page.isEmpty());
+            } else {
+                // No page discovery, try direct list loading (legacy toc.js pattern)
+                Log.add("[ListExecute] No page URLs discovered, trying direct list loading");
+                List<ChapterEntity> chapterList = loader.load(url);
+                if (chapterList != null) {
+                    for (ChapterEntity chap : chapterList) {
+                        chapters.add(new Chapter(chap.getUrl(), chap.getName()));
+                    }
+                }
+            }
 
             properties.setChapList(chapters);
             properties.setSize(chapters.size());
@@ -86,45 +83,6 @@ public class ListExecute extends SwingWorker {
             Log.add(e);
         }
         return null;
-    }
-
-    /**
-     * Convert NativeObject from JavaScript to ChapterEntity.
-     * Handles both direct ChapterEntity and NativeObject with name/url/link properties.
-     */
-    private ChapterEntity convertToChapterEntity(Object item) {
-        if (item instanceof ChapterEntity) {
-            return (ChapterEntity) item;
-        }
-
-        if (item instanceof org.mozilla.javascript.NativeObject) {
-            org.mozilla.javascript.NativeObject nativeObj = (org.mozilla.javascript.NativeObject) item;
-
-            String name = getPropertyAsString(nativeObj, "name");
-            String url = getPropertyAsString(nativeObj, "url");
-
-            // Fallback to 'link' property if 'url' is not present
-            if (url == null || url.isEmpty()) {
-                url = getPropertyAsString(nativeObj, "link");
-            }
-
-            if (name != null && url != null) {
-                ChapterEntity entity = new ChapterEntity();
-                entity.setName(name);
-                entity.setUrl(url);
-                return entity;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Safely extract string property from NativeObject.
-     */
-    private String getPropertyAsString(org.mozilla.javascript.NativeObject obj, String key) {
-        Object value = obj.get(key, obj);
-        return value != null ? value.toString() : null;
     }
 
     @Override

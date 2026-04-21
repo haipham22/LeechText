@@ -14,8 +14,8 @@ public enum LoaderType {
     /** Text loader - loads chapter content */
     TEXT("text", "chapGetter"),
 
-    /** Gen loader - loads paginated lists (novels, search results) */
-    GEN("gen", "genGetter");
+    /** Page loader - discovers all page URLs for a novel */
+    PAGE("page", "pageGetter");
 
     private final String type;
     private final String scriptName;
