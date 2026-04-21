@@ -97,7 +97,7 @@ public class Html extends JsApiWrapper {
     }
 
     /**
-     * Clean HTML by removing specified tags. Usage: html.clean("<html>...</html>", ["script",
+     * Clean HTML by removing specified tags. Usage: Html.clean("<html>...</html>", ["script",
      * ".ads"])
      */
     public static String clean(String html, Object[] tags) {

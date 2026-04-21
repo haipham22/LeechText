@@ -2,6 +2,7 @@ package dark.leech.text.plugin.js.loader;
 
 import org.mozilla.javascript.NativeObject;
 
+import dark.leech.text.action.Log;
 import dark.leech.text.enities.BookEntity;
 import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.util.TextUtils;
@@ -36,7 +37,16 @@ public class DetailLoader extends AbstractLoader<BookEntity> {
         String baseUrl = plugin.getSource();
         String safeUrl =
                 (url == null || url.isEmpty() || url.contains("NOT_FOUND")) ? baseUrl : url;
-        return extractBookEntity(result, safeUrl);
+
+        // Check for Response wrapper (vBooks compatibility)
+        if (!Response.isSuccess(result)) {
+            String errorMsg = Response.getErrorMessage(result);
+            Log.add("[DetailLoader] Error response: " + errorMsg);
+            return new BookEntity();
+        }
+
+        Object data = Response.getData(result);
+        return extractBookEntity(data, safeUrl);
     }
 
     private BookEntity extractBookEntity(Object result, String fallbackUrl) {

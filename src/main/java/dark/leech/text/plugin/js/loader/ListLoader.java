@@ -39,7 +39,26 @@ public class ListLoader extends AbstractLoader<List<ChapterEntity>> {
     protected List<ChapterEntity> processResult(Object result, String url) {
         Log.add("[ListLoader] Loading chapters from: " + url);
         Log.add("[ListLoader] Result type: " + result.getClass().getName());
-        List<ChapterEntity> chapters = extractChapterList(result);
+
+        // Check for Response wrapper (vBooks compatibility)
+        if (!Response.isSuccess(result)) {
+            String errorMsg = Response.getErrorMessage(result);
+            Log.add("[ListLoader] Error response: " + errorMsg);
+            return new ArrayList<>();
+        }
+
+        Object data = Response.getData(result);
+        Object data2 = Response.getData2(result);
+
+        // Check for dual data response (pagination token)
+        if (data2 != null) {
+            String nextPageToken = JSResponse.getString(data2);
+            if (nextPageToken != null) {
+                Log.add("[ListLoader] Next page token: " + nextPageToken);
+            }
+        }
+
+        List<ChapterEntity> chapters = extractChapterList(data);
         Log.add("[ListLoader] Extracted " + chapters.size() + " chapters");
         return chapters;
     }

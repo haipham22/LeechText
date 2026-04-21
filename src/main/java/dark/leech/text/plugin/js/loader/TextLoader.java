@@ -2,6 +2,7 @@ package dark.leech.text.plugin.js.loader;
 
 import org.mozilla.javascript.NativeObject;
 
+import dark.leech.text.action.Log;
 import dark.leech.text.enities.PluginEntity;
 
 /**
@@ -30,10 +31,19 @@ public class TextLoader extends AbstractLoader<String> {
 
     @Override
     protected String processResult(Object result, String url) {
+        // Check for Response wrapper (vBooks compatibility)
+        if (!Response.isSuccess(result)) {
+            String errorMsg = Response.getErrorMessage(result);
+            Log.add("[TextLoader] Error response: " + errorMsg);
+            return "";
+        }
+
+        Object data = Response.getData(result);
+
         // Handle different return types:
         // NativeObject with properties
-        if (result instanceof NativeObject) {
-            NativeObject obj = (NativeObject) result;
+        if (data instanceof NativeObject) {
+            NativeObject obj = (NativeObject) data;
 
             Object body = obj.get("body", obj);
             String bodyStr = JSResponse.getString(body);
@@ -55,6 +65,6 @@ public class TextLoader extends AbstractLoader<String> {
         }
 
         // Direct string result
-        return JSResponse.getString(result);
+        return JSResponse.getString(data);
     }
 }

@@ -69,12 +69,17 @@ public abstract class AbstractLoader<T> {
             }
 
             // Create secure sandbox for this loader type
-            sandbox =
-                    new JsSandbox.Builder()
+            JsSandbox.Builder builder = new JsSandbox.Builder()
                             .loaderType(getLoaderType())
                             .baseUrl(baseUrl)
-                            .targetUrl(url)
-                            .build();
+                            .targetUrl(url);
+
+            // Add plugin source if available
+            if (plugin.getSource() != null && !plugin.getSource().isEmpty()) {
+                builder.pluginSource(plugin.getSource());
+            }
+
+            sandbox = builder.build();
 
             // Execute plugin script in sandbox
             if (!sandbox.execute(script, getScriptName())) {

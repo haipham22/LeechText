@@ -13,7 +13,8 @@ import dark.leech.text.util.RegexUtils;
 import dark.leech.text.util.SettingUtils;
 
 /**
- * Generates Table of Contents (ToC) for ebook exports. Creates NCX, OPF, and HTML table of contents
+ * Generates Table of Contents (ToC) for ebook exports. Creates NCX, OPF, and
+ * HTML table of contents
  * files with optional part splitting.
  *
  * @author Long
@@ -126,10 +127,9 @@ public class ToC {
         String name = chapList.get(partIndexes.get(partIndex)).getPartName();
         if (name.isEmpty()) {
             int startChapter = partIndex * DEFAULT_PART_SIZE + 1;
-            int endChapter =
-                    (partIndex == partIndexes.size() - 1)
-                            ? -1 // "Hết" (End)
-                            : (partIndex + 1) * DEFAULT_PART_SIZE;
+            int endChapter = (partIndex == partIndexes.size() - 1)
+                    ? -1 // "Hết" (End)
+                    : (partIndex + 1) * DEFAULT_PART_SIZE;
             name = formatPartName(startChapter, endChapter);
         }
         return name;
@@ -159,18 +159,19 @@ public class ToC {
         partNameList.add(volumeName);
 
         int startIndex = partIndexes.get(volumeIndex);
-        int endIndex =
-                (volumeIndex == partIndexes.size() - 1)
-                        ? chapList.size()
-                        : partIndexes.get(volumeIndex + 1);
+        int endIndex = (volumeIndex == partIndexes.size() - 1)
+                ? chapList.size()
+                : partIndexes.get(volumeIndex + 1);
 
         makePart(startIndex, endIndex, "      ");
         tocBuilder.append("    </navPoint>\n");
     }
 
     /**
-     * Analyzes chapter list and determines optimal split points for volumes. Uses multiple
-     * strategies: pre-marked parts, volume markers, chapter 1 detection, or fixed-size fallback for
+     * Analyzes chapter list and determines optimal split points for volumes. Uses
+     * multiple
+     * strategies: pre-marked parts, volume markers, chapter 1 detection, or
+     * fixed-size fallback for
      * large works.
      *
      * @return List of chapter indexes where volumes should split
@@ -234,12 +235,10 @@ public class ToC {
 
     private void findChapterRestarts(int startIndex, List<Integer> splitPoints) {
         for (int i = startIndex; i < chapList.size(); i++) {
-            String currentChapter =
-                    RegexUtils.find(chapList.get(i).getChapName(), CHAPTER_PATTERN, 1);
+            String currentChapter = RegexUtils.find(chapList.get(i).getChapName(), CHAPTER_PATTERN, 1);
 
             if (parseInt(currentChapter) == 1) {
-                String previousChapter =
-                        RegexUtils.find(chapList.get(i - 1).getChapName(), CHAPTER_PATTERN, 1);
+                String previousChapter = RegexUtils.find(chapList.get(i - 1).getChapName(), CHAPTER_PATTERN, 1);
 
                 if (parseInt(previousChapter) != 1) {
                     splitPoints.add(i);
@@ -270,8 +269,8 @@ public class ToC {
     /**
      * Searches for chapter number near target within range.
      *
-     * @param startPoint Index to start searching from
-     * @param range Number of chapters to search
+     * @param startPoint    Index to start searching from
+     * @param range         Number of chapters to search
      * @param targetChapter Target chapter number
      * @return Index of best match, or -1 if not found
      */
@@ -282,8 +281,7 @@ public class ToC {
                 break;
             }
 
-            String chapterNum =
-                    RegexUtils.find(chapList.get(index).getChapName(), CHAPTER_PATTERN, 1);
+            String chapterNum = RegexUtils.find(chapList.get(index).getChapName(), CHAPTER_PATTERN, 1);
 
             if (parseInt(chapterNum) > targetChapter) {
                 return index;
@@ -326,7 +324,7 @@ public class ToC {
     private String createNavPoint(
             String id, String label, String src, int playOrder, String indent) {
         return String.format(
-                "%s<navPoint id=\"%s\" playOrder=\"%d\">%n"
+                "%s<navPoint id=\"%s\" playorder=\"%d\">%n"
                         + "%s  <navLabel>%n"
                         + "%s    <text>%s</text>%n"
                         + "%s  </navLabel>%n"
@@ -348,11 +346,10 @@ public class ToC {
 
     private void saveNcxFile() {
         String ncxTemplate = FileUtils.stream2string("/dark/leech/res/toc.ncx");
-        String ncxContent =
-                ncxTemplate
-                        .replace("[NAME]", properties.getName())
-                        .replace("[AUTHOR]", properties.getAuthor())
-                        .replace("[NAVPOINT]", tocBuilder.toString());
+        String ncxContent = ncxTemplate
+                .replace("[NAME]", properties.getName())
+                .replace("[AUTHOR]", properties.getAuthor())
+                .replace("[NAVPOINT]", tocBuilder.toString());
 
         FileUtils.string2file(ncxContent, properties.getSavePath() + "/data/toc.ncx", charset);
     }
@@ -361,20 +358,18 @@ public class ToC {
         String opfTemplate = FileUtils.stream2string("/dark/leech/res/content.opf");
         String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 
-        String opfContent =
-                opfTemplate
-                        .replace("[NAME]", properties.getName())
-                        .replace("[AUTHOR]", properties.getAuthor())
-                        .replace("[DATE]", currentDate);
+        String opfContent = opfTemplate
+                .replace("[NAME]", properties.getName())
+                .replace("[AUTHOR]", properties.getAuthor())
+                .replace("[DATE]", currentDate);
 
         String manifest = contentBuilder.toString();
         String spine = manifest.replaceAll("<item id=(.*?)\\s*href=.*?/>", "<itemref idref=$1/>");
 
-        opfContent =
-                opfContent
-                        .replace("[MANIFEST]", manifest)
-                        .replace("[IMAGE]", getImageManifest())
-                        .replace("[NCX]", spine);
+        opfContent = opfContent
+                .replace("[MANIFEST]", manifest)
+                .replace("[IMAGE]", getImageManifest())
+                .replace("[NCX]", spine);
 
         FileUtils.string2file(opfContent, properties.getSavePath() + "/data/content.opf", charset);
     }
@@ -395,11 +390,10 @@ public class ToC {
     }
 
     private void saveSingleToCFile(String header) {
-        String toCContent =
-                header.replaceAll("<title>.*?</title>", "<title>Mục lục</title>")
-                        + htmlToCBuilder.toString()
-                        + partList.get(0)
-                        + "</body>\n</html>";
+        String toCContent = header.replaceAll("<title>.*?</title>", "<title>Mục lục</title>")
+                + htmlToCBuilder.toString()
+                + partList.get(0)
+                + "</body>\n</html>";
 
         FileUtils.string2file(
                 toCContent, properties.getSavePath() + "/data/Text/mucluc.html", charset);
@@ -407,9 +401,8 @@ public class ToC {
 
     private void saveMultiPartToCFiles(String header) {
         // Save main ToC
-        String mainToC =
-                header.replaceAll("<title>.*?</title>", "<title>Mục lục</title>")
-                        + htmlToCBuilder.toString();
+        String mainToC = header.replaceAll("<title>.*?</title>", "<title>Mục lục</title>")
+                + htmlToCBuilder.toString();
 
         if (!partList.isEmpty()) {
             mainToC += partList.get(0);

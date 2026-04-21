@@ -5,9 +5,12 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
 import dark.leech.text.action.Log;
+import dark.leech.text.plugin.js.api.Engine;
 import dark.leech.text.plugin.js.api.Html;
 import dark.leech.text.plugin.js.api.Http;
 import dark.leech.text.plugin.js.api.Json;
+import dark.leech.text.plugin.js.api.UserAgent;
+import dark.leech.text.plugin.js.api.LocalStorage;
 
 /**
  * Shared vBook API setup helper for Rhino JavaScript loaders. Extracts duplicate setup logic from
@@ -27,8 +30,9 @@ public final class JsApiSetup {
      * @param scope The Rhino scope
      * @param baseUrl The base URL for the plugin source
      * @param targetUrl The target URL being processed
+     * @param pluginSource The plugin source directory (optional, for load() function)
      */
-    public static void setup(Context ctx, Scriptable scope, String baseUrl, String targetUrl) {
+    public static void setup(Context ctx, Scriptable scope, String baseUrl, String targetUrl, String pluginSource) {
         // Set BASE_URL variable
         ScriptableObject.putProperty(scope, "BASE_URL", baseUrl);
 
@@ -49,6 +53,16 @@ public final class JsApiSetup {
         // Json class - expose for JSON parsing (vBook compatibility)
         Json jsonApi = new Json(ctx, scope);
         ScriptableObject.putProperty(scope, "Json", jsonApi);
+        ctx.getWrapFactory().setJavaPrimitiveWrap(false);
+
+        // UserAgent class - expose for platform-specific user agents
+        UserAgent userAgentApi = new UserAgent(ctx, scope);
+        ScriptableObject.putProperty(scope, "UserAgent", userAgentApi);
+        ctx.getWrapFactory().setJavaPrimitiveWrap(false);
+
+        // Engine class - expose for browser automation
+        Engine engineApi = new Engine(ctx, scope);
+        ScriptableObject.putProperty(scope, "Engine", engineApi);
         ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
         // Response object
@@ -87,7 +101,7 @@ public final class JsApiSetup {
         ScriptableObject.putProperty(scope, "fetch", fetchFunc);
         ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
-        // Load function - no-op for config.js
+        // Load function - load JavaScript files from plugin directory
         Object loadFunc =
                 new org.mozilla.javascript.BaseFunction() {
                     @Override
@@ -100,8 +114,57 @@ public final class JsApiSetup {
                                 (args.length > 0 && args[0] != null)
                                         ? JSResponse.getString(args[0])
                                         : "";
-                        Log.add("vBook load() called for: " + fileName);
-                        return null;
+
+                        if (fileName.isEmpty()) {
+                            Log.add("[load()] File name is empty");
+                            return null;
+                        }
+
+                        // Security: Validate file path
+                        if (!isValidFileName(fileName)) {
+                            Log.add("[load()] Invalid file name: " + fileName);
+                            return null;
+                        }
+
+                        // Load file from plugin directory
+                        if (pluginSource == null || pluginSource.isEmpty()) {
+                            Log.add("[load()] Plugin source directory not set");
+                            return null;
+                        }
+
+                        try {
+                            java.io.File file = new java.io.File(pluginSource, "src/" + fileName);
+
+                            // Security: Check if file exists and is within plugin directory
+                            if (!file.exists() || !file.isFile()) {
+                                Log.add("[load()] File not found: " + file.getPath());
+                                return null;
+                            }
+
+                            // Security: Check file path doesn't escape plugin directory
+                            java.io.File pluginDir = new java.io.File(pluginSource, "src");
+                            if (!file.getCanonicalPath().startsWith(pluginDir.getCanonicalPath())) {
+                                Log.add("[load()] Path traversal detected: " + fileName);
+                                return null;
+                            }
+
+                            // Security: Check file size (limit to 100KB)
+                            long fileSize = file.length();
+                            if (fileSize > 100 * 1024) {
+                                Log.add("[load()] File too large: " + fileSize + " bytes");
+                                return null;
+                            }
+
+                            // Read file content
+                            String content = new String(java.nio.file.Files.readAllBytes(file.toPath()));
+
+                            // Execute script in current context
+                            return cx.evaluateString(scope, content, fileName, 1, null);
+
+                        } catch (Exception e) {
+                            Log.add("[load()] Failed to load file: " + e.getMessage());
+                            return null;
+                        }
                     }
 
                     @Override
@@ -149,6 +212,11 @@ public final class JsApiSetup {
         ScriptableObject.putProperty(scope, "Console", consoleApi);
         ScriptableObject.putProperty(scope, "console", consoleApi);
         ctx.getWrapFactory().setJavaPrimitiveWrap(false);
+
+        // LocalStorage API for plugin persistence
+        LocalStorage localStorageApi = new LocalStorage(ctx, scope, pluginSource != null ? pluginSource : "default");
+        ScriptableObject.putProperty(scope, "localStorage", localStorageApi);
+        ctx.getWrapFactory().setJavaPrimitiveWrap(false);
     }
 
     /**
@@ -170,5 +238,40 @@ public final class JsApiSetup {
         } catch (Exception e) {
             return url;
         }
+    }
+
+    /**
+     * Validate file name for security. Prevents path traversal and ensures only .js files are
+     * allowed.
+     *
+     * @param fileName The file name to validate
+     * @return true if valid, false otherwise
+     */
+    private static boolean isValidFileName(String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            return false;
+        }
+
+        // No path traversal
+        if (fileName.contains("..") || fileName.contains("/") || fileName.contains("\\")) {
+            return false;
+        }
+
+        // No absolute paths
+        if (fileName.startsWith("/") || fileName.startsWith("\\")) {
+            return false;
+        }
+
+        // Must end with .js
+        if (!fileName.endsWith(".js")) {
+            return false;
+        }
+
+        // No special characters that could cause issues
+        if (fileName.matches(".*[<>:\"|?*].*")) {
+            return false;
+        }
+
+        return true;
     }
 }
