@@ -24,11 +24,13 @@ public class JsSandbox {
     private final LoaderType loaderType;
     private final String baseUrl;
     private final String targetUrl;
+    private final String pluginSource;
 
     private JsSandbox(Builder builder) {
         this.loaderType = builder.loaderType;
         this.baseUrl = builder.baseUrl;
         this.targetUrl = builder.targetUrl;
+        this.pluginSource = builder.pluginSource; // Can be null for legacy loaders
 
         // Enter Rhino Context
         this.context = Context.enter();
@@ -117,7 +119,7 @@ public class JsSandbox {
     /** Setup secure sandbox environment with controlled API access. */
     private void setupSandbox() {
         // Setup vBook API (Http, Html, Response, etc.)
-        JsApiSetup.setup(context, scope, baseUrl, targetUrl);
+        JsApiSetup.setup(context, scope, baseUrl, targetUrl, pluginSource);
 
         // Add safe toString wrapper to prevent Function.toString() errors
         addSafeToStringWrapper();
@@ -156,6 +158,7 @@ public class JsSandbox {
         private LoaderType loaderType;
         private String baseUrl;
         private String targetUrl;
+        private String pluginSource;
 
         public Builder loaderType(LoaderType loaderType) {
             this.loaderType = loaderType;
@@ -172,6 +175,11 @@ public class JsSandbox {
             return this;
         }
 
+        public Builder pluginSource(String pluginSource) {
+            this.pluginSource = pluginSource;
+            return this;
+        }
+
         public JsSandbox build() {
             if (loaderType == null) {
                 throw new IllegalStateException("loaderType is required");
@@ -182,6 +190,7 @@ public class JsSandbox {
             if (targetUrl == null) {
                 throw new IllegalStateException("targetUrl is required");
             }
+            // pluginSource is optional (null for legacy loaders)
             return new JsSandbox(this);
         }
     }

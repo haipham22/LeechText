@@ -63,3 +63,85 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+---
+
+## Project-Specific Context
+
+### Quick Start
+
+```bash
+./gradlew build                    # Build project
+./gradlew test --tests "*Loader*"  # Run loader tests
+./gradlew test                     # Run all tests
+./gradlew run                      # Run application
+```
+
+### Project Structure
+
+```
+src/main/java/dark/leech/text/
+├── plugin/js/
+│   ├── api/           # JavaScript APIs (Browser, Engine, Html, LocalStorage, UserAgent)
+│   ├── loader/        # Loader types (Detail, List, Text, Page)
+│   └── sandbox/       # JsSandbox security layer
+└── entities/          # Data entities (BookEntity, ChapterEntity, PluginEntity)
+
+src/test/java/dark/leech/text/plugin/
+├── js/                # Unit tests for APIs and loaders
+└── vbook/             # E2E tests with real plugin structures
+```
+
+### Key Concepts
+
+**vBooks Plugin System**
+- JavaScript-based plugin architecture using Rhino engine
+- Plugins execute in secure JsSandbox with restricted access
+- Response wrapper pattern for vBooks compatibility: `{code: 0/1, data: ..., data2: ...}`
+
+**Response API**
+```javascript
+Response.success(data)              // Success response
+Response.success(data, data2)       // Success with pagination token
+Response.error(data)                // Error with default code 1
+Response.error(code, data)          // Error with custom code
+```
+
+**Utility Methods (Java)**
+```java
+Response.isSuccess(result)          // Check if response is successful
+Response.getData(result)            // Extract data field
+Response.getData2(result)           // Extract data2 (pagination token)
+Response.getErrorMessage(result)    // Extract error message
+```
+
+**Loader Types**
+- **DetailLoader**: Fetches book metadata (name, author, description, cover, etc.)
+- **ListLoader**: Fetches table of contents (chapter list)
+- **TextLoader**: Fetches chapter content
+- **PageLoader**: Discovers all page URLs for pagination
+
+### Gotchas
+
+**Response Handling**
+- Always use `Response.isSuccess()` before processing results
+- Use `Response.getData()` to unwrap Response objects
+- Backward compatibility: Old dual format `{data: ..., data2: ...}` without code field is supported
+
+**Security**
+- All plugin execution MUST use JsSandbox for security
+- Never execute raw plugin scripts without sandbox
+- Browser automation requires Engine API (WebDriver-based)
+
+**Testing**
+- E2E tests in `src/test/java/dark/leech/text/plugin/vbook/` use real plugin patterns
+- Use `PluginEntity.builder()` to create test plugins with custom scripts
+- Test both Response.success() and Response.error() scenarios
+
+### Documentation
+
+Comprehensive project documentation in `./docs/`:
+- `./docs/system-architecture.md` — System design and component interactions
+- `./docs/code-standards.md` — Coding conventions and style guide
+- `./docs/design-guidelines.md` — Design principles and patterns
+- `./docs/project-roadmap.md` — Development phases and milestones

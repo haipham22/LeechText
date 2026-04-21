@@ -47,8 +47,17 @@ public class PageLoader extends AbstractLoader<List<String>> {
             result = nativeJavaObj.unwrap();
         }
 
+        // Check for Response wrapper (vBooks compatibility)
+        if (!Response.isSuccess(result)) {
+            String errorMsg = Response.getErrorMessage(result);
+            Log.add("[PageLoader] Error response: " + errorMsg);
+            return new ArrayList<>();
+        }
+
+        Object data = Response.getData(result);
+
         Log.add("[PageLoader] Processing result, type: " + result.getClass().getName());
-        List<String> urlList = convertToStringList(result);
+        List<String> urlList = convertToStringList(data);
         Log.add("[PageLoader] Discovered " + urlList.size() + " page URLs");
         return urlList;
     }
