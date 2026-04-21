@@ -42,37 +42,69 @@ run: build
 		-Dapp.home.dir="$(HOME)/.leechtext" \
 		-jar $(JAR_FILE)
 
-# Run native app (macOS)
-run-native: package-mac
+# Run native app (cross-platform)
+run-native:
 	@echo "$(COLOR_BLUE)Running native LeechText app...$(COLOR_RESET)"
-	@if [ -d "/Applications/LeechText.app" ]; then \
-		LOG_FILE="$${HOME}/.leechtext/app.log"; \
-		echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
-		echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
-		/Applications/LeechText.app/Contents/MacOS/LeechText 2>&1 | tee "$$LOG_FILE"; \
-	elif [ -f "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" ]; then \
-		echo "$(COLOR_YELLOW)Installing DMG first...$(COLOR_RESET)"; \
-		hdiutil attach "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" -quiet; \
-		cp -r /Volumes/LeechText/LeechText.app /Applications/; \
-		hdiutil detach /Volumes/LeechText -quiet; \
-		LOG_FILE="$${HOME}/.leechtext/app.log"; \
-		echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
-		echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
-		/Applications/LeechText.app/Contents/MacOS/LeechText 2>&1 | tee "$$LOG_FILE"; \
+	@if [ "$(OS)" = "Darwin" ]; then \
+		if [ -d "/Applications/LeechText.app" ]; then \
+			LOG_FILE="$${HOME}/.leechtext/app.log"; \
+			echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
+			echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
+			/Applications/LeechText.app/Contents/MacOS/LeechText 2>&1 | tee "$$LOG_FILE"; \
+		elif [ -f "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" ]; then \
+			echo "$(COLOR_YELLOW)Installing DMG first...$(COLOR_RESET)"; \
+			hdiutil attach "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" -quiet; \
+			cp -r /Volumes/LeechText/LeechText.app /Applications/; \
+			hdiutil detach /Volumes/LeechText -quiet; \
+			LOG_FILE="$${HOME}/.leechtext/app.log"; \
+			echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
+			echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
+			/Applications/LeechText.app/Contents/MacOS/LeechText 2>&1 | tee "$$LOG_FILE"; \
+		else \
+			echo "$(COLOR_YELLOW)⚠ No native package found. Run 'make package-mac' first.$(COLOR_RESET)"; \
+		fi; \
+	elif [ "$(OS)" = "Linux" ]; then \
+		$(MAKE) run-native-linux; \
 	else \
-		echo "$(COLOR_YELLOW)⚠ No native package found. Run 'make package-mac' first.$(COLOR_RESET)"; \
+		echo "$(COLOR_YELLOW)⚠ run-native not supported on this OS. Use 'make run' instead.$(COLOR_RESET)"; \
+	fi
+
+# Run native app (Linux)
+run-native-linux: package-linux
+	@echo "$(COLOR_BLUE)Running native LeechText app on Linux...$(COLOR_RESET)"
+	@BINARY_NAME="$$(which leechtext 2>/dev/null)"; \
+	if [ -n "$$BINARY_NAME" ]; then \
+		LOG_FILE="$${HOME}/.leechtext/app.log"; \
+		echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
+		echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
+		$$BINARY_NAME 2>&1 | tee "$$LOG_FILE"; \
+	elif ls $(PACKAGE_DIR)/leechtext_$(VERSION)*.deb 2>/dev/null; then \
+		DEB_FILE=$$(ls $(PACKAGE_DIR)/leechtext_$(VERSION)*.deb 2>/dev/null | head -1); \
+		echo "$(COLOR_YELLOW)Installing DEB package first...$(COLOR_RESET)"; \
+		cd $(PACKAGE_DIR) && sudo apt install -y ./*.deb; \
+		LOG_FILE="$${HOME}/.leechtext/app.log"; \
+		echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
+		echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
+		echo "$(COLOR_BLUE)Searching for installed binary...$(COLOR_RESET)"; \
+		if [ -f "/opt/LeechText/bin/LeechText" ]; then \
+			echo "$(COLOR_GREEN)Found binary at /opt/LeechText/bin/LeechText$(COLOR_RESET)"; \
+			/opt/LeechText/bin/LeechText 2>&1 | tee "$$LOG_FILE"; \
+		elif [ -f "/usr/bin/leechtext" ]; then \
+			echo "$(COLOR_GREEN)Found binary at /usr/bin/leechtext$(COLOR_RESET)"; \
+			/usr/bin/leechtext 2>&1 | tee "$$LOG_FILE"; \
+		elif [ -f "/usr/local/bin/leechtext" ]; then \
+			echo "$(COLOR_GREEN)Found binary at /usr/local/bin/leechtext$(COLOR_RESET)"; \
+			/usr/local/bin/leechtext 2>&1 | tee "$$LOG_FILE"; \
+		else \
+			echo "$(COLOR_YELLOW)⚠ Could not find leechtext binary. Searched: /opt/LeechText/bin/, /usr/bin/, /usr/local/bin/$(COLOR_RESET)"; \
+			echo "$(COLOR_YELLOW)Try running: sudo updatedb && locate leechtext$(COLOR_RESET)"; \
+		fi; \
+	else \
+		echo "$(COLOR_YELLOW)⚠ No native package found. Run 'make package-linux' first.$(COLOR_RESET)"; \
 	fi
 
 # Run native app with logging
-run-logs: package-mac
-	@echo "$(COLOR_BLUE)Running LeechText with verbose logging...$(COLOR_RESET)"
-	@if [ -d "/Applications/LeechText.app" ]; then \
-		LOG_FILE="$${HOME}/.leechtext/app.log"; \
-		echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
-		/Applications/LeechText.app/Contents/MacOS/LeechText 2>&1 | tee "$$LOG_FILE"; \
-	else \
-		echo "$(COLOR_YELLOW)⚠ Native app not installed. Run 'make package-mac' first.$(COLOR_RESET)"; \
-	fi
+run-logs: run-native
 
 # Clean build artifacts
 clean:
@@ -172,9 +204,9 @@ package-windows: build $(PACKAGE_DIR)
 # Package for Linux (requires Linux)
 package-linux: build $(PACKAGE_DIR)
 	@echo "$(COLOR_BLUE)Creating Linux DEB...$(COLOR_RESET)"
-	@echo "$(COLOR_YELLOW)⚠ Linux packaging requires Linux OS$(COLOR_RESET)"
 	@if [ -f "src/main/resources/icons/leechtext.png" ]; then \
-		jpackage \
+		echo "Using custom icon: src/main/resources/icons/leechtext.png"; \
+		jpackage --verbose \
 			--name LeechText \
 			--vendor "LeechText Team" \
 			--description "Text extraction and ebook creation tool" \
@@ -188,9 +220,10 @@ package-linux: build $(PACKAGE_DIR)
 			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
 			--linux-shortcut \
 			--linux-package-name leechtext \
-			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
+			--dest $(PACKAGE_DIR) 2>&1; \
 	else \
-		jpackage \
+		echo "$(COLOR_YELLOW)Using default Java icon (custom icon not found)$(COLOR_RESET)"; \
+		jpackage --verbose \
 			--name LeechText \
 			--vendor "LeechText Team" \
 			--description "Text extraction and ebook creation tool" \
@@ -203,13 +236,13 @@ package-linux: build $(PACKAGE_DIR)
 			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
 			--linux-shortcut \
 			--linux-package-name leechtext \
-			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
-		echo "$(COLOR_YELLOW)⚠ Using default Java icon (custom icon not found)$(COLOR_RESET)"; \
+			--dest $(PACKAGE_DIR) 2>&1; \
 	fi
-	@if [ -f "$(PACKAGE_DIR)/leechtext_$(VERSION)_amd64.deb" ]; then \
-		echo "$(COLOR_GREEN)✓ Linux package created: $(PACKAGE_DIR)/leechtext_$(VERSION)_amd64.deb$(COLOR_RESET)"; \
+	@if ls $(PACKAGE_DIR)/leechtext_$(VERSION)*.deb 2>/dev/null; then \
+		DEB_FILE=$$(ls $(PACKAGE_DIR)/leechtext_$(VERSION)*.deb 2>/dev/null | head -1); \
+		echo "$(COLOR_GREEN)✓ Linux package created: $$DEB_FILE$(COLOR_RESET)"; \
 	else \
-		echo "$(COLOR_YELLOW)⚠ Package may not have been created$(COLOR_RESET)"; \
+		echo "$(COLOR_YELLOW)⚠ Package was not created. Check jpackage output above.$(COLOR_RESET)"; \
 	fi
 
 # Show help
@@ -225,7 +258,7 @@ help:
 	@echo "  $(COLOR_BLUE)make package-windows$(COLOR_RESET) - Create Windows EXE"
 	@echo "  $(COLOR_BLUE)make package-linux$(COLOR_RESET) - Create Linux DEB"
 	@echo "  $(COLOR_BLUE)make run$(COLOR_RESET)           - Run from JAR"
-	@echo "  $(COLOR_BLUE)make run-native$(COLOR_RESET)   - Run installed native app"
+	@echo "  $(COLOR_BLUE)make run-native$(COLOR_RESET)   - Run installed native app (macOS & Linux)"
 	@echo "  $(COLOR_BLUE)make run-logs$(COLOR_RESET)     - Run with verbose logging to console & file"
 	@echo "  $(COLOR_BLUE)make info$(COLOR_RESET)         - Show system information and settings location"
 	@echo "  $(COLOR_BLUE)make help$(COLOR_RESET)      - Show this help message"
