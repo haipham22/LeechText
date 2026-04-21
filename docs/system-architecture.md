@@ -129,10 +129,10 @@ PluginEntity
 #### JavaScript Engine Architecture
 
 ```
-JavaScriptEngine (GraalVM)
-├── Core GraalVM integration
+JsScriptEngine (Rhino)
+├── Core Rhino integration
 ├── Script execution context
-├── ProxyObject pattern for method exposure
+├── Direct method exposure (no ProxyObject needed)
 └── Value conversion system
 
 JavaScript API (Available to Scripts)
@@ -140,7 +140,10 @@ JavaScript API (Available to Scripts)
 ├── Http: HTTP requests with method chaining
 ├── Json: JSON parsing and serialization
 ├── JSList: Array-like operations for vBook compatibility
-└── Consumer: Functional interface for callbacks
+├── Core: UUID, timestamp utilities
+├── Regexp: Regular expression operations
+├── Text: Text manipulation utilities
+└── Response: success() / error() wrapper for vBook compatibility
 ```
 
 #### JavaScript Loaders
@@ -156,23 +159,21 @@ Execution Context Flow
 ┌─────────────────────────────┐
 │  Plugin Execution Context   │
 ├─────────────────────────────┤
-│  - GraalVM Context         │
+│  - Rhino Context            │
 │  - API Bindings (Html, Http)│
 │  - vBook API Compatibility │
 │  - Value Conversion        │
 └─────────────────────────────┘
 ```
 
-#### ProxyObject Pattern
+#### Direct Method Exposure
 
-The JavaScript API uses ProxyObject pattern to expose Java methods to JavaScript with method chaining support:
+Rhino automatically exposes public Java methods to JavaScript without requiring ProxyObject wrappers. Method chaining works naturally:
 
 ```javascript
-// Method chaining pattern (obj:method() instead of obj.method())
-const title = html.parse(htmlString)
-    .select('h1.title')
-    .text()
-    .trim();
+// Method chaining pattern (JavaScript-style)
+var doc = html.parse(htmlString);
+var title = doc.select('h1.title').text();
 ```
 
 #### Value Conversion System
@@ -197,7 +198,7 @@ Plugin Loading Process
 ┌─────────────────────────────┐
 │  Context Initialization     │
 ├─────────────────────────────┤
-│  - Create GraalVM Context  │
+│  - Create Rhino Context    │
 │  - Setup vBook API         │
 │  - Bind API objects        │
 └─────────────────────────────┘
@@ -232,7 +233,7 @@ The JavaScript API is designed to be compatible with existing vBook plugins:
 
 - **Connection Pooling**: Reuse HTTP connections for multiple requests
 - **Memory Management**: Proper resource cleanup and context management
-- **Script Execution**: Optimized GraalVM execution with caching
+- **Script Execution**: Optimized Rhino execution with context pooling
 - **Value Conversion**: Efficient type conversion between Java and JavaScript
 
 #### Security Features
@@ -244,7 +245,7 @@ The JavaScript API is designed to be compatible with existing vBook plugins:
 
 #### Extension Points
 
-- **New JavaScript APIs**: Add custom API classes with ProxyObject implementation
+- **New JavaScript APIs**: Add custom API classes (public methods auto-exposed to JavaScript)
 - **Plugin Development**: Create new plugins with JavaScript extraction scripts
 - **API Enhancement**: Extend existing APIs with additional functionality
 - **Integration**: Connect JavaScript plugins with existing Lua-based plugins
@@ -281,9 +282,9 @@ For developers migrating from vBook:
 
 ##### JSList API
 - Array-like functionality for plugin development
-- ProxyArray implementation for JavaScript array operations
+- Native JavaScript array operations
 - Map and forEach methods for transformation
-- Conversion to JavaScript arrays
+- Conversion to/from Java lists
 
 ##### Consumer Interface
 - Functional interface for callback operations
@@ -385,7 +386,7 @@ Plugin Execution Flow
 ┌─────────────────────────────┐
 │  Context Setup             │
 ├─────────────────────────────┤
-│  - Create GraalVM Context  │
+│  - Create Rhino Context    │
 │  - Bind vBook APIs        │
 │  - Initialize plugin       │
 └─────────────────────────────┘
@@ -411,7 +412,7 @@ Plugin Execution Flow
 
 - **vBook Compatibility**: Seamless migration from existing vBook plugins
 - **Modern JavaScript**: Leverage modern JavaScript features and patterns
-- **Performance**: Optimized execution with GraalVM
+- **Performance**: Optimized execution with Rhino context pooling
 - **Extensibility**: Easy to extend and customize
 - **Maintainability**: Clear separation of concerns and proper error handling
 - **Pagination Support**: Built-in cursor/token pagination for infinite scrolling content
@@ -727,7 +728,8 @@ public void startDownload() {
 
 ### JavaScript Sandboxing (NEW)
 - Rhino JavaScript engine with limited context
-- API access validation through ProxyObject pattern
+- JsSandbox security manager for resource isolation
+- API access validation through class whitelisting
 - Resource limits for script execution
 
 ### Plugin Security (NEW)
