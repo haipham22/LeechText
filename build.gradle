@@ -61,6 +61,10 @@ dependencies {
     // OkHttp3 for JavaScript plugin HTTP API (matches vBooks Android implementation)
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
+    // Selenium WebDriver for browser automation
+    implementation 'org.seleniumhq.selenium:selenium-java:4.26.0'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.9.2'
+
     // RSyntaxTextArea for syntax highlighting
     implementation 'com.fifesoft:rsyntaxtextarea:3.3.4'
 

@@ -96,6 +96,7 @@ public class ToC {
 
         tocBuilder.append(
                 createNavPoint("gioithieu", "Giới Thiệu", "Text/gioithieu.html", navPointId++));
+        tocBuilder.append("</navPoint>\n");
 
         contentBuilder.append(
                 "\t<item id=\"gioithieu\" href=\"Text/gioithieu.html\""
@@ -306,6 +307,7 @@ public class ToC {
                             "Text/" + chapterId + ".html",
                             navPointId++,
                             indent));
+            tocBuilder.append(indent).append("</navPoint>\n");
             partHtml.append(createChapterLink(chapterId, chapterName));
             contentBuilder.append(
                     String.format(
@@ -324,7 +326,7 @@ public class ToC {
     private String createNavPoint(
             String id, String label, String src, int playOrder, String indent) {
         return String.format(
-                "%s<navPoint id=\"%s\" playorder=\"%d\">%n"
+                "%s<navPoint id=\"%s\" playOrder=\"%d\">%n"
                         + "%s  <navLabel>%n"
                         + "%s    <text>%s</text>%n"
                         + "%s  </navLabel>%n"
