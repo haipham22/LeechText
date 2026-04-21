@@ -146,33 +146,50 @@ jobs:
         if: steps.check_tag.outputs.exists == 'false'
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          COMMITS=$(git log --pretty=format:"- %s (%h)" $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD | head -20)
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          # Categorize commits since last tag
+          FEATURES=$(git log ${PREV_TAG}..HEAD --pretty=format:"%s" | grep -iE "^feat" | head -10)
+          FIXES=$(git log ${PREV_TAG}..HEAD --pretty=format:"%s" | grep -iE "^fix" | head -10)
+          OTHER=$(git log ${PREV_TAG}..HEAD --pretty=format:"%s" | grep -vEi "^(feat|fix|chore|docs|test|refactor|build|ci)" | head -5)
 
           {
-            echo "## LeechText $VERSION"
+            echo "## 🚀 LeechText $VERSION"
             echo ""
-            echo "### Changes since last release:"
-            echo ""
-            if [ -n "$COMMITS" ]; then
-              echo "$COMMITS"
-            else
-              echo "No commit history available"
+            if [ -n "$FEATURES" ]; then
+              echo "### ✨ Features"
+              echo "$FEATURES" | sed 's/^/- /'
+              echo ""
             fi
-            echo ""
+            if [ -n "$FIXES" ]; then
+              echo "### 🐛 Bug Fixes"
+              echo "$FIXES" | sed 's/^/- /'
+              echo ""
+            fi
+            if [ -n "$OTHER" ]; then
+              echo "### 🔧 Other Changes"
+              echo "$OTHER" | sed 's/^/- /'
+              echo ""
+            fi
+            if [ -z "$FEATURES" ] && [ -z "$FIXES" ] && [ -z "$OTHER" ]; then
+              echo "### 📝 Changes"
+              git log ${PREV_TAG}..HEAD --pretty=format:"- %s (%h)" | head -20
+              echo ""
+            fi
             echo "---"
             echo ""
-            echo "### Installation"
+            echo "### 📦 Installation"
             echo ""
-            echo "**macOS:**"
+            echo "**macOS (Universal):**"
             echo "- Download \`LeechText.dmg\`"
-            echo "- Open and drag to Applications"
+            echo "- Open and drag to Applications folder"
             echo ""
-            echo "**Linux:**"
+            echo "**Linux (Debian/Ubuntu):**"
             echo "- Download \`leechtext_${VERSION}_amd64.deb\`"
-            echo "- Install with: \`sudo dpkg -i leechtext_*.deb\`"
+            echo "- Install: \`sudo apt install ./leechtext_${VERSION}_amd64.deb\`"
             echo ""
-            echo "**Windows:**"
-            echo "- Download \`LeechText.exe\`"
+            echo "**Windows (x64):**"
+            echo "- Download \`LeechText-setup.exe\`"
             echo "- Run installer and follow prompts"
           } > release_notes.md
 
