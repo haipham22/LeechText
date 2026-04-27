@@ -1,16 +1,14 @@
 package dark.leech.text.plugin.js.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-/**
- * Unit tests for Engine factory class. Validates Browser instance creation.
- */
+/** Unit tests for Engine factory class. Validates Browser instance creation. */
 public class EngineTest {
 
     @Test
@@ -53,10 +51,13 @@ public class EngineTest {
             ScriptableObject.putProperty(scope, "Engine", engineApi);
 
             // Test from JavaScript
-            Object result = ctx.evaluateString(scope,
-                "var browser = Engine.newBrowser();" +
-                "typeof browser.launch;",
-                "test", 1, null);
+            Object result =
+                    ctx.evaluateString(
+                            scope,
+                            "var browser = Engine.newBrowser();" + "typeof browser.launch;",
+                            "test",
+                            1,
+                            null);
 
             assertNotNull("launch method should exist", result);
             assertEquals("launch should be a function", "function", result.toString());

@@ -69,7 +69,8 @@ public abstract class AbstractLoader<T> {
             }
 
             // Create secure sandbox for this loader type
-            JsSandbox.Builder builder = new JsSandbox.Builder()
+            JsSandbox.Builder builder =
+                    new JsSandbox.Builder()
                             .loaderType(getLoaderType())
                             .baseUrl(baseUrl)
                             .targetUrl(url);

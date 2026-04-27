@@ -5,46 +5,49 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
-import org.jsoup.nodes.Document;
-import org.junit.Before;
 import org.junit.Test;
 
 import dark.leech.text.plugin.js.api.Html;
-import dark.leech.text.plugin.js.api.Http;
-import dark.leech.text.plugin.js.api.Json;
 import dark.leech.text.plugin.js.api.JSDocument;
 import dark.leech.text.plugin.js.api.JSElement;
 import dark.leech.text.plugin.js.api.JSElements;
 import dark.leech.text.plugin.js.api.JSList;
-import dark.leech.text.plugin.vbook.model.VBookPluginEntity;
+import dark.leech.text.plugin.js.api.Json;
 
 /**
- * End-to-end test for vBook plugin JSON parsing. Validates that response.json() works
- * correctly when server returns JSON with chap_list field.
+ * End-to-end test for vBook plugin JSON parsing. Validates that response.json() works correctly
+ * when server returns JSON with chap_list field.
  */
 public class E2EPluginJsonParsingTest {
 
-    private static final String TEST_URL = "https://truyenfull.vision/my-dung-su-xuyen-qua-lam-nong-phu-lam-giau-nuoi-con";
+    private static final String TEST_URL =
+            "https://truyenfull.vision/my-dung-su-xuyen-qua-lam-nong-phu-lam-giau-nuoi-con";
 
     @Test
     public void testPluginJsonParsingWhenServerReturnsJson() {
         // Simulate what the plugin expects: server returns JSON with chap_list
-        String mockJsonResponse = "{\"chap_list\": \"<div class='list-chapter'><li><a href='/chapter-1/'>Chapter 1</a></li></div>\", \"status\": 200}";
+        String mockJsonResponse =
+                "{\"chap_list\": \"<div class='list-chapter'><li><a href='/chapter-1/'>Chapter"
+                        + " 1</a></li></div>\", \"status\": 200}";
 
         // Test 1: Verify Json.parse() creates NativeObject
         Json jsonApi = new Json();
         Object parsed = jsonApi.parse(mockJsonResponse);
 
         assertNotNull("Parsed JSON should not be null", parsed);
-        assertTrue("Parsed JSON should be NativeObject", parsed instanceof org.mozilla.javascript.NativeObject);
+        assertTrue(
+                "Parsed JSON should be NativeObject",
+                parsed instanceof org.mozilla.javascript.NativeObject);
 
         org.mozilla.javascript.NativeObject jsonObj = (org.mozilla.javascript.NativeObject) parsed;
         assertTrue("Should have 'chap_list' property", jsonObj.has("chap_list", jsonObj));
 
         Object chapList = jsonObj.get("chap_list", jsonObj);
-        assertEquals("chap_list should contain HTML", "<div class='list-chapter'><li><a href='/chapter-1/'>Chapter 1</a></li></div>", chapList);
+        assertEquals(
+                "chap_list should contain HTML",
+                "<div class='list-chapter'><li><a href='/chapter-1/'>Chapter 1</a></li></div>",
+                chapList);
 
         // Test 2: Verify Html.parse() can process the chap_list content
         Html htmlApi = new Html();
@@ -63,14 +66,19 @@ public class E2EPluginJsonParsingTest {
     @Test
     public void testPluginJsonParsingWithRealWorldScenario() {
         // Simulate exact plugin flow from truyenfull.plugin
-        String mockServerResponse = "{\"chap_list\": \"<div class='list-chapter'><li><span class='glyphicon glyphicon-certificate'></span> <a href='/my-dung-su-xuyen-qua-lam-nong-phu-lam-giau-nuoi-con/chuong-1/'>Chương 1: Chương 1</a></li></div>\", \"status\": 200}";
+        String mockServerResponse =
+                "{\"chap_list\": \"<div class='list-chapter'><li><span class='glyphicon"
+                    + " glyphicon-certificate'></span> <a"
+                    + " href='/my-dung-su-xuyen-qua-lam-nong-phu-lam-giau-nuoi-con/chuong-1/'>Chương"
+                    + " 1: Chương 1</a></li></div>\", \"status\": 200}";
 
         // Plugin code: let json = response.json();
         Json jsonApi = new Json();
         Object json = jsonApi.parse(mockServerResponse);
 
         assertNotNull("json should not be null", json);
-        assertTrue("json should be NativeObject", json instanceof org.mozilla.javascript.NativeObject);
+        assertTrue(
+                "json should be NativeObject", json instanceof org.mozilla.javascript.NativeObject);
 
         org.mozilla.javascript.NativeObject jsonObj = (org.mozilla.javascript.NativeObject) json;
 
@@ -96,7 +104,10 @@ public class E2EPluginJsonParsingTest {
         String chapterUrl = chapter.attr("href");
 
         assertTrue("Chapter name should contain 'Chương 1'", chapterName.contains("Chương 1"));
-        assertEquals("Chapter URL should be correct", "/my-dung-su-xuyen-qua-lam-nong-phu-lam-giau-nuoi-con/chuong-1/", chapterUrl);
+        assertEquals(
+                "Chapter URL should be correct",
+                "/my-dung-su-xuyen-qua-lam-nong-phu-lam-giau-nuoi-con/chuong-1/",
+                chapterUrl);
     }
 
     @Test
@@ -104,19 +115,23 @@ public class E2EPluginJsonParsingTest {
         // This is the CRITICAL test - verifies response.json() returns NativeObject
         // not Map, so JavaScript property access works
 
-        String jsonResponse = "{\"chap_list\": \"<div>test</div>\", \"data\": {\"status\": \"ok\"}}";
+        String jsonResponse =
+                "{\"chap_list\": \"<div>test</div>\", \"data\": {\"status\": \"ok\"}}";
 
         Json jsonApi = new Json();
         Object result = jsonApi.parse(jsonResponse);
 
         assertNotNull("Result should not be null", result);
-        assertTrue("Result MUST be NativeObject for JavaScript property access to work",
-                   result instanceof org.mozilla.javascript.NativeObject);
+        assertTrue(
+                "Result MUST be NativeObject for JavaScript property access to work",
+                result instanceof org.mozilla.javascript.NativeObject);
 
-        org.mozilla.javascript.NativeObject nativeObj = (org.mozilla.javascript.NativeObject) result;
+        org.mozilla.javascript.NativeObject nativeObj =
+                (org.mozilla.javascript.NativeObject) result;
 
         // Verify JavaScript property access works (this is what the plugin needs)
-        assertTrue("Must have 'chap_list' property via has()", nativeObj.has("chap_list", nativeObj));
+        assertTrue(
+                "Must have 'chap_list' property via has()", nativeObj.has("chap_list", nativeObj));
         assertTrue("Must have 'data' property via has()", nativeObj.has("data", nativeObj));
 
         Object chapList = nativeObj.get("chap_list", nativeObj);
@@ -124,19 +139,22 @@ public class E2EPluginJsonParsingTest {
         assertEquals("chap_list value should be correct", "<div>test</div>", chapList);
 
         Object data = nativeObj.get("data", nativeObj);
-        assertTrue("data should also be NativeObject", data instanceof org.mozilla.javascript.NativeObject);
+        assertTrue(
+                "data should also be NativeObject",
+                data instanceof org.mozilla.javascript.NativeObject);
     }
 
     @Test
     public void testHtmlParsingOfChapListContent() {
         // Test that Html.parse() correctly processes chap_list HTML content
 
-        String chapListHtml = "<div class='list-chapter'>"
-                + "<li><span class='glyphicon glyphicon-certificate'></span> "
-                + "<a href='/chuong-1/'>Chương 1</a></li>"
-                + "<li><span class='glyphicon glyphicon-certificate'></span> "
-                + "<a href='/chuong-2/'>Chương 2</a></li>"
-                + "</div>";
+        String chapListHtml =
+                "<div class='list-chapter'>"
+                        + "<li><span class='glyphicon glyphicon-certificate'></span> "
+                        + "<a href='/chuong-1/'>Chương 1</a></li>"
+                        + "<li><span class='glyphicon glyphicon-certificate'></span> "
+                        + "<a href='/chuong-2/'>Chương 2</a></li>"
+                        + "</div>";
 
         Html htmlApi = new Html();
         JSDocument doc = htmlApi.parse(chapListHtml);
@@ -181,7 +199,10 @@ public class E2EPluginJsonParsingTest {
         assertTrue("map() MUST return JSList for vBook compatibility", mapped instanceof JSList);
 
         JSList jsList = (JSList) mapped;
-        assertEquals("JSList size should match element count", 0, jsList.size()); // null callback returns empty list
+        assertEquals(
+                "JSList size should match element count",
+                0,
+                jsList.size()); // null callback returns empty list
     }
 
     @Test
@@ -189,14 +210,17 @@ public class E2EPluginJsonParsingTest {
         // Simulate the complete plugin flow as it would execute in vBook
 
         // Step 1: Server returns JSON response
-        String serverResponse = "{\"chap_list\": \"<div class='list-chapter'><li><a href='/chuong-1/'>Chương 1</a></li></div>\", \"status\": 200}";
+        String serverResponse =
+                "{\"chap_list\": \"<div class='list-chapter'><li><a href='/chuong-1/'>Chương"
+                        + " 1</a></li></div>\", \"status\": 200}";
 
         // Step 2: Plugin calls response.json()
         Json jsonApi = new Json();
         Object json = jsonApi.parse(serverResponse);
 
         assertNotNull("json should not be null", json);
-        assertTrue("json must be NativeObject", json instanceof org.mozilla.javascript.NativeObject);
+        assertTrue(
+                "json must be NativeObject", json instanceof org.mozilla.javascript.NativeObject);
 
         org.mozilla.javascript.NativeObject jsonObj = (org.mozilla.javascript.NativeObject) json;
 
@@ -243,10 +267,13 @@ public class E2EPluginJsonParsingTest {
         assertTrue("Plugin should contain toc function", content.contains("\"toc\":"));
         assertTrue("Plugin should contain response.json()", content.contains("response.json()"));
         assertTrue("Plugin should contain json.chap_list", content.contains("json.chap_list"));
-        assertTrue("Plugin should contain Html.parse", content.contains("Html.parse(json.chap_list)"));
+        assertTrue(
+                "Plugin should contain Html.parse", content.contains("Html.parse(json.chap_list)"));
 
         // Verify the plugin expects JSON format (note: plugin file uses escaped unicode)
-        assertTrue("Plugin expects JSON response", content.contains("json") && content.contains("response.json()"));
+        assertTrue(
+                "Plugin expects JSON response",
+                content.contains("json") && content.contains("response.json()"));
         assertTrue("Plugin expects chap_list field", content.contains("json.chap_list"));
     }
 
@@ -260,9 +287,12 @@ public class E2EPluginJsonParsingTest {
         Json jsonApi = new Json();
         Object result = jsonApi.parse(jsonString);
 
-        assertTrue("Result must be NativeObject", result instanceof org.mozilla.javascript.NativeObject);
+        assertTrue(
+                "Result must be NativeObject",
+                result instanceof org.mozilla.javascript.NativeObject);
 
-        org.mozilla.javascript.NativeObject nativeObj = (org.mozilla.javascript.NativeObject) result;
+        org.mozilla.javascript.NativeObject nativeObj =
+                (org.mozilla.javascript.NativeObject) result;
 
         // Test has() method (JavaScript equivalent: "chap_list" in json)
         assertTrue("has() method must work for 'chap_list'", nativeObj.has("chap_list", nativeObj));

@@ -566,10 +566,10 @@ For plugins that need to handle paginated content (search results, chapter lists
 function execute(url, page) {
     // Fetch current page content
     const items = getItems(url, page);
-    
+
     // Get next page identifier (URL, number, token, etc.)
     const nextPage = getNextPageIdentifier(url, page);
-    
+
     // Return both data and pagination info
     return Response.success(items, nextPage);
 }

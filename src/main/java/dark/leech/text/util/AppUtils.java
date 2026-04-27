@@ -115,7 +115,8 @@ public class AppUtils {
             tempHeight = tempGd.getDisplayMode().getHeight();
         } catch (HeadlessException | AWTError e) {
             // Running in headless mode (no display) - use defaults
-            System.out.println("[AppUtils] Running in headless mode, using default screen dimensions");
+            System.out.println(
+                    "[AppUtils] Running in headless mode, using default screen dimensions");
         }
 
         gd = tempGd;

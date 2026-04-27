@@ -1,14 +1,14 @@
 package dark.leech.text.plugin.js.loader;
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
-import static org.junit.Assert.*;
-
 /**
- * Test that String.split() works correctly with regex special characters.
- * Verifies the fix for: PatternSyntaxException: Dangling meta character '?'
+ * Test that String.split() works correctly with regex special characters. Verifies the fix for:
+ * PatternSyntaxException: Dangling meta character '?'
  */
 public class StringSplitTest {
 
@@ -25,9 +25,13 @@ public class StringSplitTest {
             ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
             // Test split('?')
-            Object result = ctx.evaluateString(scope,
-                "var url = 'https://example.com/page?param=value'; url.split('?')[0];",
-                "test", 1, null);
+            Object result =
+                    ctx.evaluateString(
+                            scope,
+                            "var url = 'https://example.com/page?param=value'; url.split('?')[0];",
+                            "test",
+                            1,
+                            null);
 
             assertNotNull("Result should not be null", result);
             assertEquals("Split should work correctly", "https://example.com/page", result);
@@ -52,15 +56,16 @@ public class StringSplitTest {
             ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
             // Test split with various special characters
-            String script = "" +
-                "var results = [];\n" +
-                "results.push('a.b.c'.split('.').length);\n" +
-                "results.push('a*b*c'.split('*').length);\n" +
-                "results.push('a+b+c'.split('+').length);\n" +
-                "results.push('a?b?c'.split('?').length);\n" +
-                "results.push('a$b$c'.split('$').length);\n" +
-                "results.push('a|b|c'.split('|').length);\n" +
-                "results.join(',');\n";
+            String script =
+                    ""
+                            + "var results = [];\n"
+                            + "results.push('a.b.c'.split('.').length);\n"
+                            + "results.push('a*b*c'.split('*').length);\n"
+                            + "results.push('a+b+c'.split('+').length);\n"
+                            + "results.push('a?b?c'.split('?').length);\n"
+                            + "results.push('a$b$c'.split('$').length);\n"
+                            + "results.push('a|b|c'.split('|').length);\n"
+                            + "results.join(',');\n";
 
             Object result = ctx.evaluateString(scope, script, "test", 1, null);
 
@@ -86,9 +91,13 @@ public class StringSplitTest {
             ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
             // Test split('#')
-            Object result = ctx.evaluateString(scope,
-                "var url = 'https://example.com/page#section'; url.split('#')[0];",
-                "test", 1, null);
+            Object result =
+                    ctx.evaluateString(
+                            scope,
+                            "var url = 'https://example.com/page#section'; url.split('#')[0];",
+                            "test",
+                            1,
+                            null);
 
             assertNotNull("Result should not be null", result);
             assertEquals("Split should work correctly", "https://example.com/page", result);
@@ -113,14 +122,20 @@ public class StringSplitTest {
             ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
             // Test the exact pattern used in plugin scripts
-            Object result = ctx.evaluateString(scope,
-                "var href = 'https://khotruyenchu.online/truyen/test?param=value#section';\n" +
-                "var cleanUrl = href.split('?')[0].split('#')[0];\n" +
-                "cleanUrl;",
-                "test", 1, null);
+            Object result =
+                    ctx.evaluateString(
+                            scope,
+                            "var href ="
+                                + " 'https://khotruyenchu.online/truyen/test?param=value#section';\n"
+                                + "var cleanUrl = href.split('?')[0].split('#')[0];\n"
+                                + "cleanUrl;",
+                            "test",
+                            1,
+                            null);
 
             assertNotNull("Result should not be null", result);
-            assertEquals("Chained split should work", "https://khotruyenchu.online/truyen/test", result);
+            assertEquals(
+                    "Chained split should work", "https://khotruyenchu.online/truyen/test", result);
 
         } finally {
             if (ctx != null) {
@@ -143,18 +158,26 @@ public class StringSplitTest {
             ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
             // Verify split works with regex special characters
-            Object result = ctx.evaluateString(scope,
-                "var url = 'https://example.com/page?param=value'; url.split('?')[0];",
-                "test", 1, null);
+            Object result =
+                    ctx.evaluateString(
+                            scope,
+                            "var url = 'https://example.com/page?param=value'; url.split('?')[0];",
+                            "test",
+                            1,
+                            null);
 
             assertNotNull("Result should not be null", result);
             assertEquals("Split should work correctly", "https://example.com/page", result);
 
             // Test multiple special chars in chain
-            Object chained = ctx.evaluateString(scope,
-                "var href = 'https://example.com/page?p=v#section'; " +
-                "href.split('?')[0].split('#')[0];",
-                "test", 1, null);
+            Object chained =
+                    ctx.evaluateString(
+                            scope,
+                            "var href = 'https://example.com/page?p=v#section'; "
+                                    + "href.split('?')[0].split('#')[0];",
+                            "test",
+                            1,
+                            null);
 
             assertEquals("Chained split should work", "https://example.com/page", chained);
 

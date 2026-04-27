@@ -2,23 +2,18 @@ package dark.leech.text.plugin.js.api;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
 
 import dark.leech.text.action.Log;
-import dark.leech.text.util.SettingUtils;
 
 /**
  * LocalStorage API for JavaScript plugins. Provides persistent key-value storage compatible with
  * browser localStorage API.
  *
  * <p>Usage example:
+ *
  * <pre>{@code
  * localStorage.setItem('key', 'value');
  * var value = localStorage.getItem('key');
@@ -83,14 +78,25 @@ public final class LocalStorage extends JsApiWrapper {
             // Check value size
             byte[] valueBytes = value.getBytes("UTF-8");
             if (valueBytes.length > MAX_VALUE_SIZE) {
-                Log.add("[LocalStorage] Value too large: " + valueBytes.length + " bytes (max: " + MAX_VALUE_SIZE + ")");
+                Log.add(
+                        "[LocalStorage] Value too large: "
+                                + valueBytes.length
+                                + " bytes (max: "
+                                + MAX_VALUE_SIZE
+                                + ")");
                 return this;
             }
 
             // Check total storage size
             long totalSize = getCurrentStorageSize();
             if (totalSize + valueBytes.length > MAX_TOTAL_SIZE) {
-                Log.add("[LocalStorage] Storage quota exceeded: " + totalSize + " + " + valueBytes.length + " > " + MAX_TOTAL_SIZE);
+                Log.add(
+                        "[LocalStorage] Storage quota exceeded: "
+                                + totalSize
+                                + " + "
+                                + valueBytes.length
+                                + " > "
+                                + MAX_TOTAL_SIZE);
                 return this;
             }
 
@@ -169,9 +175,7 @@ public final class LocalStorage extends JsApiWrapper {
         return this;
     }
 
-    /**
-     * Clear all items from storage.
-     */
+    /** Clear all items from storage. */
     public void clear() {
         try {
             File[] files = storageDir.listFiles();

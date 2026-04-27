@@ -21,20 +21,27 @@ public class JSElements {
         this.length = this.elements.size();
     }
 
-    /** Select from current elements using CSS selector. Returns new JSElements collection for
+    /**
+     * Select from current elements using CSS selector. Returns new JSElements collection for
      * chaining.
      */
     public JSElements select(String selector) {
         try {
-            dark.leech.text.action.Log.add("[JSElements.select()] Called with selector: " + selector);
+            dark.leech.text.action.Log.add(
+                    "[JSElements.select()] Called with selector: " + selector);
 
             if (selector == null || selector.isEmpty()) {
-                dark.leech.text.action.Log.add("[JSElements.select()] Selector is null/empty, returning empty JSElements");
+                dark.leech.text.action.Log.add(
+                        "[JSElements.select()] Selector is null/empty, returning empty JSElements");
                 return new JSElements(new Elements());
             }
 
             Elements results = elements.select(selector);
-            dark.leech.text.action.Log.add("[JSElements.select()] Found " + results.size() + " elements matching selector: " + selector);
+            dark.leech.text.action.Log.add(
+                    "[JSElements.select()] Found "
+                            + results.size()
+                            + " elements matching selector: "
+                            + selector);
 
             return new JSElements(results);
         } catch (Exception e) {
@@ -134,9 +141,12 @@ public class JSElements {
         }
     }
 
-    /** Map - transform each element, returns JSList for vBook compatibility (matches vBook Android). */
+    /**
+     * Map - transform each element, returns JSList for vBook compatibility (matches vBook Android).
+     */
     public JSList map(Object callback) {
-        dark.leech.text.action.Log.add("[JSElements.map()] Starting map operation, elements.size(): " + elements.size());
+        dark.leech.text.action.Log.add(
+                "[JSElements.map()] Starting map operation, elements.size(): " + elements.size());
 
         JSList results = new JSList();
         if (callback instanceof org.mozilla.javascript.Function) {
@@ -149,12 +159,19 @@ public class JSElements {
                 Object result = func.call(ctx, scope, scope, new Object[] {element, i});
                 results.add(result);
 
-                dark.leech.text.action.Log.add("[JSElements.map()] Processed element " + i + ", result: " + (result != null ? result.getClass().getName() : "null"));
+                dark.leech.text.action.Log.add(
+                        "[JSElements.map()] Processed element "
+                                + i
+                                + ", result: "
+                                + (result != null ? result.getClass().getName() : "null"));
             }
 
-            dark.leech.text.action.Log.add("[JSElements.map()] Completed map operation, JSList.size(): " + results.size());
+            dark.leech.text.action.Log.add(
+                    "[JSElements.map()] Completed map operation, JSList.size(): " + results.size());
         } else {
-            dark.leech.text.action.Log.add("[JSElements.map()] Callback is not a Function: " + (callback != null ? callback.getClass().getName() : "null"));
+            dark.leech.text.action.Log.add(
+                    "[JSElements.map()] Callback is not a Function: "
+                            + (callback != null ? callback.getClass().getName() : "null"));
         }
 
         return results;

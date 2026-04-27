@@ -40,8 +40,8 @@ public class Response {
 
     /**
      * Success method with dual data support - returns both data values. Called from JavaScript as
-     * Response.success(data, data2). Used for pagination and metadata extraction.
-     * For vBooks compatibility, wraps in {code: 0, data: ..., data2: ...} structure.
+     * Response.success(data, data2). Used for pagination and metadata extraction. For vBooks
+     * compatibility, wraps in {code: 0, data: ..., data2: ...} structure.
      *
      * @param data The primary data
      * @param data2 The secondary data (e.g., next page token)

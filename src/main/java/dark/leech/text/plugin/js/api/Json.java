@@ -53,28 +53,40 @@ public class Json extends JsApiWrapper {
         }
 
         try {
-            Log.add("[Json.parse()] Parsing JSON (first 200 chars): " + (trimmed.length() > 200 ? trimmed.substring(0, 200) : trimmed));
+            Log.add(
+                    "[Json.parse()] Parsing JSON (first 200 chars): "
+                            + (trimmed.length() > 200 ? trimmed.substring(0, 200) : trimmed));
 
             // Use wrapper's context and scope for NativeJSON.parse()
             org.mozilla.javascript.Context ctx = getContext();
             org.mozilla.javascript.Scriptable scope = getScope();
 
             // Create null callable for NativeJSON.parse()
-            org.mozilla.javascript.Callable nullCallable = new org.mozilla.javascript.Callable() {
-                @Override
-                public Object call(org.mozilla.javascript.Context cx, org.mozilla.javascript.Scriptable scope,
-                                   org.mozilla.javascript.Scriptable thisObj, Object[] args) {
-                    return args[1]; // Return value as-is
-                }
-            };
+            org.mozilla.javascript.Callable nullCallable =
+                    new org.mozilla.javascript.Callable() {
+                        @Override
+                        public Object call(
+                                org.mozilla.javascript.Context cx,
+                                org.mozilla.javascript.Scriptable scope,
+                                org.mozilla.javascript.Scriptable thisObj,
+                                Object[] args) {
+                            return args[1]; // Return value as-is
+                        }
+                    };
 
-            Object result = org.mozilla.javascript.NativeJSON.parse(ctx, scope, jsonString, nullCallable);
+            Object result =
+                    org.mozilla.javascript.NativeJSON.parse(ctx, scope, jsonString, nullCallable);
 
             // Log the result type
             if (result instanceof org.mozilla.javascript.NativeObject) {
-                org.mozilla.javascript.NativeObject nativeObj = (org.mozilla.javascript.NativeObject) result;
+                org.mozilla.javascript.NativeObject nativeObj =
+                        (org.mozilla.javascript.NativeObject) result;
                 Object[] keys = nativeObj.getIds();
-                Log.add("[Json.parse()] Parsed as NativeObject with " + keys.length + " keys: " + java.util.Arrays.toString(keys));
+                Log.add(
+                        "[Json.parse()] Parsed as NativeObject with "
+                                + keys.length
+                                + " keys: "
+                                + java.util.Arrays.toString(keys));
 
                 // Log all properties and their types
                 for (Object key : keys) {
@@ -84,7 +96,16 @@ public class Json extends JsApiWrapper {
                         if (valueStr.length() > 50) {
                             valueStr = valueStr.substring(0, 50) + "...";
                         }
-                        Log.add("[Json.parse()]   - " + key + ": " + valueStr + " (type: " + (value != null ? value.getClass().getSimpleName() : "null") + ")");
+                        Log.add(
+                                "[Json.parse()]   - "
+                                        + key
+                                        + ": "
+                                        + valueStr
+                                        + " (type: "
+                                        + (value != null
+                                                ? value.getClass().getSimpleName()
+                                                : "null")
+                                        + ")");
                     }
                 }
 
@@ -92,25 +113,41 @@ public class Json extends JsApiWrapper {
                 if (nativeObj.has("chap_list", nativeObj)) {
                     Log.add("[Json.parse()] ✓ Found 'chap_list' field in NativeObject");
                 } else if (nativeObj.has("chapters", nativeObj)) {
-                    Log.add("[Json.parse()] ✓ Found 'chapters' field in NativeObject (not 'chap_list')");
+                    Log.add(
+                            "[Json.parse()] ✓ Found 'chapters' field in NativeObject (not"
+                                    + " 'chap_list')");
                 } else if (nativeObj.has("data", nativeObj)) {
-                    Log.add("[Json.parse()] ✓ Found 'data' field in NativeObject (might contain nested data)");
+                    Log.add(
+                            "[Json.parse()] ✓ Found 'data' field in NativeObject (might contain"
+                                    + " nested data)");
                 } else if (nativeObj.has("html", nativeObj)) {
-                    Log.add("[Json.parse()] ✓ Found 'html' field in NativeObject (not 'chap_list')");
+                    Log.add(
+                            "[Json.parse()] ✓ Found 'html' field in NativeObject (not"
+                                    + " 'chap_list')");
                 } else {
-                    Log.add("[Json.parse()] ✗ No 'chap_list', 'chapters', 'data', or 'html' field found in NativeObject");
+                    Log.add(
+                            "[Json.parse()] ✗ No 'chap_list', 'chapters', 'data', or 'html' field"
+                                    + " found in NativeObject");
                 }
             } else if (result instanceof org.mozilla.javascript.NativeArray) {
-                org.mozilla.javascript.NativeArray nativeArr = (org.mozilla.javascript.NativeArray) result;
-                Log.add("[Json.parse()] Parsed as NativeArray with length: " + nativeArr.getLength());
+                org.mozilla.javascript.NativeArray nativeArr =
+                        (org.mozilla.javascript.NativeArray) result;
+                Log.add(
+                        "[Json.parse()] Parsed as NativeArray with length: "
+                                + nativeArr.getLength());
             } else {
-                Log.add("[Json.parse()] Parsed as: " + (result != null ? result.getClass().getName() : "null"));
+                Log.add(
+                        "[Json.parse()] Parsed as: "
+                                + (result != null ? result.getClass().getName() : "null"));
             }
 
             return result;
 
         } catch (Exception e) {
-            Log.add("[Json.parse()] NativeJSON parsing failed: " + e.getMessage() + ", trying manual parsing");
+            Log.add(
+                    "[Json.parse()] NativeJSON parsing failed: "
+                            + e.getMessage()
+                            + ", trying manual parsing");
             return parseManual(jsonString);
         }
     }
@@ -133,7 +170,14 @@ public class Json extends JsApiWrapper {
                     if (valueStr.length() > 50) {
                         valueStr = valueStr.substring(0, 50) + "...";
                     }
-                    Log.add("[Json.parse()]   - " + key + ": " + valueStr + " (type: " + (value != null ? value.getClass().getSimpleName() : "null") + ")");
+                    Log.add(
+                            "[Json.parse()]   - "
+                                    + key
+                                    + ": "
+                                    + valueStr
+                                    + " (type: "
+                                    + (value != null ? value.getClass().getSimpleName() : "null")
+                                    + ")");
                 }
 
                 // Check for common field name variations
@@ -146,7 +190,9 @@ public class Json extends JsApiWrapper {
                 } else if (result.containsKey("html")) {
                     Log.add("[Json.parse()] ✓ Found 'html' field (not 'chap_list')");
                 } else {
-                    Log.add("[Json.parse()] ✗ No 'chap_list', 'chapters', 'data', or 'html' field found");
+                    Log.add(
+                            "[Json.parse()] ✗ No 'chap_list', 'chapters', 'data', or 'html' field"
+                                    + " found");
                 }
 
                 return result;

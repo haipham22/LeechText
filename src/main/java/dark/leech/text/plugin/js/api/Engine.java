@@ -8,6 +8,7 @@ import org.mozilla.javascript.Scriptable;
  * JavaScript plugins.
  *
  * <p>Usage example:
+ *
  * <pre>{@code
  * const browser = Engine.newBrowser();
  * browser.launch("https://example.com");

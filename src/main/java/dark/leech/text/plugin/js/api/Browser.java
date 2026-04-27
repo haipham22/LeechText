@@ -1,23 +1,24 @@
 package dark.leech.text.plugin.js.api;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.JavascriptExecutor;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 import dark.leech.text.action.Log;
-import io.github.bonigarcia.wdm.WebDriverManager;
 
 /**
  * Browser automation API for JavaScript plugins. Provides headless browser capabilities for
  * scraping dynamic content.
  *
  * <p>Usage example:
+ *
  * <pre>{@code
  * const browser = Engine.newBrowser();
  * browser.launch("https://example.com");
@@ -30,9 +31,7 @@ public class Browser extends JsApiWrapper {
     private WebDriver driver;
     private static final long DEFAULT_TIMEOUT_SECONDS = 30;
 
-    /**
-     * Create Browser instance without context (factory method).
-     */
+    /** Create Browser instance without context (factory method). */
     public Browser() {
         super();
     }
@@ -83,7 +82,9 @@ public class Browser extends JsApiWrapper {
             // Navigate to URL
             driver.get(url);
 
-            Log.add("[Browser.launch()] Browser launched successfully, page title: " + driver.getTitle());
+            Log.add(
+                    "[Browser.launch()] Browser launched successfully, page title: "
+                            + driver.getTitle());
 
         } catch (Exception e) {
             Log.add("[Browser.launch()] Failed to launch browser: " + e.getMessage());
@@ -111,7 +112,8 @@ public class Browser extends JsApiWrapper {
             // Execute JavaScript to set user agent (note: this may not work in headless mode)
             ((JavascriptExecutor) driver)
                     .executeScript(
-                            "Object.defineProperty(navigator, 'userAgent', {get: function() { return '"
+                            "Object.defineProperty(navigator, 'userAgent', {get: function() {"
+                                    + " return '"
                                     + userAgent
                                     + "'; }});");
 
@@ -140,7 +142,9 @@ public class Browser extends JsApiWrapper {
         }
 
         try {
-            Log.add("[Browser.callJs()] Executing script: " + (script.length() > 100 ? script.substring(0, 100) + "..." : script));
+            Log.add(
+                    "[Browser.callJs()] Executing script: "
+                            + (script.length() > 100 ? script.substring(0, 100) + "..." : script));
 
             JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
             Object result = jsExecutor.executeScript(script);
@@ -228,9 +232,7 @@ public class Browser extends JsApiWrapper {
         }
     }
 
-    /**
-     * Close browser and cleanup resources.
-     */
+    /** Close browser and cleanup resources. */
     public void close() {
         if (driver != null) {
             try {

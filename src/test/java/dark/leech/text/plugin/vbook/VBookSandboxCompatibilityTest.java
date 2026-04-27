@@ -5,21 +5,18 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
 import dark.leech.text.plugin.js.api.Html;
 import dark.leech.text.plugin.js.api.Http;
-import dark.leech.text.plugin.js.api.JSList;
-import dark.leech.text.plugin.js.api.Json;
 import dark.leech.text.plugin.js.api.JSDocument;
 import dark.leech.text.plugin.js.api.JSElements;
-import dark.leech.text.plugin.js.sandbox.JsSandbox;
+import dark.leech.text.plugin.js.api.Json;
 
 /**
- * End-to-end sandbox compatibility test. Simulates exactly how vBook Android executes plugins
- * to verify your implementation matches vBook behavior.
+ * End-to-end sandbox compatibility test. Simulates exactly how vBook Android executes plugins to
+ * verify your implementation matches vBook behavior.
  */
 public class VBookSandboxCompatibilityTest {
 
@@ -64,18 +61,23 @@ public class VBookSandboxCompatibilityTest {
         org.mozilla.javascript.ScriptableObject.putProperty(scope, "Response", responseObj);
 
         // Fetch function
-        Object fetchFunc = new org.mozilla.javascript.BaseFunction() {
-            @Override
-            public Object call(org.mozilla.javascript.Context cx, Scriptable scope,
-                               Scriptable thisObj, Object[] args) {
-                String requestUrl = args.length > 0 && args[0] != null
-                        ? org.mozilla.javascript.Context.toString(args[0])
-                        : baseUrl;
-                Http http = new Http(cx, scope);
-                http.request(requestUrl);
-                return http;
-            }
-        };
+        Object fetchFunc =
+                new org.mozilla.javascript.BaseFunction() {
+                    @Override
+                    public Object call(
+                            org.mozilla.javascript.Context cx,
+                            Scriptable scope,
+                            Scriptable thisObj,
+                            Object[] args) {
+                        String requestUrl =
+                                args.length > 0 && args[0] != null
+                                        ? org.mozilla.javascript.Context.toString(args[0])
+                                        : baseUrl;
+                        Http http = new Http(cx, scope);
+                        http.request(requestUrl);
+                        return http;
+                    }
+                };
         org.mozilla.javascript.ScriptableObject.putProperty(scope, "fetch", fetchFunc);
     }
 
@@ -91,8 +93,9 @@ public class VBookSandboxCompatibilityTest {
         Object result = jsonApi.parse(testJson);
 
         assertNotNull("Json.parse() must return non-null", result);
-        assertTrue("Json.parse() MUST return NativeObject (not Map) for JavaScript to work",
-                   result instanceof NativeObject);
+        assertTrue(
+                "Json.parse() MUST return NativeObject (not Map) for JavaScript to work",
+                result instanceof NativeObject);
 
         NativeObject jsonObj = (NativeObject) result;
 
@@ -104,16 +107,19 @@ public class VBookSandboxCompatibilityTest {
 
     @Test
     public void testPluginCodeExecutionInSandbox() {
-        // Simulate exact plugin code: let json = response.json(); let doc = Html.parse(json.chap_list);
+        // Simulate exact plugin code: let json = response.json(); let doc =
+        // Html.parse(json.chap_list);
 
         String pluginCode =
-                "let jsonString = '{\"chap_list\": \"<div class=\\'list-chapter\\'><li><a href=\\'/chuong-1/\\'>Chương 1</a></li></div>\", \"status\": 200}';\n" +
-                "let json = Json.parse(jsonString);\n" +
-                "let chapList = json.chap_list;\n" +  // This is where it fails if NativeObject doesn't work
-                "let HtmlApi = Html;\n" +
-                "let doc = HtmlApi.parse(chapList);\n" +
-                "let links = doc.select('.list-chapter li a');\n" +
-                "links.length;";  // Return the count
+                "let jsonString = '{\"chap_list\": \"<div class=\\'list-chapter\\'><li><a"
+                        + " href=\\'/chuong-1/\\'>Chương 1</a></li></div>\", \"status\": 200}';\n"
+                        + "let json = Json.parse(jsonString);\n"
+                        + "let chapList = json.chap_list;\n"
+                        + // This is where it fails if NativeObject doesn't work
+                        "let HtmlApi = Html;\n"
+                        + "let doc = HtmlApi.parse(chapList);\n"
+                        + "let links = doc.select('.list-chapter li a');\n"
+                        + "links.length;"; // Return the count
 
         Object result = context.evaluateString(scope, pluginCode, "testPlugin", 1, null);
 
@@ -125,7 +131,8 @@ public class VBookSandboxCompatibilityTest {
     @Test
     public void testHtmlParseInSandbox() {
         // Test Html.parse() in sandbox context
-        String testHtml = "<div class='list-chapter'><li><a href='/chuong-1/'>Chương 1</a></li></div>";
+        String testHtml =
+                "<div class='list-chapter'><li><a href='/chuong-1/'>Chương 1</a></li></div>";
 
         // Execute: let doc = Html.parse(html);
         Html htmlApi = new Html(context, scope);
@@ -146,11 +153,12 @@ public class VBookSandboxCompatibilityTest {
         // Test that JSElements.map() returns JSList in sandbox (vBook compatibility)
 
         String testCode =
-                "let HtmlApi = Html;\n" +
-                "let doc = HtmlApi.parse('<div class=\\\"chapter\\\">Chapter 1</div><div class=\\\"chapter\\\">Chapter 2</div>');\n" +
-                "let elements = doc.select('.chapter');\n" +
-                "let mapped = elements.map(function(e, i) { return e.text(); });\n" +
-                "mapped.length;";
+                "let HtmlApi = Html;\n"
+                        + "let doc = HtmlApi.parse('<div class=\\\"chapter\\\">Chapter 1</div><div"
+                        + " class=\\\"chapter\\\">Chapter 2</div>');\n"
+                        + "let elements = doc.select('.chapter');\n"
+                        + "let mapped = elements.map(function(e, i) { return e.text(); });\n"
+                        + "mapped.length;";
 
         Object result = context.evaluateString(scope, testCode, "testMap", 1, null);
 
@@ -164,19 +172,21 @@ public class VBookSandboxCompatibilityTest {
         // Complete E2E test: Simulate plugin receiving JSON response and extracting chapters
 
         String pluginCode =
-                "let mockJson = '{\"chap_list\": \"<div class=\\'list-chapter\\'><li><a href=\\'/chuong-1/\\'>Chương 1</a></li><li><a href=\\'/chuong-2/\\'>Chương 2</a></li></div>\", \"status\": 200}';\n" +
-                "let json = Json.parse(mockJson);\n" +
-                "let HtmlApi = Html;\n" +
-                "let doc = HtmlApi.parse(json.chap_list);\n" +
-                "let chapters = [];\n" +
-                "doc.select('.list-chapter li a').forEach(function(e) {\n" +
-                "  chapters.push({\n" +
-                "    name: e.text(),\n" +
-                "    url: e.attr('href'),\n" +
-                "    host: BASE_URL\n" +
-                "  });\n" +
-                "});\n" +
-                "chapters.length;";
+                "let mockJson = '{\"chap_list\": \"<div class=\\'list-chapter\\'><li><a"
+                    + " href=\\'/chuong-1/\\'>Chương 1</a></li><li><a href=\\'/chuong-2/\\'>Chương"
+                    + " 2</a></li></div>\", \"status\": 200}';\n"
+                    + "let json = Json.parse(mockJson);\n"
+                    + "let HtmlApi = Html;\n"
+                    + "let doc = HtmlApi.parse(json.chap_list);\n"
+                    + "let chapters = [];\n"
+                    + "doc.select('.list-chapter li a').forEach(function(e) {\n"
+                    + "  chapters.push({\n"
+                    + "    name: e.text(),\n"
+                    + "    url: e.attr('href'),\n"
+                    + "    host: BASE_URL\n"
+                    + "  });\n"
+                    + "});\n"
+                    + "chapters.length;";
 
         Object result = context.evaluateString(scope, pluginCode, "testFullFlow", 1, null);
 
@@ -190,9 +200,9 @@ public class VBookSandboxCompatibilityTest {
         // Verify that response.json() method exists and works correctly
 
         String testCode =
-                "let mockJson = '{\"chap_list\": \"<div>test</div>\", \"status\": 200}';\n" +
-                "let json = Json.parse(mockJson);\n" +
-                "json.chap_list;";
+                "let mockJson = '{\"chap_list\": \"<div>test</div>\", \"status\": 200}';\n"
+                        + "let json = Json.parse(mockJson);\n"
+                        + "json.chap_list;";
 
         Object result = context.evaluateString(scope, testCode, "testResponseJson", 1, null);
 
@@ -203,15 +213,17 @@ public class VBookSandboxCompatibilityTest {
     @Test
     public void testVBookAndroidBehaviorMatch() {
         // This test validates that your implementation matches vBook Android exactly
-        // Reference: vBooks-decompiled/sources/com/vbook/app/extensions/js/module/http/JSHttpResponse.java
+        // Reference:
+        // vBooks-decompiled/sources/com/vbook/app/extensions/js/module/http/JSHttpResponse.java
 
         // Test 1: NativeJSON.parse() is used (not org.json.JSONObject)
         String jsonString = "{\"chap_list\": \"<div>test</div>\"}";
         Json jsonApi = new Json(context, scope);
         Object parsed = jsonApi.parse(jsonString);
 
-        assertTrue("vBook uses NativeJSON.parse() -> returns NativeObject",
-                   parsed instanceof NativeObject);
+        assertTrue(
+                "vBook uses NativeJSON.parse() -> returns NativeObject",
+                parsed instanceof NativeObject);
         // Note: NativeObject extends AbstractMap, so it IS a Map, but that's okay
         // The important part is that it's NativeObject for JavaScript property access
 
@@ -225,7 +237,9 @@ public class VBookSandboxCompatibilityTest {
         assertNotNull("vBook Html.parse() should work", doc);
 
         // Test 3: JSElements has public length field (vBook compatibility)
-        String testCode = "let HtmlApi = Html; let doc = HtmlApi.parse('<div>a</div>'); let el = doc.select('div'); el.length;";
+        String testCode =
+                "let HtmlApi = Html; let doc = HtmlApi.parse('<div>a</div>'); let el ="
+                        + " doc.select('div'); el.length;";
         Object lengthResult = context.evaluateString(scope, testCode, "testLength", 1, null);
 
         assertNotNull("JSElements.length should be accessible", lengthResult);
@@ -233,12 +247,17 @@ public class VBookSandboxCompatibilityTest {
         assertEquals("length should be 1", Integer.valueOf(1), lengthResult);
 
         // Test 4: JSElements.map() returns JSList (vBook compatibility)
-        String mapCode = "let HtmlApi = Html; let doc = HtmlApi.parse('<div class=\\\"test\\\">a</div><div class=\\\"test\\\">b</div>'); let els = doc.select('.test'); let mapped = els.map(function(e) { return e.text(); }); mapped.length;";
+        String mapCode =
+                "let HtmlApi = Html; let doc = HtmlApi.parse('<div class=\\\"test\\\">a</div><div"
+                    + " class=\\\"test\\\">b</div>'); let els = doc.select('.test'); let mapped ="
+                    + " els.map(function(e) { return e.text(); }); mapped.length;";
         Object mapResult = context.evaluateString(scope, mapCode, "testMap", 1, null);
 
         assertNotNull("map() should return non-null", mapResult);
         // Rhino wraps JSList as NativeJavaList, so we check for length property instead
-        assertTrue("map() result should have length property (as number)", mapResult instanceof Number);
+        assertTrue(
+                "map() result should have length property (as number)",
+                mapResult instanceof Number);
         assertEquals("map() should have 2 elements", 2, ((Number) mapResult).intValue());
     }
 
@@ -247,10 +266,12 @@ public class VBookSandboxCompatibilityTest {
         // Test what happens when json.chap_list is undefined
 
         String testCode =
-                "let mockJson = '{}';\n" +  // JSON without chap_list
-                "let json = Json.parse(mockJson);\n" +
-                "let chapList = json.chap_list;\n" +  // This will be undefined
-                "typeof chapList;";
+                "let mockJson = '{}';\n"
+                        + // JSON without chap_list
+                        "let json = Json.parse(mockJson);\n"
+                        + "let chapList = json.chap_list;\n"
+                        + // This will be undefined
+                        "typeof chapList;";
 
         Object result = context.evaluateString(scope, testCode, "testUndefined", 1, null);
 
@@ -261,7 +282,8 @@ public class VBookSandboxCompatibilityTest {
     @Test
     public void testSandboxApiSurfaceCompleteness() {
         // Verify all required APIs are exposed in sandbox (matching vBook Android)
-        // Note: typeof on Java objects returns different values in Rhino, so we test functionality instead
+        // Note: typeof on Java objects returns different values in Rhino, so we test functionality
+        // instead
 
         // Check Html API - test that it works
         String htmlTest = "Html.parse('<div>test</div>');";
@@ -280,7 +302,8 @@ public class VBookSandboxCompatibilityTest {
 
         // Check Response API - test that it exists
         String responseTest = "Response.success([]);";
-        Object responseResult = context.evaluateString(scope, responseTest, "testResponseApi", 1, null);
+        Object responseResult =
+                context.evaluateString(scope, responseTest, "testResponseApi", 1, null);
         assertNotNull("Response.success() should work", responseResult);
     }
 
@@ -289,13 +312,17 @@ public class VBookSandboxCompatibilityTest {
         // Test the complete property access chain: json -> chap_list -> Html.parse -> select
 
         String testCode =
-                "let mockJson = '{\"chap_list\": \"<div class=\\'list-chapter\\'><li><a href=\\'/chuong-1/\\'>Test</a></li></div>\"}';\n" +
-                "let json = Json.parse(mockJson);\n" +
-                "let chapList = json.chap_list;\n" +  // Critical property access
-                "let HtmlApi = Html;\n" +
-                "let doc = HtmlApi.parse(chapList);\n" +  // Parse HTML
-                "let links = doc.select('.list-chapter li a');\n" +  // Select elements
-                "links.length;";  // Return count
+                "let mockJson = '{\"chap_list\": \"<div class=\\'list-chapter\\'><li><a"
+                        + " href=\\'/chuong-1/\\'>Test</a></li></div>\"}';\n"
+                        + "let json = Json.parse(mockJson);\n"
+                        + "let chapList = json.chap_list;\n"
+                        + // Critical property access
+                        "let HtmlApi = Html;\n"
+                        + "let doc = HtmlApi.parse(chapList);\n"
+                        + // Parse HTML
+                        "let links = doc.select('.list-chapter li a');\n"
+                        + // Select elements
+                        "links.length;"; // Return count
 
         Object result = context.evaluateString(scope, testCode, "testPropertyChain", 1, null);
 

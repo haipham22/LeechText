@@ -1,11 +1,12 @@
 package dark.leech.text.plugin.js.loader;
 
-import org.junit.Test;
-import dark.leech.text.enities.PluginEntity;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import dark.leech.text.enities.PluginEntity;
 
 /**
  * Integration tests for Response.error() methods. Validates error handling in vBooks compatibility
@@ -16,14 +17,14 @@ public class ResponseErrorTest {
     @Test
     public void testResponseErrorWithData() {
         // Create plugin with error response
-        PluginEntity plugin = PluginEntity.builder()
-                .source("https://test.com")
-                .detailGetter(
-                    "function execute(url) {" +
-                    "  return Response.error('Book not found');" +
-                    "}"
-                )
-                .build();
+        PluginEntity plugin =
+                PluginEntity.builder()
+                        .source("https://test.com")
+                        .detailGetter(
+                                "function execute(url) {"
+                                        + "  return Response.error('Book not found');"
+                                        + "}")
+                        .build();
 
         DetailLoader loader = DetailLoader.with(plugin);
         var result = loader.load("https://test.com/test-book");
@@ -37,14 +38,14 @@ public class ResponseErrorTest {
 
     @Test
     public void testResponseErrorWithCode() {
-        PluginEntity plugin = PluginEntity.builder()
-                .source("https://test.com")
-                .detailGetter(
-                    "function execute(url) {" +
-                    "  return Response.error(404, 'Not found');" +
-                    "}"
-                )
-                .build();
+        PluginEntity plugin =
+                PluginEntity.builder()
+                        .source("https://test.com")
+                        .detailGetter(
+                                "function execute(url) {"
+                                        + "  return Response.error(404, 'Not found');"
+                                        + "}")
+                        .build();
 
         DetailLoader loader = DetailLoader.with(plugin);
         var result = loader.load("https://test.com/test-book");
@@ -57,14 +58,13 @@ public class ResponseErrorTest {
 
     @Test
     public void testResponseErrorWithCodeAndMessage() {
-        PluginEntity plugin = PluginEntity.builder()
-                .source("https://test.com")
-                .detailGetter(
-                    "function execute(url) {" +
-                    "  return Response.error(500, 'Server error', 'Internal error');" +
-                    "}"
-                )
-                .build();
+        PluginEntity plugin =
+                PluginEntity.builder()
+                        .source("https://test.com")
+                        .detailGetter(
+                                "function execute(url) {  return Response.error(500, 'Server"
+                                        + " error', 'Internal error');}")
+                        .build();
 
         DetailLoader loader = DetailLoader.with(plugin);
         var result = loader.load("https://test.com/test-book");
@@ -77,17 +77,17 @@ public class ResponseErrorTest {
 
     @Test
     public void testResponseSuccessWithCodeField() {
-        PluginEntity plugin = PluginEntity.builder()
-                .source("https://test.com")
-                .detailGetter(
-                    "function execute(url) {" +
-                    "  return Response.success({" +
-                    "    name: 'Test Novel'," +
-                    "    author: 'Test Author'" +
-                    "  });" +
-                    "}"
-                )
-                .build();
+        PluginEntity plugin =
+                PluginEntity.builder()
+                        .source("https://test.com")
+                        .detailGetter(
+                                "function execute(url) {"
+                                        + "  return Response.success({"
+                                        + "    name: 'Test Novel',"
+                                        + "    author: 'Test Author'"
+                                        + "  });"
+                                        + "}")
+                        .build();
 
         DetailLoader loader = DetailLoader.with(plugin);
         var result = loader.load("https://test.com/test-novel");
@@ -99,17 +99,17 @@ public class ResponseErrorTest {
 
     @Test
     public void testResponseSuccessDualWithCodeField() {
-        PluginEntity plugin = PluginEntity.builder()
-                .source("https://test.com")
-                .tocGetter(
-                    "function execute(url) {" +
-                    "  return Response.success([" +
-                    "    {name: 'Chapter 1', url: '/chap-1'}," +
-                    "    {name: 'Chapter 2', url: '/chap-2'}" +
-                    "  ], 'next-page-token');" +
-                    "}"
-                )
-                .build();
+        PluginEntity plugin =
+                PluginEntity.builder()
+                        .source("https://test.com")
+                        .tocGetter(
+                                "function execute(url) {"
+                                        + "  return Response.success(["
+                                        + "    {name: 'Chapter 1', url: '/chap-1'},"
+                                        + "    {name: 'Chapter 2', url: '/chap-2'}"
+                                        + "  ], 'next-page-token');"
+                                        + "}")
+                        .build();
 
         ListLoader loader = ListLoader.with(plugin);
         var chapters = loader.load("https://test.com");
@@ -123,25 +123,25 @@ public class ResponseErrorTest {
     @Test
     public void testResponseSuccessWithMultipleDataResponse() {
         // Test Response.success() with multiple data types
-        PluginEntity plugin = PluginEntity.builder()
-                .source("https://test.com")
-                .detailGetter(
-                    "function execute(url) {" +
-                    "  return Response.success({" +
-                    "    name: 'Multi-Field Novel'," +
-                    "    author: 'Test Author'," +
-                    "    description: 'A novel with many fields'," +
-                    "    cover: 'https://example.com/cover.jpg'," +
-                    "    tags: ['action', 'adventure']," +
-                    "    metadata: {" +
-                    "      chapters: 100," +
-                    "      status: 'ongoing'," +
-                    "      rating: 4.5" +
-                    "    }" +
-                    "  });" +
-                    "}"
-                )
-                .build();
+        PluginEntity plugin =
+                PluginEntity.builder()
+                        .source("https://test.com")
+                        .detailGetter(
+                                "function execute(url) {"
+                                        + "  return Response.success({"
+                                        + "    name: 'Multi-Field Novel',"
+                                        + "    author: 'Test Author',"
+                                        + "    description: 'A novel with many fields',"
+                                        + "    cover: 'https://example.com/cover.jpg',"
+                                        + "    tags: ['action', 'adventure'],"
+                                        + "    metadata: {"
+                                        + "      chapters: 100,"
+                                        + "      status: 'ongoing',"
+                                        + "      rating: 4.5"
+                                        + "    }"
+                                        + "  });"
+                                        + "}")
+                        .build();
 
         DetailLoader loader = DetailLoader.with(plugin);
         var result = loader.load("https://test.com/multi-field-novel");
@@ -156,17 +156,17 @@ public class ResponseErrorTest {
     @Test
     public void testBackwardCompatibilityDirectData() {
         // Test that plugins returning data directly still work
-        PluginEntity plugin = PluginEntity.builder()
-                .source("https://test.com")
-                .detailGetter(
-                    "function execute(url) {" +
-                    "  return {" +
-                    "    name: 'Direct Novel'," +
-                    "    author: 'Direct Author'" +
-                    "  };" +
-                    "}"
-                )
-                .build();
+        PluginEntity plugin =
+                PluginEntity.builder()
+                        .source("https://test.com")
+                        .detailGetter(
+                                "function execute(url) {"
+                                        + "  return {"
+                                        + "    name: 'Direct Novel',"
+                                        + "    author: 'Direct Author'"
+                                        + "  };"
+                                        + "}")
+                        .build();
 
         DetailLoader loader = DetailLoader.with(plugin);
         var result = loader.load("https://test.com/direct");
@@ -179,19 +179,19 @@ public class ResponseErrorTest {
     @Test
     public void testBackwardCompatibilityDualData() {
         // Test that plugins using old dual response format still work
-        PluginEntity plugin = PluginEntity.builder()
-                .source("https://test.com")
-                .tocGetter(
-                    "function execute(url) {" +
-                    "  return {" +
-                    "    data: [" +
-                    "      {name: 'Old Chapter 1', url: '/old-1'}" +
-                    "    ]," +
-                    "    data2: 'next-token'" +
-                    "  };" +
-                    "}"
-                )
-                .build();
+        PluginEntity plugin =
+                PluginEntity.builder()
+                        .source("https://test.com")
+                        .tocGetter(
+                                "function execute(url) {"
+                                        + "  return {"
+                                        + "    data: ["
+                                        + "      {name: 'Old Chapter 1', url: '/old-1'}"
+                                        + "    ],"
+                                        + "    data2: 'next-token'"
+                                        + "  };"
+                                        + "}")
+                        .build();
 
         ListLoader loader = ListLoader.with(plugin);
         var chapters = loader.load("https://test.com");
@@ -203,14 +203,14 @@ public class ResponseErrorTest {
 
     @Test
     public void testTextLoaderErrorResponse() {
-        PluginEntity plugin = PluginEntity.builder()
-                .source("https://test.com")
-                .chapGetter(
-                    "function execute(url) {" +
-                    "  return Response.error('Chapter not available');" +
-                    "}"
-                )
-                .build();
+        PluginEntity plugin =
+                PluginEntity.builder()
+                        .source("https://test.com")
+                        .chapGetter(
+                                "function execute(url) {"
+                                        + "  return Response.error('Chapter not available');"
+                                        + "}")
+                        .build();
 
         TextLoader loader = TextLoader.with(plugin);
         String result = loader.load("https://test.com/chap-1");
@@ -220,14 +220,14 @@ public class ResponseErrorTest {
 
     @Test
     public void testTextLoaderSuccessWithCodeField() {
-        PluginEntity plugin = PluginEntity.builder()
-                .source("https://test.com")
-                .chapGetter(
-                    "function execute(url) {" +
-                    "  return Response.success('Chapter content here...');" +
-                    "}"
-                )
-                .build();
+        PluginEntity plugin =
+                PluginEntity.builder()
+                        .source("https://test.com")
+                        .chapGetter(
+                                "function execute(url) {"
+                                        + "  return Response.success('Chapter content here...');"
+                                        + "}")
+                        .build();
 
         TextLoader loader = TextLoader.with(plugin);
         String result = loader.load("https://test.com/chap-1");

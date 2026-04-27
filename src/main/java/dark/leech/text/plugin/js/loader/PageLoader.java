@@ -85,11 +85,12 @@ public class PageLoader extends AbstractLoader<List<String>> {
             }
 
             // Create secure sandbox for PAGE loader
-            sandbox = new JsSandbox.Builder()
-                    .loaderType(getLoaderType())
-                    .baseUrl(baseUrl)
-                    .targetUrl(url)
-                    .build();
+            sandbox =
+                    new JsSandbox.Builder()
+                            .loaderType(getLoaderType())
+                            .baseUrl(baseUrl)
+                            .targetUrl(url)
+                            .build();
 
             // Execute plugin script in sandbox
             if (!sandbox.execute(script, getScriptName())) {
@@ -132,7 +133,9 @@ public class PageLoader extends AbstractLoader<List<String>> {
             NativeArray nativeArray = (NativeArray) data;
             long size = nativeArray.size();
             if (size > Integer.MAX_VALUE) {
-                Log.add("[PageLoader] Array size exceeds Integer.MAX_VALUE, truncating to " + Integer.MAX_VALUE);
+                Log.add(
+                        "[PageLoader] Array size exceeds Integer.MAX_VALUE, truncating to "
+                                + Integer.MAX_VALUE);
                 size = Integer.MAX_VALUE;
             }
             List<String> list = new ArrayList<>((int) size);
@@ -159,7 +162,8 @@ public class PageLoader extends AbstractLoader<List<String>> {
 
         if (data instanceof org.mozilla.javascript.NativeJavaObject) {
             // Unwrap the Java object
-            org.mozilla.javascript.NativeJavaObject nativeJavaObj = (org.mozilla.javascript.NativeJavaObject) data;
+            org.mozilla.javascript.NativeJavaObject nativeJavaObj =
+                    (org.mozilla.javascript.NativeJavaObject) data;
             Object unwrapped = nativeJavaObj.unwrap();
             if (unwrapped instanceof List) {
                 @SuppressWarnings("unchecked")
@@ -219,9 +223,7 @@ public class PageLoader extends AbstractLoader<List<String>> {
         return new ArrayList<>();
     }
 
-    /**
-     * Convert object to String URL.
-     */
+    /** Convert object to String URL. */
     private String convertToString(Object obj) {
         if (obj == null) {
             return null;
@@ -233,9 +235,7 @@ public class PageLoader extends AbstractLoader<List<String>> {
         return (str != null && !str.isEmpty()) ? str : null;
     }
 
-    /**
-     * Extract URL from NativeObject (checks common property names).
-     */
+    /** Extract URL from NativeObject (checks common property names). */
     private String extractUrlFromObject(NativeObject obj) {
         String[] urlProps = {"url", "link", "href", "page", "pageUrl"};
         for (String prop : urlProps) {
@@ -254,9 +254,7 @@ public class PageLoader extends AbstractLoader<List<String>> {
         return null;
     }
 
-    /**
-     * Extract base URL from full URL.
-     */
+    /** Extract base URL from full URL. */
     private String extractBaseUrl(String url) {
         if (url == null || url.isEmpty()) {
             return "";

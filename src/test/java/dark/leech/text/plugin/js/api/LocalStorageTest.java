@@ -1,18 +1,16 @@
 package dark.leech.text.plugin.js.api;
 
-import org.junit.Test;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Integration tests for LocalStorage API. Validates persistent key-value storage for plugins.
- */
+import org.junit.Test;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
+
+/** Integration tests for LocalStorage API. Validates persistent key-value storage for plugins. */
 public class LocalStorageTest {
 
     @Test
@@ -30,9 +28,13 @@ public class LocalStorageTest {
             ScriptableObject.putProperty(scope, "localStorage", localStorageApi);
 
             // Test setItem
-            Object result = ctx.evaluateString(scope,
-                "localStorage.setItem('testKey', 'testValue');",
-                "test", 1, null);
+            Object result =
+                    ctx.evaluateString(
+                            scope,
+                            "localStorage.setItem('testKey', 'testValue');",
+                            "test",
+                            1,
+                            null);
 
             assertNotNull("setItem should complete", result);
 
@@ -58,13 +60,10 @@ public class LocalStorageTest {
             ScriptableObject.putProperty(scope, "localStorage", localStorageApi);
 
             // Test set and get
-            ctx.evaluateString(scope,
-                "localStorage.setItem('myKey', 'myValue');",
-                "test", 1, null);
+            ctx.evaluateString(scope, "localStorage.setItem('myKey', 'myValue');", "test", 1, null);
 
-            Object result = ctx.evaluateString(scope,
-                "localStorage.getItem('myKey');",
-                "test", 1, null);
+            Object result =
+                    ctx.evaluateString(scope, "localStorage.getItem('myKey');", "test", 1, null);
 
             assertEquals("Should retrieve stored value", "myValue", result);
 
@@ -93,10 +92,12 @@ public class LocalStorageTest {
             ctx.evaluateString(scope, "localStorage.clear();", "test", 1, null);
 
             // Test remove
-            ctx.evaluateString(scope, "localStorage.setItem('tempKey', 'tempValue');", "test", 1, null);
+            ctx.evaluateString(
+                    scope, "localStorage.setItem('tempKey', 'tempValue');", "test", 1, null);
             ctx.evaluateString(scope, "localStorage.removeItem('tempKey');", "test", 1, null);
 
-            Object result = ctx.evaluateString(scope, "localStorage.getItem('tempKey');", "test", 1, null);
+            Object result =
+                    ctx.evaluateString(scope, "localStorage.getItem('tempKey');", "test", 1, null);
             assertNull("Should return null after removal", result);
 
         } finally {
@@ -126,7 +127,9 @@ public class LocalStorageTest {
             ctx.evaluateString(scope, "localStorage.clear();", "test", 1, null);
 
             Object length = ctx.evaluateString(scope, "localStorage.getLength();", "test", 1, null);
-            assertTrue("Storage should be empty after clear", length instanceof Number && ((Number) length).intValue() == 0);
+            assertTrue(
+                    "Storage should be empty after clear",
+                    length instanceof Number && ((Number) length).intValue() == 0);
 
         } finally {
             if (ctx != null) {
@@ -158,7 +161,9 @@ public class LocalStorageTest {
             ctx.evaluateString(scope, "localStorage.setItem('key3', 'value3');", "test", 1, null);
 
             Object length = ctx.evaluateString(scope, "localStorage.getLength();", "test", 1, null);
-            assertTrue("Should have 3 items", length instanceof Number && ((Number) length).intValue() == 3);
+            assertTrue(
+                    "Should have 3 items",
+                    length instanceof Number && ((Number) length).intValue() == 3);
 
         } finally {
             if (ctx != null) {
@@ -212,9 +217,8 @@ public class LocalStorageTest {
             ctx1.getWrapFactory().setJavaPrimitiveWrap(false);
             ScriptableObject.putProperty(scope1, "localStorage", localStorageApi1);
 
-            ctx1.evaluateString(scope1,
-                "localStorage.setItem('persistent', 'data');",
-                "test", 1, null);
+            ctx1.evaluateString(
+                    scope1, "localStorage.setItem('persistent', 'data');", "test", 1, null);
 
         } finally {
             if (ctx1 != null) {
@@ -234,9 +238,9 @@ public class LocalStorageTest {
             ctx2.getWrapFactory().setJavaPrimitiveWrap(false);
             ScriptableObject.putProperty(scope2, "localStorage", localStorageApi2);
 
-            Object result = ctx2.evaluateString(scope2,
-                "localStorage.getItem('persistent');",
-                "test", 1, null);
+            Object result =
+                    ctx2.evaluateString(
+                            scope2, "localStorage.getItem('persistent');", "test", 1, null);
 
             assertEquals("Data should persist across instances", "data", result);
 

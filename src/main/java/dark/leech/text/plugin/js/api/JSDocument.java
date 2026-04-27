@@ -1,8 +1,9 @@
 package dark.leech.text.plugin.js.api;
 
-import dark.leech.text.action.Log;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import dark.leech.text.action.Log;
 
 /**
  * Rhino wrapper for JSoup Document. Provides select() method returning JSElements. Simple Java
@@ -18,7 +19,11 @@ public class JSDocument {
     /** Select elements using CSS selector. Returns JSElements collection for chaining. */
     public JSElements select(String selector) {
         try {
-            Log.add("[JSDocument.select()] Called with selector: " + selector + ", document: " + document);
+            Log.add(
+                    "[JSDocument.select()] Called with selector: "
+                            + selector
+                            + ", document: "
+                            + document);
 
             if (document == null) {
                 Log.add("[JSDocument.select()] Document is null, returning empty JSElements");
@@ -30,7 +35,11 @@ public class JSDocument {
             }
 
             Elements results = document.select(selector);
-            Log.add("[JSDocument.select()] Found " + results.size() + " elements matching selector: " + selector);
+            Log.add(
+                    "[JSDocument.select()] Found "
+                            + results.size()
+                            + " elements matching selector: "
+                            + selector);
 
             return new JSElements(results);
         } catch (Exception e) {

@@ -7,6 +7,7 @@ import org.mozilla.javascript.Scriptable;
  * UserAgent API for JavaScript plugins. Provides preset user agent strings for different platforms.
  *
  * <p>Usage example:
+ *
  * <pre>{@code
  * http.get(url)
  *     .headers({"User-Agent": UserAgent.android()})

@@ -229,7 +229,9 @@ public class Http extends JsApiWrapper {
             String html = response.body().string();
 
             Log.add("[Http.html()] Response length: " + html.length() + " bytes");
-            Log.add("[Http.html()] First 200 chars: " + (html.length() > 200 ? html.substring(0, 200) : html));
+            Log.add(
+                    "[Http.html()] First 200 chars: "
+                            + (html.length() > 200 ? html.substring(0, 200) : html));
 
             org.jsoup.nodes.Document doc = org.jsoup.Jsoup.parse(html, this.url);
             Log.add("[Http.html()] Parsed document, title: " + doc.title());
@@ -290,12 +292,16 @@ public class Http extends JsApiWrapper {
             Json jsonApi = new Json();
             Object parsed = jsonApi.parse(body);
 
-            // If parsing returned a String (HTML content), wrap it in NativeObject for plugin compatibility
+            // If parsing returned a String (HTML content), wrap it in NativeObject for plugin
+            // compatibility
             if (parsed instanceof String) {
                 String trimmed = body.trim();
-                if (trimmed.startsWith("<!DOCTYPE html>") || trimmed.startsWith("<html") || trimmed.startsWith("<HTML")) {
+                if (trimmed.startsWith("<!DOCTYPE html>")
+                        || trimmed.startsWith("<html")
+                        || trimmed.startsWith("<HTML")) {
                     // Create NativeObject for proper JavaScript property access
-                    org.mozilla.javascript.NativeObject wrapper = new org.mozilla.javascript.NativeObject();
+                    org.mozilla.javascript.NativeObject wrapper =
+                            new org.mozilla.javascript.NativeObject();
                     wrapper.put("chap_list", wrapper, parsed);
                     wrapper.put("status", wrapper, 200);
                     Log.add("[Http.json()] Wrapped HTML in NativeObject with chap_list field");
@@ -377,7 +383,9 @@ public class Http extends JsApiWrapper {
             String cookies = CookiesUtils.getCookies(url);
             if (cookies != null && !cookies.isEmpty()) {
                 requestBuilder.header("Cookie", cookies);
-                Log.add("[Http.execute()] Added cookies: " + cookies.substring(0, Math.min(50, cookies.length())));
+                Log.add(
+                        "[Http.execute()] Added cookies: "
+                                + cookies.substring(0, Math.min(50, cookies.length())));
             }
         }
 

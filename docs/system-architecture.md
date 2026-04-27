@@ -476,7 +476,7 @@ function execute(url, page) {
     // Make HTTP request for current page
     const response = http.get(url + (page ? '?page=' + page : ''));
     const html = response.string();
-    
+
     // Parse HTML and extract items
     const items = html.parse(html)
         .select('.chapter-list li')
@@ -486,12 +486,12 @@ function execute(url, page) {
                 url: chapter.select('a').attr('href')
             };
         });
-    
+
     // Get next page link or token
     const nextPage = html.parse(html)
         .select('.pagination .next')
         .attr('href');
-    
+
     // Return both items and next page
     return Response.success(items, nextPage);
 }

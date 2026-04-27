@@ -9,8 +9,8 @@ import dark.leech.text.plugin.js.api.Engine;
 import dark.leech.text.plugin.js.api.Html;
 import dark.leech.text.plugin.js.api.Http;
 import dark.leech.text.plugin.js.api.Json;
-import dark.leech.text.plugin.js.api.UserAgent;
 import dark.leech.text.plugin.js.api.LocalStorage;
+import dark.leech.text.plugin.js.api.UserAgent;
 
 /**
  * Shared vBook API setup helper for Rhino JavaScript loaders. Extracts duplicate setup logic from
@@ -32,7 +32,8 @@ public final class JsApiSetup {
      * @param targetUrl The target URL being processed
      * @param pluginSource The plugin source directory (optional, for load() function)
      */
-    public static void setup(Context ctx, Scriptable scope, String baseUrl, String targetUrl, String pluginSource) {
+    public static void setup(
+            Context ctx, Scriptable scope, String baseUrl, String targetUrl, String pluginSource) {
         // Set BASE_URL variable
         ScriptableObject.putProperty(scope, "BASE_URL", baseUrl);
 
@@ -156,7 +157,8 @@ public final class JsApiSetup {
                             }
 
                             // Read file content
-                            String content = new String(java.nio.file.Files.readAllBytes(file.toPath()));
+                            String content =
+                                    new String(java.nio.file.Files.readAllBytes(file.toPath()));
 
                             // Execute script in current context
                             return cx.evaluateString(scope, content, fileName, 1, null);
@@ -214,7 +216,8 @@ public final class JsApiSetup {
         ctx.getWrapFactory().setJavaPrimitiveWrap(false);
 
         // LocalStorage API for plugin persistence
-        LocalStorage localStorageApi = new LocalStorage(ctx, scope, pluginSource != null ? pluginSource : "default");
+        LocalStorage localStorageApi =
+                new LocalStorage(ctx, scope, pluginSource != null ? pluginSource : "default");
         ScriptableObject.putProperty(scope, "localStorage", localStorageApi);
         ctx.getWrapFactory().setJavaPrimitiveWrap(false);
     }

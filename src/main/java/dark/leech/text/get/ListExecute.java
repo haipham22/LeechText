@@ -11,8 +11,8 @@ import dark.leech.text.enities.PluginEntity;
 import dark.leech.text.listeners.ChangeListener;
 import dark.leech.text.models.Chapter;
 import dark.leech.text.models.Properties;
-import dark.leech.text.plugin.js.loader.PageLoader;
 import dark.leech.text.plugin.js.loader.ListLoader;
+import dark.leech.text.plugin.js.loader.PageLoader;
 
 /** Created by Dark on 1/18/2017. */
 public class ListExecute extends SwingWorker {
@@ -62,7 +62,11 @@ public class ListExecute extends SwingWorker {
                             }
                         }
                     } catch (Exception e) {
-                        Log.add("[ListExecute] Failed to load page " + pageUrl + ": " + e.getMessage());
+                        Log.add(
+                                "[ListExecute] Failed to load page "
+                                        + pageUrl
+                                        + ": "
+                                        + e.getMessage());
                     }
                 }
             } else {
