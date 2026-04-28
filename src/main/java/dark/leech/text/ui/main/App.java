@@ -25,6 +25,7 @@ public class App {
                             } catch (Exception ex) {
                             }
                             AppUtils.doLoad();
+                            FileUtils.bootstrapHomeDirectory();
                             FileUtils.init();
                             SettingUtils.doLoad();
                             Log.add("Home directory: " + AppUtils.curDir);

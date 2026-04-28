@@ -133,11 +133,12 @@ public class AppUtils {
     /**
      * Determines the appropriate home directory for application data.
      *
-     * <p>This method reads the home directory from system property "app.home.dir", which is set at
-     * build time or runtime. If not set (development mode), it uses the current working directory.
-     * For native apps where app.home.dir is not set, it falls back to ~/.leech.
-     *
-     * <p>Build-time configuration (via build.gradle): Development mode uses user.dir
+     * <p>Priority order:
+     * <ol>
+     *   <li>System property "app.home.dir" (set at runtime or build time)</li>
+     *   <li>Native app detection: ~/.leechtext (for jpackage bundles)</li>
+     *   <li>Development mode: current working directory</li>
+     * </ol>
      *
      * @return The appropriate home directory path for storing application data
      */
@@ -149,16 +150,37 @@ public class AppUtils {
             return homeDir;
         }
 
-        // Development mode: use current directory
-        // This is set in build.gradle for development builds
+        // Detect if running from a JAR file (native app or packaged jar)
+        if (isRunningFromJar()) {
+            // Native app: use user home directory
+            String userHome = System.getProperty("user.home");
+            if (userHome != null && !userHome.isEmpty()) {
+                return userHome + "/.leechtext";
+            }
+        }
+
+        // Development mode: use current working directory
         String userDir = System.getProperty("user.dir");
         if (userDir != null && !userDir.isEmpty()) {
             return userDir;
         }
 
-        // Fallback: use ~/.leech (should rarely reach here)
-        String userHome = System.getProperty("user.home");
-        return userHome + "/.leech";
+        // Ultimate fallback
+        return System.getProperty("user.home", ".") + "/.leechtext";
+    }
+
+    /**
+     * Detects if the application is running from a JAR file (native app or packaged distribution).
+     *
+     * @return true if running from a JAR, false if running from class files (development mode)
+     */
+    private static boolean isRunningFromJar() {
+        try {
+            String protocol = AppUtils.class.getResource("AppUtils.class").getProtocol();
+            return "jar".equals(protocol) || "rsrc".equals(protocol);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /** Current location of the application window */

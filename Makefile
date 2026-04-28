@@ -1,13 +1,18 @@
 # LeechText Build System
 # Simple Makefile for building native packages
 
-# Read version from gradle.properties (single source of truth)
+# Read config from gradle.properties (single source of truth)
 VERSION := $(shell grep "^app.version" gradle.properties | cut -d'=' -f2 | tr -d ' ')
+MAIN_CLASS := $(shell grep "^app.mainClass" gradle.properties | cut -d'=' -f2 | tr -d ' ')
+APP_NAME := $(shell grep "^app.name" gradle.properties | cut -d'=' -f2 | tr -d ' ')
+APP_HOME_DIR := $(shell grep "^app.home.dir" gradle.properties | cut -d'=' -f2 | tr -d ' ')
+LINUX_PACKAGE_NAME := $(shell echo $(APP_NAME) | tr '[:upper:]' '[:lower:]')
 
-# Build configuration
-JAR_FILE := build/libs/leechtext-java-$(VERSION).jar
+# Build configuration - match Gradle's artifact naming (rootProject.name from settings.gradle)
+GRADLE_PROJECT_NAME := $(shell grep "^rootProject.name" settings.gradle | cut -d'=' -f2 | tr -d " '")
+JAR_FILE := build/libs/$(GRADLE_PROJECT_NAME)-$(VERSION).jar
+LINUX_DEB_PATTERN := $(PACKAGE_DIR)/$(LINUX_PACKAGE_NAME)_$(VERSION)*.deb
 PACKAGE_DIR := build/jpackage
-MAIN_CLASS := dark.leech.text.ui.main.App
 
 # Colors for output
 COLOR_RESET := \033[0m
@@ -30,7 +35,7 @@ GRADLEW := ./gradlew
 # Build JAR file
 build:
 	@echo "$(COLOR_BLUE)Building LeechText v$(VERSION)...$(COLOR_RESET)"
-	$(GRADLEW) clean assemble jar -x test -x pmdMain -x pmdTest -x checkstyleMain -x checkstyleTest -Papp.home.dir="$(HOME)/.leechtext"
+	$(GRADLEW) clean assemble jar -x test -x pmdMain -x pmdTest -x checkstyleMain -x checkstyleTest -Papp.home.dir="$(HOME)/$(APP_HOME_DIR)"
 	@echo "$(COLOR_GREEN)✓ Build complete: $(JAR_FILE)$(COLOR_RESET)"
 
 # Run JAR directly
@@ -39,27 +44,27 @@ run: build
 	java \
 		--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED \
 		--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED \
-		-Dapp.home.dir="$(HOME)/.leechtext" \
+		-Dapp.home.dir="$(HOME)/$(APP_HOME_DIR)" \
 		-jar $(JAR_FILE)
 
 # Run native app (cross-platform)
 run-native:
 	@echo "$(COLOR_BLUE)Running native LeechText app...$(COLOR_RESET)"
 	@if [ "$(OS)" = "Darwin" ]; then \
-		if [ -d "/Applications/LeechText.app" ]; then \
-			LOG_FILE="$${HOME}/.leechtext/app.log"; \
+		if [ -d "/Applications/$(APP_NAME).app" ]; then \
+			LOG_FILE="$${HOME}/$(APP_HOME_DIR)/app.log"; \
 			echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
 			echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
-			/Applications/LeechText.app/Contents/MacOS/LeechText 2>&1 | tee "$$LOG_FILE"; \
-		elif [ -f "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" ]; then \
+			/Applications/$(APP_NAME).app/Contents/MacOS/$(APP_NAME) 2>&1 | tee "$$LOG_FILE"; \
+		elif [ -f "$(PACKAGE_DIR)/$(APP_NAME)-$(VERSION).dmg" ]; then \
 			echo "$(COLOR_YELLOW)Installing DMG first...$(COLOR_RESET)"; \
-			hdiutil attach "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" -quiet; \
-			cp -r /Volumes/LeechText/LeechText.app /Applications/; \
-			hdiutil detach /Volumes/LeechText -quiet; \
-			LOG_FILE="$${HOME}/.leechtext/app.log"; \
+			hdiutil attach "$(PACKAGE_DIR)/$(APP_NAME)-$(VERSION).dmg" -quiet; \
+			cp -r /Volumes/$(APP_NAME)/$(APP_NAME).app /Applications/; \
+			hdiutil detach /Volumes/$(APP_NAME) -quiet; \
+			LOG_FILE="$${HOME}/$(APP_HOME_DIR)/app.log"; \
 			echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
 			echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
-			/Applications/LeechText.app/Contents/MacOS/LeechText 2>&1 | tee "$$LOG_FILE"; \
+			/Applications/$(APP_NAME).app/Contents/MacOS/$(APP_NAME) 2>&1 | tee "$$LOG_FILE"; \
 		else \
 			echo "$(COLOR_YELLOW)⚠ No native package found. Run 'make package-mac' first.$(COLOR_RESET)"; \
 		fi; \
@@ -74,21 +79,21 @@ run-native-linux: package-linux
 	@echo "$(COLOR_BLUE)Running native LeechText app on Linux...$(COLOR_RESET)"
 	@BINARY_NAME="$$(which leechtext 2>/dev/null)"; \
 	if [ -n "$$BINARY_NAME" ]; then \
-		LOG_FILE="$${HOME}/.leechtext/app.log"; \
+		LOG_FILE="$${HOME}/$(APP_HOME_DIR)/app.log"; \
 		echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
 		echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
 		$$BINARY_NAME 2>&1 | tee "$$LOG_FILE"; \
-	elif ls $(PACKAGE_DIR)/leechtext_$(VERSION)*.deb 2>/dev/null; then \
-		DEB_FILE=$$(ls $(PACKAGE_DIR)/leechtext_$(VERSION)*.deb 2>/dev/null | head -1); \
+	elif ls $(PACKAGE_DIR)/$(LINUX_PACKAGE_NAME)_$(VERSION)*.deb 2>/dev/null; then \
+		DEB_FILE=$$(ls $(PACKAGE_DIR)/$(LINUX_PACKAGE_NAME)_$(VERSION)*.deb 2>/dev/null | head -1); \
 		echo "$(COLOR_YELLOW)Installing DEB package first...$(COLOR_RESET)"; \
 		cd $(PACKAGE_DIR) && sudo apt install -y ./*.deb; \
-		LOG_FILE="$${HOME}/.leechtext/app.log"; \
+		LOG_FILE="$${HOME}/$(APP_HOME_DIR)/app.log"; \
 		echo "$(COLOR_GREEN)Logging to: $$LOG_FILE$(COLOR_RESET)"; \
 		echo "$(COLOR_YELLOW)Press Ctrl+C to stop the app$(COLOR_RESET)"; \
 		echo "$(COLOR_BLUE)Searching for installed binary...$(COLOR_RESET)"; \
-		if [ -f "/opt/LeechText/bin/LeechText" ]; then \
-			echo "$(COLOR_GREEN)Found binary at /opt/LeechText/bin/LeechText$(COLOR_RESET)"; \
-			/opt/LeechText/bin/LeechText 2>&1 | tee "$$LOG_FILE"; \
+		if [ -f "/opt/$(APP_NAME)/bin/$(APP_NAME)" ]; then \
+			echo "$(COLOR_GREEN)Found binary at /opt/$(APP_NAME)/bin/$(APP_NAME)$(COLOR_RESET)"; \
+			/opt/$(APP_NAME)/bin/$(APP_NAME) 2>&1 | tee "$$LOG_FILE"; \
 		elif [ -f "/usr/bin/leechtext" ]; then \
 			echo "$(COLOR_GREEN)Found binary at /usr/bin/leechtext$(COLOR_RESET)"; \
 			/usr/bin/leechtext 2>&1 | tee "$$LOG_FILE"; \
@@ -137,7 +142,7 @@ package-mac: build $(PACKAGE_DIR)
 	@echo "$(COLOR_BLUE)Creating macOS Universal DMG...$(COLOR_RESET)"
 	@if [ -f "src/main/resources/icons/leechtext.icns" ]; then \
 		jpackage \
-			--name LeechText \
+			--name $(APP_NAME) \
 			--vendor "LeechText Team" \
 			--description "Text extraction and ebook creation tool" \
 			--copyright "MIT License" \
@@ -145,31 +150,29 @@ package-mac: build $(PACKAGE_DIR)
 			--type dmg \
 			--icon src/main/resources/icons/leechtext.icns \
 			--input build/libs/ \
-			--main-jar leechtext-java-$(VERSION).jar \
+			--main-jar $(GRADLE_PROJECT_NAME)-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
-			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
 			--java-options "--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED" \
 			--java-options "--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED" \
 			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
 	else \
 		jpackage \
-			--name LeechText \
+			--name $(APP_NAME) \
 			--vendor "LeechText Team" \
 			--description "Text extraction and ebook creation tool" \
 			--copyright "MIT License" \
 			--app-version "$(VERSION)" \
 			--type dmg \
 			--input build/libs/ \
-			--main-jar leechtext-java-$(VERSION).jar \
+			--main-jar $(GRADLE_PROJECT_NAME)-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
-			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
 			--java-options "--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED" \
 			--java-options "--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED" \
 			--dest $(PACKAGE_DIR)/ || echo "jpackage failed - may need manual invocation"; \
 		echo "$(COLOR_YELLOW)⚠ Using default Java icon (custom icon not found)$(COLOR_RESET)"; \
 	fi
-	@if [ -f "$(PACKAGE_DIR)/LeechText-$(VERSION).dmg" ]; then \
-		echo "$(COLOR_GREEN)✓ macOS package created: $(PACKAGE_DIR)/LeechText-$(VERSION).dmg$(COLOR_RESET)"; \
+	@if [ -f "$(PACKAGE_DIR)/$(APP_NAME)-$(VERSION).dmg" ]; then \
+		echo "$(COLOR_GREEN)✓ macOS package created: $(PACKAGE_DIR)/$(APP_NAME)-$(VERSION).dmg$(COLOR_RESET)"; \
 	else \
 		echo "$(COLOR_YELLOW)⚠ Package may not have been created$(COLOR_RESET)"; \
 	fi
@@ -180,23 +183,22 @@ package-windows: build $(PACKAGE_DIR)
 	@echo "$(COLOR_YELLOW)⚠ Windows packaging requires Windows OS$(COLOR_RESET)"
 	@ls -la build/libs/
 	jpackage \
-		--name LeechText \
+		--name $(APP_NAME) \
 		--vendor "LeechText Team" \
 		--description "Text extraction and ebook creation tool" \
 		--copyright "MIT License" \
 		--app-version "$(VERSION)" \
 		--type msi \
 		--input build/libs/ \
-		--main-jar leechtext-java-$(VERSION).jar \
+		--main-jar $(GRADLE_PROJECT_NAME)-$(VERSION).jar \
 		--main-class $(MAIN_CLASS) \
-		--java-options "-Dapp.home.dir=%USERPROFILE%\.leechtext" \
 		--win-menu \
 		--win-dir-chooser \
 		--win-shortcut \
 		--dest $(PACKAGE_DIR)/
 	@ls -la $(PACKAGE_DIR)/
-	@if [ -f "$(PACKAGE_DIR)/LeechText-$(VERSION).exe" ]; then \
-		echo "$(COLOR_GREEN)✓ Windows package created: $(PACKAGE_DIR)/LeechText-$(VERSION).exe$(COLOR_RESET)"; \
+	@if [ -f "$(PACKAGE_DIR)/$(APP_NAME)-$(VERSION).exe" ]; then \
+		echo "$(COLOR_GREEN)✓ Windows package created: $(PACKAGE_DIR)/$(APP_NAME)-$(VERSION).exe$(COLOR_RESET)"; \
 	else \
 		echo "$(COLOR_YELLOW)⚠ Package may not have been created$(COLOR_RESET)"; \
 	fi
@@ -207,7 +209,7 @@ package-linux: build $(PACKAGE_DIR)
 	@if [ -f "src/main/resources/icons/leechtext.png" ]; then \
 		echo "Using custom icon: src/main/resources/icons/leechtext.png"; \
 		jpackage --verbose \
-			--name LeechText \
+			--name $(APP_NAME) \
 			--vendor "LeechText Team" \
 			--description "Text extraction and ebook creation tool" \
 			--copyright "MIT License" \
@@ -215,31 +217,29 @@ package-linux: build $(PACKAGE_DIR)
 			--type deb \
 			--icon src/main/resources/icons/leechtext.png \
 			--input build/libs/ \
-			--main-jar leechtext-java-$(VERSION).jar \
+			--main-jar $(GRADLE_PROJECT_NAME)-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
-			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
 			--linux-shortcut \
-			--linux-package-name leechtext \
+			--linux-package-name $(LINUX_PACKAGE_NAME) \
 			--dest $(PACKAGE_DIR) 2>&1; \
 	else \
 		echo "$(COLOR_YELLOW)Using default Java icon (custom icon not found)$(COLOR_RESET)"; \
 		jpackage --verbose \
-			--name LeechText \
+			--name $(APP_NAME) \
 			--vendor "LeechText Team" \
 			--description "Text extraction and ebook creation tool" \
 			--copyright "MIT License" \
 			--app-version "$(VERSION)" \
 			--type deb \
 			--input build/libs/ \
-			--main-jar leechtext-java-$(VERSION).jar \
+			--main-jar $(GRADLE_PROJECT_NAME)-$(VERSION).jar \
 			--main-class $(MAIN_CLASS) \
-			--java-options "-Dapp.home.dir=$$HOME/.leechtext" \
 			--linux-shortcut \
-			--linux-package-name leechtext \
+			--linux-package-name $(LINUX_PACKAGE_NAME) \
 			--dest $(PACKAGE_DIR) 2>&1; \
 	fi
-	@if ls $(PACKAGE_DIR)/leechtext_$(VERSION)*.deb 2>/dev/null; then \
-		DEB_FILE=$$(ls $(PACKAGE_DIR)/leechtext_$(VERSION)*.deb 2>/dev/null | head -1); \
+	@if ls $(PACKAGE_DIR)/$(LINUX_PACKAGE_NAME)_$(VERSION)*.deb 2>/dev/null; then \
+		DEB_FILE=$$(ls $(PACKAGE_DIR)/$(LINUX_PACKAGE_NAME)_$(VERSION)*.deb 2>/dev/null | head -1); \
 		echo "$(COLOR_GREEN)✓ Linux package created: $$DEB_FILE$(COLOR_RESET)"; \
 	else \
 		echo "$(COLOR_YELLOW)⚠ Package was not created. Check jpackage output above.$(COLOR_RESET)"; \
@@ -264,7 +264,7 @@ help:
 	@echo "  $(COLOR_BLUE)make help$(COLOR_RESET)      - Show this help message"
 	@echo ""
 	@echo "$(COLOR_YELLOW)Version: $(VERSION)$(COLOR_RESET)"
-	@echo "$(COLOR_YELLOW)Log file: $$HOME/.leechtext/app.log$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)Log file: $$HOME/$(APP_HOME_DIR)/app.log$(COLOR_RESET)"
 	@echo ""
 	@echo "$(COLOR_BLUE)Run 'make info' for more system information$(COLOR_RESET)"
 
@@ -278,19 +278,19 @@ info:
 	@echo "  Copyright: $(shell grep "^app.copyright" gradle.properties | cut -d'=' -f2 | tr -d ' ')"
 	@echo ""
 	@echo "$(COLOR_GREEN)Directories:$(COLOR_RESET)"
-	@echo "  Home: $$HOME/.leechtext"
+	@echo "  Home: $$HOME/$(APP_HOME_DIR)"
 	@echo "  Working: $$(pwd)"
-	@echo "  Cache: $$HOME/.leechtext/cache"
+	@echo "  Cache: $$HOME/$(APP_HOME_DIR)/cache"
 	@echo ""
 	@echo "$(COLOR_GREEN)Files:$(COLOR_RESET)"
-	@if [ -f "$$HOME/.leechtext/app.log" ]; then \
-		echo "  Log file: $$HOME/.leechtext/app.log ($$(wc -l < $$HOME/.leechtext/app.log) lines)"; \
+	@if [ -f "$$HOME/$(APP_HOME_DIR)/app.log" ]; then \
+		echo "  Log file: $$HOME/$(APP_HOME_DIR)/app.log ($$(wc -l < $$HOME/$(APP_HOME_DIR)/app.log) lines)"; \
 	else \
-		echo "  Log file: $$HOME/.leechtext/app.log (not created yet)"; \
+		echo "  Log file: $$HOME/$(APP_HOME_DIR)/app.log (not created yet)"; \
 	fi
-	@if [ -d "$$HOME/.leechtext" ]; then \
+	@if [ -d "$$HOME/$(APP_HOME_DIR)" ]; then \
 		echo "  Config dir exists: ✓"; \
-		echo "  Config dir size: $$(du -sh $$HOME/.leechtext 2>/dev/null | cut -f1)"; \
+		echo "  Config dir size: $$(du -sh $$HOME/$(APP_HOME_DIR) 2>/dev/null | cut -f1)"; \
 	else \
 		echo "  Config dir exists: ✗ (will be created on first run)"; \
 	fi

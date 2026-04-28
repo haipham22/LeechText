@@ -9,7 +9,19 @@ public class FileUtils {
     private FileUtils() {}
 
     public static void init() {
+        bootstrapHomeDirectory();
         mkdir(validate(AppUtils.curDir + "/tools/plugins"));
+    }
+
+    public static void bootstrapHomeDirectory() {
+        File homeDir = new File(validate(AppUtils.curDir));
+        if (homeDir.exists() && homeDir.isDirectory()) {
+            return;
+        }
+        boolean created = homeDir.mkdirs();
+        if (created) {
+            System.out.println("Home directory created: " + homeDir.getAbsolutePath());
+        }
     }
 
     // Tao thu muc
