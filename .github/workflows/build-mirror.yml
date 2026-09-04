@@ -1,0 +1,86 @@
+name: Build Mirror
+
+# Build code từ repo haipham22/leechtext2 (public — checkout không cần token),
+# artifacts/release đỗ vào repo này. Quota Actions/storage riêng, không đụng repo gốc.
+# Trigger: tay (workflow_dispatch) hoặc schedule poll 6h — tag mới của leechtext2
+# chưa có release mirror ở đây thì build.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Ref leechtext2 build (trống = release mới nhất)'
+        default: ''
+  schedule:
+    - cron: '23 */6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-mirror
+  cancel-in-progress: true
+
+env:
+  SRC_REPO: haipham22/leechtext2
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.resolve.outputs.tag }}
+      should_build: ${{ steps.resolve.outputs.should_build }}
+    steps:
+      - id: resolve
+        run: |
+          MANUAL="${{ github.event.inputs.ref }}"
+          if [ -n "$MANUAL" ]; then
+            echo "tag=$MANUAL" >> "$GITHUB_OUTPUT"
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          LATEST=$(curl -fsSL "https://api.github.com/repos/$SRC_REPO/releases/latest" | jq -r .tag_name)
+          [ "$LATEST" = "null" ] && { echo "should_build=false" >> "$GITHUB_OUTPUT"; exit 0; }
+          HAVE=$(curl -fsSL "https://api.github.com/repos/${{ github.repository }}/releases/tags/$LATEST" -o /dev/null -w '%{http_code}' || true)
+          if [ "$HAVE" = "200" ]; then
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=$LATEST" >> "$GITHUB_OUTPUT"
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.should_build == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ env.SRC_REPO }}
+          ref: ${{ needs.check.outputs.tag }}
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Test + build jar + deb
+        run: |
+          ./gradlew :engine:jvmTest :app-shared:jvmTest
+          ./gradlew :desktop-app:fatJar -x test
+          ./gradlew :desktop-app:packageReleaseDistributionForCurrentOS
+          ls -lh desktop-app/build/libs/ desktop-app/build/compose/binaries/main-release/deb/
+
+      # Notes copy từ release gốc — commit list + compare link giữ nguyên
+      - name: Release mirror
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.check.outputs.tag }}
+        run: |
+          BODY=$(curl -fsSL "https://api.github.com/repos/$SRC_REPO/releases/tags/$TAG" | jq -r .body)
+          gh release create "$TAG" \
+            --title "$TAG (mirror)" \
+            --notes "$BODY" \
+            desktop-app/build/libs/leechtext-desktop-*.jar \
+            desktop-app/build/compose/binaries/main-release/deb/*.deb
