@@ -20,9 +20,9 @@ concurrency:
 permissions:
   contents: write
 
-# Không dùng artifacts trung gian — quota artifact đầy 1 lần (7.7GB, 260903).
-# Release job tự build lại jar+deb rồi upload THẲNG vào release (không tính quota).
-# Đổi đổi: build 2 lần khi release — runner phút rẻ hơn головache quota.
+# Mỗi build job upload artifact retention-days: 1 (quota gần 0 — từng bị đầy 7.7GB
+# với retention 90 ngày, 260903) → release job chỉ download + attach vào release,
+# không build lại. iOS chỉ smoke compile (simulator app không phân phối được).
 jobs:
   # Lint + test — gate: fail thì jar/native/release không chạy (owner 260906)
   test:
@@ -68,6 +68,56 @@ jobs:
           test ${rc:-0} -eq 124 -o ${rc:-0} -eq 137
           ls -lh desktop-app/build/libs/
 
+      - uses: actions/upload-artifact@v5
+        with:
+          name: desktop-jar
+          path: desktop-app/build/libs/leechtext-desktop-*.jar
+          retention-days: 1
+
+  # Android APK (release ký debug-key → cài trực tiếp) — build 1 lần, upload artifact.
+  android:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Build release APK
+        run: |
+          ./gradlew :android-app:assembleRelease
+          VERSION="$(grep '^app.version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')"
+          cp android-app/build/outputs/apk/release/android-app-release.apk \
+            "android-app/build/outputs/apk/release/leechtext-android-${VERSION}.apk"
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: android-apk
+          path: android-app/build/outputs/apk/release/leechtext-android-*.apk
+          retention-days: 1
+
+  # iOS — build simulator trên macOS (không ký device) — smoke compile check.
+  ios:
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Build iOS simulator app
+        run: |
+          xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -derivedDataPath iosApp/build \
+            -configuration Debug build
+
   # jpackage native installer — mỗi OS build trên runner của nó.
   # mac/windows bật từ 260916 (release 2.0.0 full 3 nền tảng).
   # Không upload artifact — release job build lại (tránh quota).
@@ -92,8 +142,17 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v6
 
-      - name: Build native installer (jpackage) — smoke, không lưu artifact
+      - name: Build native installer (jpackage)
         run: ./gradlew :desktop-app:packageReleaseDistributionForCurrentOS
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: native-${{ matrix.artifact }}
+          path: |
+            desktop-app/build/compose/binaries/main-release/deb/*.deb
+            desktop-app/build/compose/binaries/main-release/dmg/*.dmg
+            desktop-app/build/compose/binaries/main-release/msi/*.msi
+          retention-days: 1
 
   release:
     # push tag trực tiếp (github.ref = tag) HOẶC chạy từ Auto Release (workflow_run —
@@ -101,17 +160,10 @@ jobs:
     if: >
       startsWith(github.ref, 'refs/tags/v') ||
       github.event_name == 'workflow_run'
-    needs: [jar, native]
+    needs: [jar, native, android, ios]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: '17'
-      - uses: gradle/actions/setup-gradle@v6
 
       # workflow_run: ref là main — đọc tag v$app.version vừa tạo để release đúng chỗ
       - name: Resolve tag
@@ -119,19 +171,15 @@ jobs:
         id: tag
         run: echo "name=v$(grep '^app.version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
 
-      - name: Build jar + deb (upload thẳng release, không qua artifact)
-        run: |
-          ./gradlew :desktop-app:fatJar -x test
-          ./gradlew :desktop-app:packageReleaseDistributionForCurrentOS
-          ls -lh desktop-app/build/libs/ desktop-app/build/compose/binaries/main-release/deb/
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: '!*tests*'
+          merge-multiple: true
+          path: release-assets
 
       - uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.event_name == 'workflow_run' && steps.tag.outputs.name || github.ref_name }}
           # Notes tự sinh kiểu open-source: full commit list từ tag trước + link So sánh
           generate_release_notes: true
-          files: |
-            desktop-app/build/libs/leechtext-desktop-*.jar
-            desktop-app/build/compose/binaries/main-release/deb/*.deb
-            desktop-app/build/compose/binaries/main-release/dmg/*.dmg
-            desktop-app/build/compose/binaries/main-release/msi/*.msi
+          files: release-assets/**
