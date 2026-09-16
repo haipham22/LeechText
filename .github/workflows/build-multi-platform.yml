@@ -99,7 +99,8 @@ jobs:
           path: android-app/build/outputs/apk/release/leechtext-android-*.apk
           retention-days: 1
 
-  # iOS — build simulator trên macOS (không ký device) — smoke compile check.
+  # iOS — build device unsigned + đóng gói IPA (người cài tự ký qua Sideloadly/AltStore;
+  # signed IPA/TestFlight cần Apple Developer account — làm khi có).
   ios:
     needs: test
     runs-on: macos-latest
@@ -111,12 +112,28 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v6
 
-      - name: Build iOS simulator app
+      - name: Build iOS device app (unsigned)
         run: |
           xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
             -derivedDataPath iosApp/build \
-            -configuration Debug build
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package unsigned IPA
+        run: |
+          mkdir -p iosApp/build/Payload
+          cp -R "iosApp/build/Build/Products/Release-iphoneos/LeechText.app" iosApp/build/Payload/
+          (cd iosApp/build && zip -qry leechtext-ios.ipa Payload)
+          VERSION="$(grep '^app.version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')"
+          mv iosApp/build/leechtext-ios.ipa "leechtext-ios-${VERSION}.ipa"
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: ios-ipa
+          path: leechtext-ios-*.ipa
+          retention-days: 1
 
   # jpackage native installer — mỗi OS build trên runner của nó.
   # mac/windows bật từ 260916 (release 2.0.0 full 3 nền tảng).
