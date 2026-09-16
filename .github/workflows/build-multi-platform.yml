@@ -69,7 +69,7 @@ jobs:
           ls -lh desktop-app/build/libs/
 
   # jpackage native installer — mỗi OS build trên runner của nó.
-  # mac/windows off mặc định (owner 260903: cần khi nào bật khi đó) — bỏ comment 2 entry để bật lại.
+  # mac/windows bật từ 260916 (release 2.0.0 full 3 nền tảng).
   # Không upload artifact — release job build lại (tránh quota).
   native:
     needs: jar
@@ -79,10 +79,10 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact: leechtext-linux-deb
-          # - os: macos-latest
-          #   artifact: leechtext-macos-dmg
-          # - os: windows-latest
-          #   artifact: leechtext-windows-msi
+          - os: macos-latest
+            artifact: leechtext-macos-dmg
+          - os: windows-latest
+            artifact: leechtext-windows-msi
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
