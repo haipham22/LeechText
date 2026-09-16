@@ -77,7 +77,7 @@ class VBookSandboxCompatibilityTest {
         assertNotNull(result)
         assertTrue(result is NativeObject, "Json.parse() MUST return NativeObject")
 
-        val jsonObj = result as NativeObject
+        val jsonObj = result
         assertTrue(jsonObj.has("chap_list", jsonObj))
         assertEquals("<div>test</div>", jsonObj["chap_list", jsonObj])
     }
@@ -126,7 +126,7 @@ class VBookSandboxCompatibilityTest {
         val result = context.evaluateString(scope, testCode, "testMap", 1, null)
         assertNotNull(result)
         assertTrue(result is Number)
-        assertEquals(2, (result as Number).toInt())
+        assertEquals(2, result.toInt())
     }
 
     @Test
@@ -151,7 +151,7 @@ class VBookSandboxCompatibilityTest {
         val result = context.evaluateString(scope, pluginCode, "testFullFlow", 1, null)
         assertNotNull(result)
         assertTrue(result is Number)
-        assertEquals(2, (result as Number).toInt())
+        assertEquals(2, result.toInt())
     }
 
     @Test
@@ -173,7 +173,7 @@ class VBookSandboxCompatibilityTest {
         assertTrue(parsed is NativeObject)
 
         // Test 2: Html.parse() với chap_list
-        val jsonObj = parsed as NativeObject
+        val jsonObj = parsed
         val chapList = jsonObj["chap_list", jsonObj] as String
         val doc = Html(platformEngineLogger()).parse(chapList)
         assertNotNull(doc)
@@ -203,7 +203,7 @@ class VBookSandboxCompatibilityTest {
             )
         assertNotNull(mapResult)
         assertTrue(mapResult is Number)
-        assertEquals(2, (mapResult as Number).toInt())
+        assertEquals(2, mapResult.toInt())
     }
 
     @Test

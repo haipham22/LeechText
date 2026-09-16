@@ -36,7 +36,7 @@ class DetailLoaderTest {
         val result = runBlocking { DetailLoader.with(plugin, platformEngineLogger()).load("https://truyenfull.vision/test-novel") }
 
         assertNotNull(result, RESULT_NULL_MSG)
-        assertEquals("Test Novel", result!!.name, "Name should match")
+        assertEquals("Test Novel", result.name, "Name should match")
         assertEquals("Test Author", result.author, "Author should match")
         assertEquals("Test description", result.introduce, "Description should match")
         assertEquals("https://example.com/cover.jpg", result.cover, "Cover should match")
@@ -118,7 +118,7 @@ class DetailLoaderTest {
         val result = runBlocking { DetailLoader.with(plugin, platformEngineLogger()).load("https://truyenfull.vision/test-novel") }
 
         assertNotNull(result, RESULT_NULL_MSG)
-        assertEquals("Test Novel Name", result!!.name, "Name should match")
+        assertEquals("Test Novel Name", result.name, "Name should match")
         assertEquals("Test Author", result.author, "Author should match")
         assertEquals(
             "https://truyenfull.vision/cover.jpg",

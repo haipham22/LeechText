@@ -34,7 +34,7 @@ class ResponseErrorTest {
 
         // Error → BookEntity rỗng
         assertNotNull(result, RESULT_NOT_NULL_MESSAGE)
-        val name = result!!.name
+        val name = result.name
         assertTrue(name == null || name.isEmpty(), NAME_EMPTY_ON_ERROR_MESSAGE)
     }
 
@@ -52,7 +52,7 @@ class ResponseErrorTest {
         val result = runBlocking { DetailLoader.with(plugin, platformEngineLogger()).load(TEST_BOOK_URL) }
 
         assertNotNull(result, RESULT_NOT_NULL_MESSAGE)
-        val name = result!!.name
+        val name = result.name
         assertTrue(name == null || name.isEmpty(), NAME_EMPTY_ON_ERROR_MESSAGE)
     }
 
@@ -69,7 +69,7 @@ class ResponseErrorTest {
         val result = runBlocking { DetailLoader.with(plugin, platformEngineLogger()).load(TEST_BOOK_URL) }
 
         assertNotNull(result, RESULT_NOT_NULL_MESSAGE)
-        val name = result!!.name
+        val name = result.name
         assertTrue(name == null || name.isEmpty(), NAME_EMPTY_ON_ERROR_MESSAGE)
     }
 
@@ -90,7 +90,7 @@ class ResponseErrorTest {
         val result = runBlocking { DetailLoader.with(plugin, platformEngineLogger()).load("https://test.com/test-novel") }
 
         assertNotNull(result, RESULT_NOT_NULL_MESSAGE)
-        assertEquals("Test Novel", result!!.name, "Name should match")
+        assertEquals("Test Novel", result.name, "Name should match")
         assertEquals("Test Author", result.author, "Author should match")
     }
 
@@ -111,7 +111,7 @@ class ResponseErrorTest {
         val chapters = runBlocking { ListLoader.with(plugin, platformEngineLogger()).load(TEST_SOURCE) }
 
         assertNotNull(chapters, "Chapters should not be null")
-        assertEquals(2, chapters!!.size, "Should extract 2 chapters")
+        assertEquals(2, chapters.size, "Should extract 2 chapters")
         assertEquals("Chapter 1", chapters[0].name, "First chapter name")
         assertEquals("Chapter 2", chapters[1].name, "Second chapter name")
     }

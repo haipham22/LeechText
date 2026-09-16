@@ -34,7 +34,7 @@ class E2EPluginJsonParsingTest {
         assertNotNull(parsed)
         assertTrue(parsed is NativeObject, "Parsed JSON should be NativeObject")
 
-        val jsonObj = parsed as NativeObject
+        val jsonObj = parsed
         assertTrue(jsonObj.has("chap_list", jsonObj))
 
         val chapList = jsonObj["chap_list", jsonObj]
@@ -70,7 +70,7 @@ class E2EPluginJsonParsingTest {
         assertNotNull(json)
         assertTrue(json is NativeObject)
 
-        val jsonObj = json as NativeObject
+        val jsonObj = json
         assertTrue(jsonObj.has("chap_list", jsonObj))
         val chapList = jsonObj["chap_list", jsonObj]
 
@@ -101,7 +101,7 @@ class E2EPluginJsonParsingTest {
         assertNotNull(result)
         assertTrue(result is NativeObject, "Result MUST be NativeObject for JS property access")
 
-        val nativeObj = result as NativeObject
+        val nativeObj = result
         assertTrue(nativeObj.has("chap_list", nativeObj))
         assertTrue(nativeObj.has("data", nativeObj))
 
@@ -153,13 +153,13 @@ class E2EPluginJsonParsingTest {
 
         val json = Json(platformEngineLogger()).parse(serverResponse)
         assertTrue(json is NativeObject)
-        val jsonObj = json as NativeObject
+        val jsonObj = json
 
         assertTrue(jsonObj.has("chap_list", jsonObj))
         val chapList = jsonObj["chap_list", jsonObj]
         assertTrue(chapList is String)
 
-        val doc = Html(platformEngineLogger()).parse(chapList as String)
+        val doc = Html(platformEngineLogger()).parse(chapList)
         val links = doc.select(TOC_SELECTOR)
         assertEquals(1, links.size())
         assertEquals(1, links.length)
@@ -188,7 +188,7 @@ class E2EPluginJsonParsingTest {
         val result = Json(platformEngineLogger()).parse(jsonString)
         assertTrue(result is NativeObject)
 
-        val nativeObj = result as NativeObject
+        val nativeObj = result
         assertTrue(nativeObj.has("chap_list", nativeObj))
         assertTrue(nativeObj.has("status", nativeObj))
 
