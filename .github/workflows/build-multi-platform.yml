@@ -2,15 +2,14 @@ name: Build Desktop
 
 on:
   push:
-    branches: [main]
     tags: ['v*']
-  pull_request:
-  # Auto Release push tag bằng GITHUB_TOKEN → không fire "push tag" event.
-  # workflow_run là ngoại lệ duy nhất được trigger sau workflow khác (cùng repo).
+  # Build nặng (jar/apk/ipa/deb/dmg/msi) chỉ chạy khi có tag — push main chỉ qua
+  # code-quality.yml. Auto Release push tag bằng GITHUB_TOKEN → không fire
+  # "push tag" event; workflow_run là ngoại lệ duy nhất trigger sau workflow khác.
   workflow_run:
     workflows: ['Auto Release']
     types: [completed]
-  workflow_dispatch: # trigger tay khi cần (vd tag tạo trước workflow này)
+  workflow_dispatch: # trigger tay khi cần (chọn tag ở UI để release lại)
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
