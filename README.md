@@ -1,9 +1,12 @@
 # LeechText
 
-Tải truyện từ web về đọc offline — xuất EPUB/TXT/HTML. Viết lại bằng **Kotlin + Compose Multiplatform**, chạy chung một codebase trên **Desktop (macOS/Windows/Linux) và Android**.
+Tải truyện từ web về đọc offline — xuất EPUB/TXT/HTML. Viết lại bằng **Kotlin + Compose Multiplatform**, chạy chung một codebase trên **Desktop (macOS/Windows/Linux), Android và iOS**.
 
-[![Build](https://github.com/haipham22/LeechText/actions/workflows/build-multi-platform.yml/badge.svg)](https://github.com/haipham22/LeechText/actions/workflows/build-multi-platform.yml)
 [![Code Quality](https://github.com/haipham22/LeechText/actions/workflows/code-quality.yml/badge.svg)](https://github.com/haipham22/LeechText/actions/workflows/code-quality.yml)
+[![Release](https://img.shields.io/github/v/release/haipham22/LeechText)](https://github.com/haipham22/LeechText/releases)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Android%20%7C%20iOS-6ba7c6)](https://github.com/haipham22/LeechText/releases)
+
+> **Tải bản dựng:** [Releases](https://github.com/haipham22/LeechText/releases) — desktop `jar` / `deb` / `dmg` / `msi`, Android `apk`, iOS `ipa` (unsigned — tự ký qua Sideloadly/AltStore).
 
 <!-- Screenshots: docs/screenshots/{library,reader}.png — chạy `./gradlew :desktop-app:run` rồi Cmd-Shift-4, thêm vào đây -->
 
@@ -25,9 +28,10 @@ engine/        # Core: plugin system (Rhino sandbox), fetch/download, export, se
 app-shared/    # UI Compose Multiplatform dùng chung (screens, state ViewModels, theme)
 desktop-app/   # Entry desktop (Compose Desktop, window 1280x800)
 android-app/   # Entry Android (share toàn bộ UI + engine với desktop)
+iosApp/        # Entry iOS (Xcode project nhúng KMP framework)
 ```
 
-Kotlin **2.1.21** · Compose Multiplatform **1.8.1** · Gradle **8.14.5** · JDK **17**
+Kotlin **2.4.10** · Compose Multiplatform **1.12.0** · Gradle **9.7.0** · JDK **17**
 
 Bản Java Swing gốc nằm ở tag `java-legacy` (đã xóa khỏi working tree).
 
@@ -36,6 +40,7 @@ Bản Java Swing gốc nằm ở tag `java-legacy` (đã xóa khỏi working tre
 ```bash
 ./gradlew :desktop-app:run             # chạy app desktop
 ./gradlew :android-app:assembleDebug   # APK Android
+make ios                               # build + cài + mở trên iOS simulator
 ./gradlew build                        # build tất cả
 ```
 
