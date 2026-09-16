@@ -267,6 +267,7 @@
     <!-- Nguồn / plugin -->
     <string name="sources_extensions_tab">Phần mở rộng</string>
     <string name="cd_add_from_url">Thêm sách từ URL</string>
+    <string name="sources_add_url_hint">Dán URL truyện — engine tự dò plugin khớp</string>
     <string name="cd_add_repo">Thêm repo</string>
     <string name="cd_global_search">Tìm toàn cầu</string>
     <string name="action_search">Tìm</string>

@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Refresh
@@ -80,6 +81,7 @@ import dev.haipham22.leechtext.resources.addbook_in_library
 import dev.haipham22.leechtext.resources.addbook_loading_info
 import dev.haipham22.leechtext.resources.cat_audio
 import dev.haipham22.leechtext.resources.cat_other
+import dev.haipham22.leechtext.resources.cd_add_from_url
 import dev.haipham22.leechtext.resources.cd_add_repo
 import dev.haipham22.leechtext.resources.cd_global_search
 import dev.haipham22.leechtext.resources.cd_next_chapter
@@ -90,6 +92,7 @@ import dev.haipham22.leechtext.resources.lang_name_en
 import dev.haipham22.leechtext.resources.lang_name_vi
 import dev.haipham22.leechtext.resources.lang_name_zh
 import dev.haipham22.leechtext.resources.plugins_update_all
+import dev.haipham22.leechtext.resources.sources_add_url_hint
 import dev.haipham22.leechtext.resources.sources_broken_section
 import dev.haipham22.leechtext.resources.sources_cfg_default
 import dev.haipham22.leechtext.resources.sources_cfg_delay
@@ -165,6 +168,8 @@ fun PluginScreen(
     // Thêm repo mở dialog ngay (dogfood 260902: trước đây chỉ nhảy tab — form nằm đáy
     // list 175 extension, user không tìm thấy)
     var showRepoDialog by remember { mutableStateOf(false) }
+    // Thêm sách bằng URL — dán link, engine auto-dò plugin (README promise; mất trong refactor)
+    var showUrlDialog by remember { mutableStateOf(false) }
 
     // Render theo stack — không animation (như when cũ), tránh detach race offscreen
     val stack by state.stack.subscribeAsState()
@@ -224,6 +229,7 @@ fun PluginScreen(
                 // Top bar: title trái lớn + actions phải — cố định, không nhảy khi đổi tab
                 PluginTopBar(
                     state = state,
+                    onAddUrl = { showUrlDialog = true },
                     onAdd = { showRepoDialog = true },
                     onSearch = {
                         showSearch = !showSearch
@@ -285,6 +291,45 @@ fun PluginScreen(
     if (showRepoDialog) {
         RepoDialog(state, onDismiss = { showRepoDialog = false })
     }
+
+    // ── Dialog thêm sách bằng URL ──
+    if (showUrlDialog) {
+        AddUrlDialog(state, onDismiss = { showUrlDialog = false })
+    }
+}
+
+/** Dialog dán URL truyện — openPreview → AddBookState tự dò plugin khớp trong repo. */
+@Composable
+private fun AddUrlDialog(
+    state: PluginState,
+    onDismiss: () -> Unit,
+) {
+    var url by remember { mutableStateOf("") }
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.cd_add_from_url)) },
+        text = {
+            OutlinedTextField(
+                value = url,
+                onValueChange = { url = it },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(Res.string.sources_add_url_hint)) },
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    state.openPreview(url.trim())
+                    onDismiss()
+                },
+                enabled = url.isNotBlank(),
+            ) { Text(stringResource(Res.string.action_search)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.action_cancel)) }
+        },
+    )
 }
 
 /** Dialog quản lý kho repo (Thêm repo) — tách khỏi PluginScreen cho dưới ngưỡng LongMethod. */
@@ -446,6 +491,7 @@ private fun PluginSourceList(
 @Composable
 private fun PluginTopBar(
     state: PluginState,
+    onAddUrl: () -> Unit,
     onAdd: () -> Unit,
     onSearch: () -> Unit,
 ) {
@@ -461,6 +507,9 @@ private fun PluginTopBar(
         )
         IconButton(onClick = { state.refresh() }, enabled = !state.loading) {
             Icon(Icons.Filled.Refresh, contentDescription = stringResource(Res.string.cd_refresh))
+        }
+        IconButton(onClick = onAddUrl) {
+            Icon(Icons.Filled.Link, contentDescription = stringResource(Res.string.cd_add_from_url))
         }
         IconButton(onClick = onAdd) {
             Icon(
