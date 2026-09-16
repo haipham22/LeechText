@@ -1,5 +1,7 @@
 # Codebase Summary - LeechText
 
+> 📌 **Snapshot bản Java** (pre-rewrite, ~140 file `dark.leech.text`). Giữ làm bản ghi lịch sử. Codebase hiện tại là Kotlin Compose Multiplatform (~165 file `dev.haipham22.leechtext`, modules engine/app-shared/desktop-app/android-app) — xem cấu trúc hiện tại ở CLAUDE.md và README.md. Bản Java ở tag `java-legacy`.
+
 ## Project Statistics
 
 - **Total Java Files**: ~140+ files (including JavaScript engine components)

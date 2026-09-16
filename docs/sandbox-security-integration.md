@@ -1,5 +1,7 @@
 # Sandbox Security Integration
 
+> 📌 **Ghi chép thời Java** (2026-04-19). Các đường dẫn `src/main/java/dark/leech/text/...` dưới đây đã xóa. Hiện tại: `JsSandbox` tại `engine/src/jvmMain/.../plugin/js/sandbox/JsSandbox.kt` + validators ở `plugin/security/`.
+
 **Date:** 2026-04-19
 **Status:** ✅ Complete
 

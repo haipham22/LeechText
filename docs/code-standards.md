@@ -1,778 +1,333 @@
 # Code Standards - LeechText
 
-## Java Code Style
+Kotlin + Compose Multiplatform. Bản Java (Spotless/Checkstyle/PMD/Lombok) đã xóa cùng legacy — xem tag `java-legacy`.
+
+## Kotlin Code Style
 
 ### Naming Conventions
 
 | Type | Convention | Example |
 |------|------------|---------|
-| Classes | PascalCase | `PluginManager`, `DownloadUI` |
-| Methods | camelCase | `getPlugin()`, `startDownload()` |
-| Variables | camelCase | `chapList`, `downloadListener` |
-| Constants | UPPER_SNAKE_CASE | `MAX_CONN`, `DOWNLOADING` |
-| Packages | lowercase | `dark.leech.text.action` |
+| Classes / Objects | PascalCase | `PluginManager`, `BookDownload`, `LibraryScreen` |
+| Functions | camelCase | `getPlugin()`, `enqueue()` |
+| Variables | camelCase | `chapList`, `downloadQueue` |
+| Constants | UPPER_SNAKE_CASE | `MAX_PARALLELISM`, `NOTIFICATION_ID` |
+| Packages | lowercase | `dev.haipham22.leechtext.action` |
 
-### Code Formatting (Spotless - Google Java Format)
+### Formatting
 
-```bash
-# Apply code formatting
-./gradlew spotlessApply
+Không có formatter plugin (Spotless/Checkstyle/PMD đã bỏ). Theo quy ước:
 
-# Check code format
-./gradlew spotlessCheck
-```
-
-**Formatting Rules:**
-- Google Java Format 1.18.1 (AOSP variant)
 - No wildcard imports
-- Import order: `java`, `javax`, `org`, `com`, `dark.leech`
-- Trim trailing whitespace
+- 4 space indent, không tab
+- Line length ~120
 - End files with newline
 
-### Checkstyle Rules
-
-**Configuration**: `config/checkstyle/checkstyle.xml`
-
-```bash
-# Run checkstyle
-./gradlew checkstyleMain
-```
-
-**Key Rules:**
-- No wildcard imports
-- Proper Javadoc for public APIs
-- No line length > 100 characters (recommended)
-- Proper modifier order
-- Consistent code blocks
-
-### PMD Rules
-
-**Configuration**: `config/pmd/pmd-rules.xml`
-
-```bash
-# Run PMD
-./gradlew pmdMain
-```
-
-**Key Checks:**
-- Empty code blocks
-- Unused imports/variables
-- Duplicate code
-- Optimizable code patterns
+Quality gate thực tế: **SonarQube** (0 issues) + tests — xem README phần "Kiểm thử & chất lượng".
 
 ## Code Organization
 
-### Package Structure
+### Module / Package Structure
 
 ```
-dark.leech.text
-├── action/         # Business logic actions
-├── animation/      # UI animations
-├── enities/        # Data entities (note: typo, should be entities)
-├── get/            # Content retrieval
-├── image/          # Image processing
-├── listeners/      # Event listeners
-├── lua/            # Lua integration
-├── models/         # Data models
-├── plugin/         # Plugin system (includes js/, security/, validation/, sandbox/, vbook/ subpackages)
-├── ui/             # User interface
-└── util/           # Utilities (includes ImageConverter, HtmlSanitizer)
+engine/src/jvmMain/kotlin/dev/haipham22/leechtext/
+├── action/          # Business actions (History) + export/ (Ebook, Text, ToC)
+├── entities/        # BookEntity, ChapterEntity, PluginEntity, RepositoryEntity
+├── get/             # Download/fetch (BookDownload, BookFetch, ChapterImages...)
+├── models/          # Data classes (Chapter, Properties, Settings, Pager, Post, Repository, Trash)
+├── plugin/
+│   ├── api/         # Plugin API models (PaginatedResult, PluginMetadata...)
+│   ├── js/
+│   │   ├── api/     # JS APIs (Html, Http, Json, Regexp, Browser, Engine, LocalStorage...)
+│   │   ├── loader/  # Loaders (Detail, List, Text, Page, Browse) + Response
+│   │   └── sandbox/ # JsSandbox
+│   ├── security/    # Network/Regex/Zip validators
+│   ├── util/        # PluginPersistence
+│   └── vbook/       # VBookPluginService, converter, repository client
+└── util/            # FileUtils, ZipUtils, HtmlSanitizer, EnginePaths...
+
+app-shared/src/
+├── commonMain/.../ui/          # components (AppRail, BookCoverTile, Theme)
+├── jvmMain/.../ui/             # screens + state (SliceApp, DownloadQueueState, Strings)
+└── androidMain/                # DownloadService, Android glue
+
+desktop-app/  android-app/  baselineprofile/
 ```
 
-### Class Organization
+**Nguyên tắc**: business logic nằm ở `:engine` (không phụ thuộc Compose); UI dùng chung ở `:app-shared`; code platform-specific đúng source set của nó (jvmMain/androidMain).
 
-```java
-package dark.leech.text.package;
+### File / Class Layout
 
-// 1. Standard imports (no wildcards)
-import java.util.List;
-import javax.swing.*;
+```kotlin
+package dev.haipham22.leechtext.plugin
 
-// 2. Third-party imports
-import org.jsoup.nodes.Document;
+// 1. Kotlin stdlib / coroutine imports
+// 2. Third-party (org.jsoup, com.google.gson...)
+// 3. Project (dev.haipham22.leechtext...)
 
-// 3. Project imports
-import dark.leech.text.models.Chapter;
+/** Mô tả class (KDoc). */
+class ClassName {
+    // companion object / constants trước
+    // properties
+    // init / constructors
+    // public → private
+}
+```
 
+- 1 class chính mỗi file, tên file = tên class
+- Data class cho pure data (`models/`), không viết getter/setter tay
+- Singleton bằng `object` (vd `PluginManager`, `EngineLog`) — không tự viết double-checked locking
+
+## Comments & KDoc
+
+```kotlin
 /**
- * Class description.
- *
- * @author Author Name
- * @since 2019.03.30
+ * Quản lý load plugin: scan tools/plugins, match URL theo regex.
  */
-public class ClassName {
-
-    // 1. Static constants
-    public static final int CONSTANT_NAME = 100;
-
-    // 2. Static fields
-    private static Type staticField;
-
-    // 3. Instance fields
-    private final Type finalField;
-    private Type instanceField;
-
-    // 4. Constructors
-    public ClassName() {
-        this.finalField = initialize();
-    }
-
-    // 5. Public methods
-    public void publicMethod() {
-        // Implementation
-    }
-
-    // 6. Protected methods
-    protected void protectedMethod() {
-        // Implementation
-    }
-
-    // 7. Package-private methods
-    void packageMethod() {
-        // Implementation
-    }
-
-    // 8. Private methods
-    private void privateMethod() {
-        // Implementation
-    }
+object PluginManager {
+    /** Trả plugin khớp [url], null nếu không match. */
+    fun get(url: String): PluginEntity? = ...
 }
 ```
 
-## Lombok Usage Guidelines
+Comment tiếng Việt OK (khớp code hiện tại). Giải thích "tại sao", không giải thích "cái gì".
 
-### Recommended Annotations
+## Error Handling & Logging
 
-```java
-@Getter@Setter  // For simple POJOs
-@Data          // For comprehensive data classes
-@AllArgsConstructor  // When all-args constructor needed
-@NoArgsConstructor   // When no-args constructor needed
-@Builder       // For builder pattern
-@Slf4j         // For logging
-```
-
-### Examples
-
-**Models with Lombok:**
-```java
-@Getter
-@Setter
-public class Chapter implements Cloneable {
-    private String url;
-    private String partName;
-    private String chapName;
-    private boolean completed;
-    // ...
-}
-```
-
-**Builder Pattern:**
-```java
-@Builder
-public class DownloadConfig {
-    private int maxConnections;
-    private String outputFormat;
-    private boolean includeImages;
-}
-```
-
-## Comment Standards
-
-### Javadoc for Public APIs
-
-```java
-/**
- * Manages plugin loading and lifecycle.
- *
- * <p>Plugins are loaded from the tools/plugins directory
- * and are matched against URLs using regex patterns.
- *
- * @author LeechText Team
- * @since 2019.03.30
- */
-public class PluginManager {
-    /**
-     * Gets a plugin matching the given URL.
-     *
-     * @param url the URL to match against plugin regex
-     * @return matching PluginEntity, or null if no match
-     */
-    public PluginEntity get(String url) {
-        // Implementation
-    }
-}
-```
-
-### Inline Comments
-
-```java
-// Start the download process
-status = DOWNLOADING;
-next = next + MAX_CONN - 1;
-
-// Check if we've downloaded all chapters
-if (index >= size) {
-    update();  // Update progress UI
-}
-```
-
-## Error Handling
-
-### Exception Handling Pattern
-
-```java
-public void downloadContent(String url) {
-    try {
-        // Attempt download
-        PageGetter getter = new PageGetter(url);
-        String content = getter.get();
-    } catch (IOException e) {
-        Log.add(e);  // Log the error
-        status = ERROR;  // Update status
-        downloadListener.updateDownload(downloaded, status);
-    } catch (Exception e) {
-        Log.add(e);  // Catch unexpected errors
-    }
-}
-```
-
-### Logging
-
-```java
-// Use the Log class for application logging
-Log.add(exception);
-Log.add("Error message: " + details);
-```
-
-## Thread Safety Guidelines
-
-### Runnable Pattern for UI Operations
-
-```java
-// Run UI updates on Event Dispatch Thread
-SwingUtilities.invokeLater(() -> {
-    mainFrame.setVisible(true);
-});
-
-// Run long tasks on separate thread
-new Thread(() -> {
-    // Background work
-    doHeavyWork();
-
-    // Update UI on EDT
-    SwingUtilities.invokeLater(() -> {
-        updateUI();
-    });
-}).start();
-```
-
-### Synchronization
-
-```java
-public class PluginManager {
-    private static volatile PluginManager manager;
-    private static final Object lock = new Object();
-
-    public static PluginManager getManager() {
-        if (manager == null) {
-            synchronized (lock) {
-                if (manager == null) {
-                    manager = new PluginManager();
-                }
-            }
+```kotlin
+suspend fun downloadChapters(...) {
+    runCatching { fetch(url) }
+        .onSuccess { ... }
+        .onFailure { e ->
+            EngineLog.add(e)              // log exception
+            EngineLog.warn("fetch failed: $url")
         }
-        return manager;
-    }
 }
 ```
+
+- `EngineLog` (`add(msg)`, `add(e)`, `debug`, `warn`) — không dùng println
+- Không nuốt exception im lặng ở trust boundary (network, file IO, parse)
+- UI error → state (StateFlow), không throw lên Compose
+
+## Concurrency
+
+```kotlin
+// Engine work qua dispatcher chung (parallelism khớp Rhino context pool)
+withContext(EngineDispatchers.engine) { ... }
+
+// Giới hạn song song bằng Semaphore
+val sem = Semaphore(settings.maxConn)
+```
+
+- Không dùng raw `Thread`. Coroutines + `EngineDispatchers`
+- UI update từ background: qua StateFlow/state holder, Compose tự recompose
+- Plugin script luôn chạy trong JsSandbox, không bao giờ chạy raw
 
 ## Plugin Development Standards
 
-### Plugin File Structure
+Plugin là JavaScript (Rhino). Không còn Lua.
 
-#### Lua Plugin Structure
-
-```json
-{
-  "name": "Lua Plugin Name",
-  "version": "1.0",
-  "regex": "example\\.com",
-  "chap": "chapter extraction script",
-  "toc": "table of contents script",
-  "detail": "detail page script"
-}
-```
-
-#### JavaScript Plugin Structure (NEW)
+### Plugin Manifest (`.plugin` JSON)
 
 ```json
 {
-  "name": "JavaScript Plugin",
-  "version": "1.0",
+  "uuid": "unique-id",
+  "name": "Example Plugin",
+  "version": 1.0,
+  "url": "https://example.com",
   "regex": "example\\.com",
-  "chap": "chapter extraction script",
-  "toc": "table of contents script",
-  "detail": "detail page script",
-  "javascript": true
+  "detail": "detail extraction script (JS)",
+  "toc": "table of contents script (JS)",
+  "chap": "chapter extraction script (JS)",
+  "gen": "pagination script (JS)",
+  "search": "search script (JS)"
 }
 ```
 
-**Security Requirements for JavaScript Plugins:**
-- All network requests must use HTTPS (except localhost)
-- Maximum download size: 50MB per plugin
+Các key khác: `page, home, genre, tab, extra_scripts, config, config_spec, priority, tag`. **Không có cờ `javascript`** — mọi plugin đều là JS.
+
+**Security requirements:**
+- Network request phải HTTPS (except localhost)
+- Maximum download size: 50MB
 - Allowed content types: ZIP, ZIP-compressed, octet-stream
-- Script execution with resource limits
-- Validation of all user inputs and URLs
+- Script chạy trong JsSandbox với resource limits
+- Regex của plugin được kiểm ReDoS trước khi dùng
 
-### JavaScript Plugin Development Standards
-
-#### Basic Plugin Structure
+### Basic Plugin Structure
 
 ```javascript
-// Basic JavaScript plugin structure
-function extractData(html, context) {
-    // Initialize APIs with context
-    const htmlApi = new Html(context);
-    const httpApi = new Http(context);
-
+function extractData(html) {
     try {
-        // Parse HTML
-        const doc = htmlApi.parse(html);
-
-        // Extract data using method chaining
+        const doc = Html.parse(html);
         const title = doc.select('h1.title').text();
-        const chapters = doc.select('.chapter-list').map(function(chapter) {
+        const chapters = doc.select('.chapter-list li').map(function(chapter) {
             return {
-                title: chapter.select('h3').text(),
+                title: chapter.select('a').text(),
                 url: chapter.select('a').attr('href')
             };
         });
-
-        return { title, chapters };
-
+        return Response.success({ title: title, chapters: chapters });
     } catch (e) {
-        Log.add('Extraction failed: ' + e.message);
-        return null;
+        console.log('Extraction failed: ' + e.message);
+        return Response.error('extract failed');
     }
 }
 ```
 
-#### API Usage Guidelines
+### API Usage Guidelines
 
-1. **Always use context constructor**:
-   ```javascript
-   const html = new Html(context);  // Correct
-   const html = new Html();        // Incorrect - throws exception
-   ```
-
+1. **Constructors**: `new Html()` (no-arg) và `new Html(context, scope)` đều chạy (constructor nhận context giữ để compat vBook).
 2. **Handle null values properly**:
    ```javascript
    const data = http.get(url).json();
    if (data === null) {
-       Log.add('Request failed');
-       return null;
+       console.log('Request failed');
+       return Response.error('request failed');
    }
    ```
-
 3. **Use method chaining**:
    ```javascript
-   const title = html.parse(htmlString)
-       .select('h1.title')
-       .text()
-       .trim();
+   const title = Html.parse(htmlString).select('h1.title').text().trim();
    ```
+4. **Implement proper error handling** — bọc `try/catch`, trả `Response.error(...)`, không trả throw.
 
-4. **Implement proper error handling**:
-   ```javascript
-   try {
-       const data = http.get(url).json();
-       // Process data
-   } catch (e) {
-       Log.add('API error: ' + e.message);
-       return null;
-   }
-   ```
-
-#### Plugin File Structure
+### Response Format
 
 ```javascript
-// Complete plugin example
-function extractData(html, context) {
-    const htmlApi = new Html(context);
-    const httpApi = new Http(context);
-
-    // Extract metadata
-    const metadata = {
-        title: htmlApi.parse(html).select('h1.novel-title').text(),
-        author: htmlApi.parse(html).select('.author').text()
-    };
-
-    // Extract chapters
-    const chapters = htmlApi.parse(html).select('.chapter-list li').map(function(chapter) {
-        return {
-            title: chapter.select('a').text(),
-            url: chapter.select('a').attr('href')
-        };
-    });
-
-    return {
-        metadata: metadata,
-        chapters: chapters
-    };
-}
+Response.success(data)        // {code: 0, data}
+Response.success(data, data2) // {code: 0, data, data2} — data2 = pagination token
+Response.error(data)          // {code: 1, data2: data} — message nằm ở data2
 ```
 
-#### Testing Guidelines
+Kotlin side: `Response.isSuccess(result)`, `Response.getData(result)`, `Response.getData2(result)`, `Response.getErrorMessage(result)`.
+
+### Pagination Guidelines
+
+Phân trang dùng script `gen` (chạy qua **BrowseLoader** — không còn "GenLoader"):
 
 ```javascript
-// JavaScript plugin unit test
-function testPlugin() {
-    const context = getContext(); // Get execution context
-    const htmlApi = new Html(context);
-
-    // Test HTML parsing
-    const testHtml = '<html><body><h1>Test</h1><p>Hello</p></body></html>';
-    const doc = htmlApi.parse(testHtml);
-    assertEquals('Test', doc.select('h1').text());
-
-    // Test HTTP requests (mocked)
-    const mockResponse = http.get('https://test.com').string();
-    assertEquals('Mock response', mockResponse);
-}
-```
-
-#### Performance Considerations
-
-1. **Reuse contexts when possible**:
-   ```javascript
-   // Reuse context for multiple operations
-   const context = getContext();
-   const html = new Html(context);
-   const http = new Http(context);
-   ```
-
-2. **Minimize object creation**:
-   ```javascript
-   // Avoid unnecessary temporary objects
-   const title = html.parse(html).select('h1').text();
-   ```
-
-3. **Use efficient selectors**:
-   ```javascript
-   // Use specific selectors
-   const content = html.parse(html).select('.chapter-content').html();
-   ```
-
-#### Security Guidelines
-
-1. **Validate input data**:
-   ```javascript
-   if (!html || html.trim().isEmpty()) {
-       return null;
-   }
-   ```
-
-2. **Handle external requests safely**:
-   ```javascript
-   const url = httpApi.get(url).json();
-   if (url === null) {
-       Log.add('Invalid URL');
-       return null;
-   }
-   ```
-
-3. **Implement proper error boundaries**:
-   ```javascript
-   try {
-       // Plugin execution
-   } catch (e) {
-       Log.add('Plugin error: ' + e.message);
-       return null;
-   }
-   ```
-
-#### Migration from vBook
-
-When migrating vBook plugins to JavaScript:
-
-```javascript
-// vBook plugin (original)
-function extractData(html) {
-    const htmlApi = new Html();
-    const doc = htmlApi.parse(html);
-
-    return {
-        title: doc.select('h1.title').text(),
-        chapters: doc.select('.chapter-list li').map(function(chapter) {
-            return {
-                title: chapter.select('a').text(),
-                url: chapter.select('a').attr('href')
-            };
-        })
-    };
-}
-
-// Migrated JavaScript plugin
-function extractData(html, context) {
-    const htmlApi = new Html(context);
-    const doc = htmlApi.parse(html);
-
-    return {
-        title: doc.select('h1.title').text(),
-        chapters: doc.select('.chapter-list li').map(function(chapter) {
-            return {
-                title: chapter.select('a').text(),
-                url: chapter.select('a').attr('href')
-            };
-        })
-    };
-}
-```
-
-#### Plugin Configuration
-
-JavaScript plugins use the same `.plugin` configuration format as Lua plugins, with an additional `javascript` flag:
-
-```json
-{
-  "name": "Example JavaScript Plugin",
-  "version": "1.0",
-  "regex": "example\\.com",
-  "chap": "chapter extraction script",
-  "toc": "table of contents script",
-  "detail": "detail page script",
-  "javascript": true
-}
-```
-
-#### Pagination Guidelines (NEW)
-
-For plugins that need to handle paginated content (search results, chapter lists across multiple pages):
-
-**Use GenLoader Type:**
-```javascript
-// Plugin configuration includes gen field
-{
-  "name": "Pagination Plugin",
-  "regex": "example\\.com",
-  "gen": "pagination extraction script",
-  "javascript": true
-}
-```
-
-**Return PaginatedResponse:**
-```javascript
+// Script gen: trả items + next page token
 function execute(url, page) {
-    // Fetch current page content
     const items = getItems(url, page);
-
-    // Get next page identifier (URL, number, token, etc.)
-    const nextPage = getNextPageIdentifier(url, page);
-
-    // Return both data and pagination info
+    const nextPage = getNextPageIdentifier(url, page); // null khi hết
     return Response.success(items, nextPage);
 }
 ```
 
-**Handle Pagination Metadata:**
-- Always return consistent page identifiers (URL paths, page numbers, tokens)
-- Return `null` or `undefined` for next page when reaching final page
-- Ensure items are always an array or object (not null)
+**Metadata rules:**
+- Page identifier nhất quán (URL path, số trang, hoặc token)
+- Trang cuối: trả `null`/`undefined` cho next page
+- Items luôn là array/object, không null
 
-**Consume Paginated Results:**
-```javascript
-const result = loader.load(url, null); // First page
-const items = result.getItems();
-const nextPage = result.getNextPage();
+**Kotlin consume** — `PaginatedResult<T>` (`plugin/api/PaginatedResult.kt`):
 
-if (result.hasNext()) {
-    // Load next page with nextPage identifier
-    const nextResult = loader.load(url, nextPage);
+```kotlin
+val result: PaginatedResult<BookEntity> = browseLoader.load(url)
+val items = result.items
+if (result.hasMore) {
+    val next = browseLoader.load(url + result.getNextPage()) // page+1, -1 nếu hết
 }
 ```
 
-#### Best Practices
+`PaginatedResult` fields: `items, totalCount, page, pageSize, totalPages, hasMore`; factory `PaginatedResult.of(...)`, `PaginatedResult.empty()`. Không có builder.
 
-1. **Keep plugins focused**: Each plugin should handle a specific website or type of content
-2. **Use descriptive variable names**: Clear and meaningful variable names
-3. **Add comments for complex logic**: Explain non-obvious code sections
-4. **Handle edge cases**: Consider various website structures and error conditions
-5. **Test thoroughly**: Validate with different inputs and scenarios
-6. **Follow existing patterns**: Consistent with other plugins in the codebase
-7. **Document usage**: Include comments explaining plugin functionality
-8. **Handle encoding properly**: Use proper character encoding for text processing
-9. **Plan for pagination**: Design extraction scripts to support multi-page content when applicable
+### Testing Guidelines
 
-#### Common Patterns
+Plugin engine test bằng kotlin.test trong `engine/src/jvmTest/` (vd `plugin/vbook/` E2E với plugin pattern thật):
 
-##### Method Chaining Pattern
-
-```javascript
-// Chain methods for cleaner code
-const title = html.parse(htmlString)
-    .select('h1.title')
-    .text()
-    .trim();
+```kotlin
+class VBookSandboxCompatibilityTest {
+    @Test
+    fun `plugin vBook chạy được trong sandbox`() {
+        val result = JsSandbox.execute(plugin, url)
+        assertTrue(Response.isSuccess(result))
+    }
+}
 ```
 
-##### Array Processing Pattern
+### Best Practices
+
+1. **Keep plugins focused**: mỗi plugin một site/một loại nội dung
+2. **Descriptive variable names**
+3. **Comments cho logic phức tạp**
+4. **Handle edge cases**: cấu trúc site lạ, encoding, error
+5. **Test với input thật**
+6. **Follow existing patterns** — tham khảo plugin trong repository vBook
+7. **Plan for pagination** khi site có multi-page
+
+### Common Patterns
 
 ```javascript
-// Process collections with map
-const chapters = html.select('.chapter-list li').map(function(chapter) {
-    return {
-        title: chapter.select('a').text(),
-        url: chapter.select('a').attr('href')
-    };
+// Method chaining
+const title = Html.parse(html).select('h1.title').text().trim();
+
+// Array processing
+const chapters = doc.select('.chapter-list li').map(function(ch) {
+    return { title: ch.select('a').text(), url: ch.select('a').attr('href') };
 });
-```
 
-##### Error Handling Pattern
-
-```javascript
-// Comprehensive error handling
-function safeExtract(html, context) {
+// Safe extraction
+function safeExtract(html) {
     try {
-        const htmlApi = new Html(context);
-        const doc = htmlApi.parse(html);
-
-        if (doc.select('.content').isEmpty()) {
-            Log.add('No content found');
-            return null;
-        }
-
-        return {
-            title: doc.select('h1.title').text(),
-            content: doc.select('.content').html()
-        };
-
+        const doc = Html.parse(html);
+        if (doc.select('.content').isEmpty()) return Response.error('no content');
+        return Response.success({ title: doc.select('h1').text() });
     } catch (e) {
-        Log.add('Extraction failed: ' + e.message);
-        return null;
+        return Response.error('extract failed: ' + e.message);
     }
 }
 ```
 
-##### API Integration Pattern
+### Migration from vBook
 
-```javascript
-// Integrate with HTTP API
-function fetchAdditionalData(url, context) {
-    const httpApi = new Http(context);
-    const data = httpApi.get(url).json();
+Plugin vBook chạy được gần như nguyên vẹn: API mapping trực tiếp, method chaining giữ nguyên, `Response` cùng format. Khác biệt chính: script chạy trong JsSandbox (HTTPS-only, whitelist), và Lua không còn được hỗ trợ.
 
-    if (data === null) {
-        Log.add('Failed to fetch additional data');
-        return null;
-    }
+## HTML Sanitation
 
-    return data;
-}
+`util/HtmlSanitizer.kt` — top-level functions, sửa HTML lỗi (tag không đóng, orphan closing tag) trước khi xuất EPUB:
+
+```kotlin
+val clean = sanitizeHtml(dirtyHtml)
+val ok = isValidHtml(clean)
 ```
-
-## Image Processing Standards (NEW)
-
-### WebP Conversion Guidelines
-
-**Automatic Conversion Requirements:**
-- Cover images named `cover.jpg` are automatically converted from WebP to JPEG
-- Use `ImageConverter.downloadAndConvertToJpeg()` for cover images
-- Use `ImageConverter.isWebP()` to detect WebP format by magic bytes
-- Conversion tools (ffmpeg/ImageMagick) are optional but recommended
-
-**Implementation Pattern:**
-```java
-// For cover images - use WebP-aware conversion
-if (pathImage.endsWith("cover.jpg")) {
-    FileUtils.url2fileConvertWebP(urlImage, pathImage);
-} else {
-    FileUtils.url2file(urlImage, pathImage);
-}
-```
-
-**External Tool Support:**
-- **ffmpeg** (primary): `ffmpeg -i input.webp -qscale:v 2 output.jpg`
-- **ImageMagick** (fallback): `convert input.webp -quality 95 output.jpg`
-- **Fallback behavior**: Save as-is with warning logged
-
-### HTML Sanitation Guidelines (NEW)
-
-**Purpose**: Ensure EPUB XML validation by fixing common HTML issues
-
-**Use Cases:**
-- EPUB export preprocessing
-- Content cleanup before XML generation
-
-**Implementation:**
-```java
-// Sanitize HTML for EPUB compatibility
-String cleanHtml = HtmlSanitizer sanitize(dirtyHtml);
-boolean isValid = HtmlSanitizer isValid(cleanHtml);
-```
-
-**Fixed Issues:**
-- Unclosed inline tags (<strong>, <em>, <b>, <i>, <span>, <a>)
-- Orphaned closing tags without opening tags
-- Tag balance validation for common elements
 
 ## Testing Guidelines
 
-### Unit Test Structure
+kotlin.test, đặt ở `engine/src/jvmTest/` và `app-shared/src/jvmTest/`:
 
-```java
-public class DownloadTest {
-
+```kotlin
+class BookDownloadTest {
     @Test
-    public void testDownloadStart() {
-        // Arrange
-        Properties props = new Properties();
-        Download download = new Download(props);
-
-        // Act
-        download.start();
-
-        // Assert
-        assertEquals(Download.DOWNLOADING, download.getStatus());
+    fun `chapter đã có file thì skip`() {
+        // arrange + act + assert
+        assertEquals(expected, actual)
     }
 }
 ```
 
-## Build and Quality Gate
+- Test đặt cùng package với class được test
+- Feature mới MUST kèm test (xem quy ước trong CLAUDE.md)
+- Coverage: `./gradlew :engine:jacocoJvmReport`
 
-### Pre-commit Checklist
-
-```bash
-# Format code
-./gradlew spotlessApply
-
-# Compile
-./gradlew compileJava
-
-# Run quality checks
-./gradlew checkstyleMain pmdMain test
-```
-
-### Quality Gate Task
+## Build & Quality
 
 ```bash
-# Run all quality checks
-./gradlew qualityGate
+./gradlew :engine:jvmTest :app-shared:jvmTest    # unit tests
+./gradlew :engine:jacocoJvmReport               # coverage
+./gradlew :desktop-app:run                      # chạy app
+./gradlew build                                 # build tất cả
 ```
 
-This runs:
-- Spotless format check
-- Checkstyle validation
-- PMD analysis
-- Unit tests
+Không có spotless/checkstyle/pmd/qualityGate task — quality gate là SonarQube (0 issues) + tests.
 
 ## Code Review Checklist
 
-- [ ] Code follows naming conventions
-- [ ] No wildcard imports
-- [ ] Proper error handling
-- [ ] Thread-safe where applicable
-- [ ] Javadoc on public methods
-- [ ] No TODO/FIXME in production code
-- [ ] Consistent with existing patterns
-- [ ] Tests added for new functionality
+- [ ] Code theo naming conventions
+- [ ] Đúng source set/module (business → engine, UI → app-shared, platform → đúng source set)
+- [ ] Proper error handling (không nuốt exception ở trust boundary)
+- [ ] Coroutine dùng EngineDispatchers, không raw Thread
+- [ ] Plugin execution qua JsSandbox
+- [ ] KDoc cho public API phức tạp
+- [ ] No TODO/FIXME trong production code
+- [ ] Consistent với patterns hiện có
+- [ ] Tests cho functionality mới

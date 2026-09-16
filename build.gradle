@@ -1,269 +1,47 @@
+// Legacy Java app đã xoá (tag java-legacy) — bản Kotlin/Compose ở :engine, :app-shared, :desktop-app.
+// Root project host các module + tập trung version plugin (apply false) để dùng chung 1 classloader —
+// khai báo version ở pluginManagement/subproject sẽ nạp Kotlin plugin nhiều lần.
 plugins {
-    id 'java'
-    id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.13' apply false
-    id 'com.diffplug.spotless' version '6.23.3'
-    id 'checkstyle'
-    id 'pmd'
+    id 'org.jetbrains.kotlin.multiplatform' version '2.4.10' apply false
+        id 'org.jetbrains.kotlin.plugin.compose' version '2.4.10' apply false
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.4.10' apply false
+    id 'org.jetbrains.compose' version '1.12.0' apply false
+    id 'com.android.application' version '9.1.1' apply false
+    id 'com.android.kotlin.multiplatform.library' version '9.1.1' apply false
+    id 'com.android.test' version '9.1.1' apply false
+        id 'com.diffplug.spotless' version '8.10.0' apply false
+    id 'io.gitlab.arturbosch.detekt' version '1.23.8' apply false
+    id 'org.jetbrains.kotlin.jvm' version '2.4.10'
 }
 
-group = 'dark.leech'
-version = project.getProperty('app.version')
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+// Format Kotlin mọi module từ 1 chỗ — pre-commit chạy `./gradlew spotlessCheck`.
+subprojects {
+    apply plugin: 'com.diffplug.spotless'
+    spotless {
+        kotlin {
+            target('src/**/*.kt')
+            ktlint('1.8.0').editorConfigOverride(['ktlint_standard_no-unused-imports': 'enabled'])
+        }
+    }
 }
 
-application {
-    mainClass = 'dark.leech.text.ui.main.App'
-    applicationDefaultJvmArgs = [
-        '-Xmx1g',
-        "-Dapp.home.dir=${project.hasProperty('app.home.dir') ? project.getProperty('app.home.dir') : System.getProperty('user.dir')}",
-        // Add exports for macOS-specific APIs (for dock icon)
-        '--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED',
-        '--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED'
-    ]
+// Static analysis Kotlin mọi module — `./gradlew detekt` (format là việc của ktlint).
+subprojects {
+    apply plugin: 'io.gitlab.arturbosch.detekt'
+    detekt {
+        buildUponDefaultConfig = true
+        config.setFrom(rootProject.file('config/detekt/detekt.yml'))
+        baseline = file("${projectDir}/detekt-baseline.xml")
+        // KMP: detekt chỉ biết src/main|test mặc định — quét cả commonMain/jvmMain/androidMain
+        source.setFrom('src')
+    }
+    dependencies {
+        detektPlugins 'io.nlopez.compose.rules:detekt:0.4.22'
+    }
 }
-
 dependencies {
-    // JSoup for HTML parsing
-    implementation 'org.jsoup:jsoup:1.22.1'
-
-    // JSON processing
-    implementation 'org.json:json:20230618'
-
-    // Gson for JSON serialization
-    implementation 'com.google.code.gson:gson:2.10.1'
-
-    // Lombok for reducing boilerplate code
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
-    testCompileOnly 'org.projectlombok:lombok:1.18.30'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
-
-    // Rhino JavaScript engine (for JavaScript extension support)
-    implementation 'org.mozilla:rhino:1.7.15'
-
-    // GraalVM JavaScript engine (replaced by Rhino - kept for rollback)
-    // implementation 'org.graalvm.polyglot:polyglot:23.1.0'
-    // implementation 'org.graalvm.polyglot:js:23.1.0'
-
-    // Monitoring for JavaScript engine performance
-    implementation 'io.micrometer:micrometer-core:1.11.0'
-
-    // Archive handling (equivalent to zt-zip)
-    implementation 'net.lingala.zip4j:zip4j:2.11.5'
-
-    // HTTP client
-    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
-
-    // OkHttp3 for JavaScript plugin HTTP API (matches vBooks Android implementation)
-    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-
-    // Selenium WebDriver for browser automation
-    implementation 'org.seleniumhq.selenium:selenium-java:4.26.0'
-    implementation 'io.github.bonigarcia:webdrivermanager:5.9.2'
-
-    // RSyntaxTextArea for syntax highlighting
-    implementation 'com.fifesoft:rsyntaxtextarea:3.3.4'
-
-    // StringUtils && CollectionUtils
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'org.apache.commons:commons-collections4:4.4'
-
-    // Testing dependencies
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.4.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java']
-        }
-        resources {
-            srcDirs = ['src/main/resources']
-        }
-    }
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
-        resources {
-            srcDirs = ['src/test/resources']
-        }
-    }
-}
-
-// Generate version properties file
-tasks.register('generateVersionProperties') {
-    group = 'build'
-    description = 'Generate version properties from gradle.properties'
-
-    doLast {
-        def versionPropsFile = file("$projectDir/src/main/resources/version.properties")
-        versionPropsFile.parentFile.mkdirs()
-
-        // Get current date/time
-        def now = new Date()
-        def dateFormat = new java.text.SimpleDateFormat("HH:mm")
-        dateFormat.setTimeZone(java.util.TimeZone.getTimeZone("UTC"))
-        def yearFormat = new java.text.SimpleDateFormat("yyyy")
-
-        def versionProps = new Properties()
-        versionProps.setProperty('app.version', project.getProperty('app.version'))
-        versionProps.setProperty('app.name', project.getProperty('app.name'))
-        versionProps.setProperty('app.buildTime', dateFormat.format(now))
-        versionProps.setProperty('app.buildYear', yearFormat.format(now))
-        versionProps.setProperty('app.copyright', "2017-${yearFormat.format(now)}")
-        versionProps.setProperty('app.home.dir', project.hasProperty('app.home.dir') ? project.getProperty('app.home.dir') : System.getProperty('user.dir'))
-
-        versionPropsFile.withOutputStream { versionProps.store(it, 'Generated by Gradle') }
-        println "Generated version.properties: ${versionProps.getProperty('app.version')}"
-    }
-}
-
-// Custom task to copy native libraries if needed
-tasks.register('copyNativeLibs', Copy) {
-    from configurations.runtimeClasspath
-    into layout.buildDirectory.dir('libs')
-    include '**/*.dll', '**/*.so', '**/*.dylib'
-}
-
-// Ensure version properties are generated before compilation
-compileJava.dependsOn generateVersionProperties
-
-// Ensure native libraries are copied before running
-run.dependsOn copyNativeLibs
-
-// Configure the JAR task
-jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    manifest {
-        attributes(
-            'Main-Class': 'dark.leech.text.ui.main.App',
-            'Implementation-Title': 'LeechText',
-            'Implementation-Version': project.version,
-            'Implementation-Vendor': 'LeechText Team'
-        )
-    }
-
-    // Include resources and dependencies in the JAR (fat JAR)
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    // Explicitly include source resources (prevents overwriting)
-    from sourceSets.main.output
-}
-
-// Configure compiler options
-compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs += ['-Xlint:unchecked', '-Xlint:deprecation']
-}
-
-// Configure test execution
-test {
-    useJUnit()
-    testLogging {
-        events "passed", "skipped", "failed"
-        exceptionFormat "full"
-    }
-}
-
-// Task to run the application in development
-tasks.register('runDev', JavaExec) {
-    group = 'application'
-    description = 'Run the application in development mode'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'dark.leech.text.ui.main.App'
-
-    // Set system properties for development
-    systemProperty 'java.awt.headless', 'false'
-    systemProperty 'swing.defaultlaf', 'javax.swing.plaf.metal.MetalLookAndFeel'
-
-    // Enable debugging and macOS dock icon support
-    jvmArgs = [
-        '-Xmx1g',
-        '-Xms512m',
-        '--add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED',
-        '--add-opens=java.desktop/com.apple.eawt.event=ALL-UNNAMED'
-    ]
-}
-
-// Wrapper configuration
-wrapper {
-    gradleVersion = '8.4'
-    distributionType = Wrapper.DistributionType.BIN
-}
-
-// Code formatting with Spotless
-spotless {
-    java {
-        target 'src/**/*.java'
-
-        // Use Google Java Format
-        googleJavaFormat('1.18.1').aosp().reflowLongStrings()
-
-        // Remove unused imports
-        removeUnusedImports()
-
-        // Import order configuration
-        importOrder('java', 'javax', 'org', 'com', '', 'dark.leech')
-
-        // Trim trailing whitespace
-        trimTrailingWhitespace()
-
-        // End files with newline
-        endWithNewline()
-
-        // Custom formatting rules
-        custom 'noWildcardImports', {
-            if (it.contains('import .*\\*;')) {
-                throw new AssertionError('Wildcard imports are not allowed')
-            }
-        }
-    }
-
-    json {
-        target '*.json', 'src/**/*.json'
-        simple().indentWithSpaces(2)
-    }
-
-    yaml {
-        target '*.yaml', '*.yml', 'src/**/*.yaml', 'src/**/*.yml'
-        jackson().yamlFeature('WRITE_DOC_START_MARKER', false)
-    }
-}
-
-// Checkstyle configuration
-checkstyle {
-    toolVersion = '10.12.5'
-    configFile = file('config/checkstyle/checkstyle.xml')
-    ignoreFailures = true // TODO: Fix 534 violations in legacy code
-    maxWarnings = 1000 // Allow warnings for now
-}
-
-// PMD configuration
-pmd {
-    toolVersion = '6.55.0'
-    ruleSetFiles = files('config/pmd/pmd-rules.xml')
-    ignoreFailures = false
-    consoleOutput = true
-}
-
-// Quality gate task
-tasks.register('qualityGate') {
-    group = 'verification'
-    description = 'Run all quality checks'
-    dependsOn 'spotlessCheck', 'checkstyleMain', 'pmdMain', 'test'
-}
-
-// Pre-commit task
-tasks.register('preCommit') {
-    group = 'verification'
-    description = 'Run pre-commit checks'
-    dependsOn 'spotlessApply', 'compileJava'
+kotlin {
+    jvmToolchain(8)
 }

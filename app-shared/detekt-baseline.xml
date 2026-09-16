@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComposableParamOrder:LibraryScreen.kt$LibraryScreen</ID>
+    <ID>ComposableParamOrder:PluginScreen.kt$PluginScreen</ID>
+    <ID>LongParameterList:ChapterPickDialog.kt$( chapters: List&lt;Chapter&gt;, query: String, filter: Int, isDownloaded: ((Chapter) -&gt; Boolean)?, )</ID>
+    <ID>LongParameterList:ChapterReader.kt$( editMode: Boolean, paged: Boolean, showDisplay: Boolean, showChapterPicker: Boolean, showAddRule: Boolean, )</ID>
+    <ID>LongParameterList:ChapterReader.kt$( showAddRule: Boolean, showDisplay: Boolean, showChapterPicker: Boolean, setShowAddRule: (Boolean) -&gt; Unit, setShowDisplay: (Boolean) -&gt; Unit, setShowPicker: (Boolean) -&gt; Unit, onBookmarkSaved: () -&gt; Unit, )</ID>
+    <ID>LongParameterList:ChapterReader.kt$ChromeGestures$( val onToggle: (Offset) -&gt; Unit, val onHover: () -&gt; Unit, val hideTapPos: Offset, )</ID>
+    <ID>LongParameterList:ChapterReader.kt$ReaderUiCallbacks$( val onToggleFullscreen: () -&gt; Unit, val onEditChange: (Boolean) -&gt; Unit, gestures: ChromeGestures, )</ID>
+    <ID>LongParameterList:ChapterReader.kt$ReaderUiFlags$( val editMode: Boolean, val fullscreen: Boolean, val chromeVisible: Boolean, )</ID>
+    <ID>LongParameterList:ChapterReader.kt$ReaderUiState$( val display: ReaderDisplay, val auto: AutoScroller, val pagedState: PagedState, val listState: androidx.compose.foundation.lazy.LazyListState, var trashRules: List&lt;dev.haipham22.leechtext.models.Trash&gt;, )</ID>
+    <ID>LongParameterList:ExportBookDialog.kt$RuleEditUi$( val src: String, val to: String, val onSrc: (String) -&gt; Unit, val onTo: (String) -&gt; Unit, val onSave: () -&gt; Unit, val onCancel: () -&gt; Unit, )</ID>
+    <ID>LongParameterList:PluginScreen.kt$( state: PluginState, repoList: List&lt;VBookExtensionEntity&gt;, categoryExpanded: Map&lt;String, Boolean&gt;, onToggleCategory: (String, Boolean) -&gt; Unit, )</ID>
+    <ID>LongParameterList:ReaderPaging.kt$( lineCount: Int, lineHeight: Float, pageHeight: Float, offset: Float, )</ID>
+    <ID>LongParameterList:ReaderPaging.kt$( title: androidx.compose.ui.text.TextLayoutResult, paragraphs: List&lt;androidx.compose.ui.text.TextLayoutResult&gt;, pageHeight: Float, paragraphSpacingPx: Float, titleSpacingPx: Float, )</ID>
+    <ID>LongParameterList:ReaderPaging.kt$PagedState$( delta: Int, chapterIdx: Int, chapterTotal: Int, onChapter: (Int) -&gt; Unit, )</ID>
+    <ID>LongParameterList:ReaderPaging.kt$ReaderPageTheme$( val titleStyle: androidx.compose.ui.text.TextStyle, val bodyStyle: androidx.compose.ui.text.TextStyle, val fgColor: Color?, val chapterIdx: Int, val showChrome: Boolean, val notDownloaded: Boolean, val busy: Boolean, )</ID>
+    <ID>LongParameterList:ReaderScroll.kt$( auto: AutoScroller, state: LibraryState, listState: androidx.compose.foundation.lazy.LazyListState, idx: Int, total: Int, )</ID>
+    <ID>LongParameterList:ReaderScroll.kt$( e: androidx.compose.ui.input.key.KeyEvent, dir: Int, idx: Int, total: Int, scrollEnabled: Boolean, autoScroll: Boolean, paged: Boolean, )</ID>
+    <ID>LongParameterList:ReaderScroll.kt$( e: androidx.compose.ui.input.key.KeyEvent, idx: Int, total: Int, exitEnabled: Boolean, scrollEnabled: Boolean, autoScroll: Boolean, paged: Boolean, )</ID>
+    <ID>LongParameterList:ReaderScroll.kt$ReaderKeyActions$( val onDelta: (Int) -&gt; Unit, val onExit: () -&gt; Unit, val onScroll: (Int) -&gt; Unit, val onToggleAutoScroll: () -&gt; Unit, val onSpeedDelta: (Int) -&gt; Unit, val onPageTurn: (Int) -&gt; Unit, )</ID>
+    <ID>LongParameterList:ReaderScroll.kt$ReaderKeyContext$( val idx: Int, val total: Int, val exitEnabled: Boolean, val scrollEnabled: Boolean, val autoScroll: Boolean, val paged: Boolean, )</ID>
+    <ID>LongParameterList:SliceApp.kt$QueueUi$( val state: DownloadQueueState, val items: List&lt;QueueItemUi&gt;, val itemById: Map&lt;String, QueueItem&gt;, )</ID>
+    <ID>LongParameterList:SliceAppScreenshotTest.kt$SliceAppScreenshotTest$( width: Int, height: Int, tab: Int, settleFrames: Int, )</ID>
+    <ID>MagicNumber:ChapterReader.kt$32f</ID>
+    <ID>MagicNumber:ChapterReader.kt$ReaderDisplay.Companion$1.2f</ID>
+    <ID>MagicNumber:ChapterReader.kt$ReaderDisplay.Companion$12</ID>
+    <ID>MagicNumber:ChapterReader.kt$ReaderDisplay.Companion$2.4f</ID>
+    <ID>MagicNumber:ChapterReader.kt$ReaderDisplay.Companion$28</ID>
+    <ID>MagicNumber:CloudflareWebViewActivity.kt$CloudflareWebViewActivity$2000</ID>
+    <ID>MagicNumber:CloudflareWebViewActivity.kt$CloudflareWebViewActivity$24</ID>
+    <ID>MagicNumber:CloudflareWebViewActivity.kt$CloudflareWebViewActivity$96</ID>
+    <ID>MagicNumber:CloudflareWebViewSolver.ios.kt$CloudflarePopupViewController$2000</ID>
+    <ID>MagicNumber:PluginState.kt$PluginState$200</ID>
+    <ID>MagicNumber:PluginState.kt$PluginState$399</ID>
+    <ID>MagicNumber:ReaderChrome.kt$0.25f</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF003733</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF006A63</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF161A1A</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF181C1C</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF1D2222</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF222727</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF2C3131</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF3A4241</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF3E4947</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF3F4947</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF6E7977</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFF80D5CC</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFFBDC9C6</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFFBEC9C6</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFFD8CCB0</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFFDDE4E1</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFFE0E3E2</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFFE6E9E7</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFFE8DFC8</ID>
+    <ID>MagicNumber:ReaderChrome.kt$ReaderBg$0xFFF7FAF8</ID>
+    <ID>MagicNumber:ReaderScroll.kt$10</ID>
+    <ID>MagicNumber:ReaderScroll.kt$1500</ID>
+    <ID>MagicNumber:ReaderScroll.kt$16_666_667f</ID>
+    <ID>MagicNumber:ReaderScroll.kt$8</ID>
+    <ID>MagicNumber:ReaderScroll.kt$9</ID>
+    <ID>MagicNumber:ReaderScroll.kt$AutoScroller$10</ID>
+    <ID>MagicNumber:ReaderScroll.kt$AutoScroller.Companion$10</ID>
+    <ID>SwallowedException:AddBookState.kt$AddBookState$e: kotlinx.coroutines.CancellationException</ID>
+    <ID>SwallowedException:DownloadQueueState.kt$DownloadQueueState$e: kotlinx.coroutines.CancellationException</ID>
+    <ID>SwallowedException:FilePickers.sharedJvm.kt$e: Exception</ID>
+    <ID>SwallowedException:StartReadingNoPluginTest.kt$StartReadingNoPluginTest$e: IllegalStateException</ID>
+    <ID>TooGenericExceptionCaught:AddBookState.kt$AddBookState$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DownloadQueueState.kt$DownloadQueueState$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DownloadService.kt$DownloadService$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:FilePickers.sharedJvm.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:LibraryState.kt$LibraryState$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:PluginState.kt$PluginState$e: Exception</ID>
+  </CurrentIssues>
+</SmellBaseline>

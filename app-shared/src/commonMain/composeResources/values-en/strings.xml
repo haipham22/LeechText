@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tab / nav -->
+    <string name="tab_library">Library</string>
+    <string name="tab_updates">Downloads</string>
+    <string name="tab_history">History</string>
+    <string name="tab_sources">Sources</string>
+    <string name="tab_more">More</string>
+    <string name="settings_title">Settings</string>
+
+    <!-- Hành động dùng chung -->
+    <string name="action_close">Close</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_add">Add</string>
+    <string name="action_download">Download</string>
+    <string name="action_read">Read</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_back">Back</string>
+    <string name="action_edit">Edit</string>
+
+    <!-- Lịch sử -->
+    <string name="history_title">History</string>
+    <string name="history_empty">No reading history yet</string>
+    <string name="history_empty_hint">Open a book from Library to get started</string>
+    <string name="time_just_now">just now</string>
+    <string name="time_minutes_ago">%1$d min ago</string>
+    <string name="time_hours_ago">%1$d hr ago</string>
+    <string name="time_days_ago">%1$d d ago</string>
+
+    <!-- Chung -->
+    <string name="chapter_default_name">Chapter %1$d</string>
+    <string name="chapters_count">%1$d chapters</string>
+    <string name="error_prefix">Error: %1$s</string>
+
+    <!-- Cài đặt: section -->
+    <string name="settings_section_connection">Connection</string>
+    <string name="settings_section_storage">Storage</string>
+    <string name="settings_section_reader">Reading</string>
+    <string name="settings_section_syntax">Save templates</string>
+    <string name="settings_section_tools">Tools</string>
+    <string name="settings_section_trash">Text filters</string>
+    <string name="settings_section_privacy">Privacy</string>
+    <string name="settings_section_language">Language &amp; Appearance</string>
+    <string name="settings_theme_title">Appearance</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_reset">Reset to defaults</string>
+    <string name="settings_language_field">Language</string>
+    <string name="settings_language_restart">Restart the app to apply the new language</string>
+
+    <!-- Cài đặt: hub summary -->
+    <string name="summary_connection">%1$d connections · %2$d s</string>
+    <string name="summary_syntax_on">%1$d/4 on</string>
+    <string name="summary_tools_configured">%1$d/2 configured</string>
+    <string name="summary_trash_rules">%1$d rule(s)</string>
+    <string name="summary_on">On</string>
+    <string name="summary_off">Off</string>
+    <string name="lang_name_vi">Tiếng Việt</string>
+    <string name="lang_name_en">English</string>
+
+    <!-- Cài đặt: kết nối -->
+    <string name="conn_max_title">Max connections</string>
+    <string name="conn_max_caption">parallel downloads per book</string>
+    <string name="conn_retry_title">Retries on error</string>
+    <string name="conn_retry_caption">retries per chapter</string>
+    <string name="conn_timeout_title">Timeout</string>
+    <string name="conn_timeout_caption">wait up to %1$ds for site response</string>
+    <string name="conn_delay_title">Delay between chapters</string>
+    <string name="conn_delay_caption">ms pause to avoid hammering sites</string>
+    <string name="conn_ua_title">User Agent</string>
+    <string name="conn_ua_caption">UA header when fetching sites</string>
+    <string name="conn_note">Cookies sync per site. Proxy not supported yet.</string>
+
+    <!-- Cài đặt: lưu trữ -->
+    <string name="storage_workdir_title">Working directory</string>
+    <string name="storage_workdir_caption">books saved under output/</string>
+    <string name="storage_pick">Browse…</string>
+    <string name="storage_pick_dialog_title">Choose storage folder</string>
+
+    <!-- Cài đặt: cấu trúc lưu -->
+    <string name="syntax_dropcaps_desc">DropCaps template applied on save</string>
+    <string name="syntax_html_desc">HTML template applied on save</string>
+    <string name="syntax_txt_desc">TXT template applied on save</string>
+    <string name="syntax_css_desc">Stylesheet for EPUB (data/stylesheet.css)</string>
+    <string name="syntax_template_label">Syntax template</string>
+
+    <!-- Cài đặt: quyền riêng tư -->
+    <string name="privacy_crash_title">Crash reporting</string>
+    <string name="privacy_crash_caption">Send crashes to Sentry for debugging. Off by default — enable to opt in.</string>
+    <string name="privacy_debuglog_title">Debug log</string>
+    <string name="privacy_debuglog_caption">Log every step (download/TOC/plugin) to console + logcat. Off by default.</string>
+
+    <!-- Cài đặt: công cụ -->
+    <string name="tools_not_configured">not configured</string>
+    <string name="tools_abs_path">Absolute path</string>
+
+    <!-- Cài đặt: lọc rác -->
+    <string name="trash_hint">Regex rules replacing text on export (src → to). Toggle a rule off to disable it.</string>
+    <string name="trash_delete_rule">Delete rule</string>
+    <string name="trash_rule_title">Rule #%1$d</string>
+    <string name="trash_to_label">to (replace with)</string>
+    <string name="trash_add_rule">Add rule</string>
+    <string name="trash_empty_hint">No rules yet — tap Add rule</string>
+    <string name="trash_rules_title">Filter rules (%1$d)</string>
+    <string name="trash_replace_with">replace with (empty = delete)</string>
+
+    <!-- Kiểm tra cập nhật (N4) -->
+    <string name="update_check_row">Check for updates</string>
+    <string name="update_version_summary">version %1$s</string>
+    <string name="update_checking">Checking…</string>
+    <string name="update_check_failed">Check failed — try again later</string>
+    <string name="update_up_to_date">You are on the latest version (%1$s)</string>
+    <string name="update_available_title">Update available</string>
+    <string name="update_view_release">View release</string>
+
+    <!-- Hàng đợi tải -->
+    <string name="queue_panel_title">Downloads</string>
+    <string name="queue_clear_finished">Clear finished</string>
+    <string name="queue_empty">No items</string>
+    <string name="queue_section_active">DOWNLOADING (%1$d)</string>
+    <string name="queue_section_done">COMPLETED</string>
+    <string name="queue_section_failed">FAILED (%1$d)</string>
+    <string name="queue_status_waiting">Queued</string>
+    <string name="queue_status_downloading">Downloading</string>
+    <string name="queue_status_paused">Paused</string>
+    <string name="queue_status_cancelled">Cancelled</string>
+    <string name="queue_status_done">Done — %1$d new, %2$d errors</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="cd_dismiss">Dismiss</string>
+    <string name="cd_done">Done</string>
+    <string name="cd_open_library">Go to library</string>
+    <!-- Thư viện -->
+    <string name="lib_reading_badge">Reading %1$d/%2$d</string>
+    <string name="library_items_count">%1$d items</string>
+    <string name="library_empty_title">Library is empty</string>
+    <string name="library_empty_hint">Add books from the Sources tab (paste a URL) or paste a novel URL</string>
+    <string name="library_search_hint">Search library…</string>
+    <string name="library_search_empty">No results for “%1$s”</string>
+    <string name="cd_refresh">Refresh</string>
+    <string name="cd_search_library">Search library</string>
+    <string name="cd_close_search">Close search</string>
+    <string name="cd_sort">Sort</string>
+    <string name="sort_added">Recently added</string>
+    <string name="sort_read">Recently read</string>
+    <string name="sort_name">Name A-Z</string>
+    <string name="chapter_list_failed">Failed to load chapter list</string>
+
+    <!-- Thư viện: message state -->
+    <string name="lib_checking_new">Checking for new chapters…</string>
+    <string name="lib_no_new_chapters">No new chapters (%1$d chapters)</string>
+    <string name="lib_new_chapters_done">+%1$d new chapters — %2$d downloaded, %3$d already present, %4$d errors</string>
+    <string name="lib_new_chapters_found">Found %1$d new chapters (%2$d total) — tap Download chapters to fetch</string>
+    <string name="lib_exporting_txt">Exporting TXT…</string>
+    <string name="lib_export_txt_done">TXT exported — %1$s</string>
+    <string name="lib_export_not_found">Error: exported file not found in out/</string>
+    <string name="lib_export_txt_failed">TXT export failed: %1$s</string>
+    <string name="lib_export_epub_start">Starting EPUB export…</string>
+    <string name="lib_export_epub_done">EPUB exported — %1$s</string>
+    <string name="lib_export_epub_failed">EPUB export failed: %1$s</string>
+    <string name="export_error_empty">EPUB empty after compression (%1$s bytes) — check chapters downloaded</string>
+    <string name="sources_error_encrypted">Encrypted plugin — decrypt not supported</string>
+    <string name="sources_error_plugin">Plugin operation failed — try again or reinstall the plugin</string>
+    <string name="sources_error_registry">Cannot read plugin repository — check the repo URL</string>
+    <string name="sources_error_plugin_format">Invalid plugin format or missing required fields</string>
+    <string name="sources_error_network">Network error — check your connection and retry</string>
+    <string name="sources_error_rate_limited">Rate limited — retry in about a minute</string>
+    <string name="sources_error_service_unavailable">Repository temporarily unavailable — retry in about 30 seconds</string>
+    <string name="sources_error_not_found">Resource not found on the repository</string>
+    <string name="sources_error_security">Blocked for security reasons (unsafe URL/ZIP/regex)</string>
+    <string name="lib_retry_none_failed">No failed chapters — downloading missing ones (if any)</string>
+    <string name="lib_retrying_failed">Redownloading %1$d failed chapters…</string>
+    <string name="lib_retry_done">Redownload done: %1$d new, %2$d already present, %3$d still failing</string>
+    <string name="lib_downloading_images">Downloading chapter images…</string>
+    <string name="lib_images_done">Downloaded %1$d images — %2$s</string>
+    <string name="lib_images_failed">Image download failed: %1$s</string>
+    <string name="lib_chapter_not_downloaded">Chapter not downloaded — empty content</string>
+    <string name="reader_download_this_chapter">Download this chapter</string>
+    <string name="reader_font">Font</string>
+    <string name="reader_font_caption">Tap to change: Default → Serif → Sans → Mono</string>
+    <string name="reader_font_default">Default</string>
+    <string name="reader_font_size">Font size</string>
+    <string name="reader_bg">Background</string>
+    <string name="reader_fg">Text color</string>
+    <string name="reader_fg_auto">Default</string>
+    <string name="reader_fg_black">Black</string>
+    <string name="reader_fg_sepia">Sepia</string>
+    <string name="reader_fg_gray">Gray</string>
+    <string name="reader_fg_green">Green</string>
+    <string name="reader_fg_white">White</string>
+    <string name="reader_fg_yellow">Yellow</string>
+    <string name="reader_add_font">Add font…</string>
+    <string name="reader_bg_light">Light</string>
+    <string name="reader_bg_sepia">Sepia</string>
+    <string name="reader_bg_dark">Dark</string>
+    <string name="reader_display">Display</string>
+    <string name="reader_line_height">Line height</string>
+    <string name="reader_auto_scroll">Auto-scroll</string>
+    <string name="reader_auto_scroll_speed">Scroll speed</string>
+    <string name="reader_mode">Reading mode</string>
+    <string name="reader_mode_vertical">Vertical scroll</string>
+    <string name="reader_mode_paged">Paged</string>
+    <string name="reader_fullscreen">Fullscreen</string>
+    <string name="lib_loading_toc">Loading chapter list…</string>
+    <string name="lib_toc_failed">Failed to load chapter list: %1$s</string>
+    <string name="lib_downloading_n">Downloading %1$d chapters…</string>
+    <string name="lib_download_done">Downloaded: %1$d new, %2$d already present, %3$d errors</string>
+    <string name="lib_download_failed">Download failed: %1$s</string>
+    <string name="lib_redownloaded">Redownloaded: %1$s</string>
+    <string name="lib_redownload_failed">Redownload failed: %1$s</string>
+    <string name="lib_chapter_saved">Saved: %1$s</string>
+    <string name="lib_names_saved">Saved %1$d chapter names</string>
+    <string name="lib_deleted">Deleted: %1$s</string>
+    <string name="lib_delete_failed">Delete failed: %1$s</string>
+
+    <!-- Chi tiết sách -->
+    <string name="cd_more">More</string>
+    <string name="book_download_chapters">Download chapters</string>
+    <string name="book_check_new">Check for new chapters</string>
+    <string name="book_export">Export ebook…</string>
+    <string name="book_download_images">Download chapter images</string>
+    <string name="book_edit_names">Edit chapter names…</string>
+    <string name="book_share_export">Share exported file</string>
+    <string name="book_remove_from_library">Remove from library</string>
+    <string name="book_delete_title">Remove from library?</string>
+    <string name="book_delete_confirm">Delete \"%1$s\" and all downloaded chapters. This cannot be undone.</string>
+    <string name="book_ongoing">Ongoing</string>
+    <string name="book_completed">Completed</string>
+    <string name="book_chapter_list">Chapters</string>
+    <string name="book_search_chapters">Search chapters</string>
+    <string name="book_resume_download">Resume download (%1$d chapters left)</string>
+    <string name="read_resume">Resume — Ch. %1$d</string>
+    <string name="cd_bookmarked">Bookmarked</string>
+
+    <!-- Xuất sách -->
+    <string name="export_title">Export book</string>
+    <string name="export_no_chapters">⚠ No chapters downloaded — tap Download all before exporting</string>
+    <string name="export_open_folder">Open output folder</string>
+    <string name="export_done_open_q">Export complete. Open output folder?</string>
+    <string name="export_format">Format</string>
+    <string name="export_location">Save location</string>
+    <string name="export_action">Export</string>
+    <string name="export_epub_options">EPUB options</string>
+    <string name="export_include_images">Include images</string>
+    <string name="export_split">Split volumes</string>
+    <string name="export_compress_level">Compression</string>
+    <string name="cd_pick_location">Choose save location</string>
+    <string name="export_pick_dialog_title">Choose export file location</string>
+    <string name="export_edit_names_title">Edit chapter names (%1$d)</string>
+    <string name="names_strip_numbers">Strip numbering</string>
+    <string name="names_optimize">Optimize</string>
+
+    <!-- Reader -->
+    <string name="cd_redownload_chapter">Redownload chapter</string>
+    <string name="cd_add_filter_rule">Add filter rule</string>
+    <string name="cd_view">View</string>
+    <string name="cd_edit_chapter">Edit chapter</string>
+    <string name="cd_remove_bookmark">Remove bookmark</string>
+    <string name="cd_add_bookmark">Bookmark chapter</string>
+    <string name="cd_prev_chapter">Previous chapter</string>
+    <string name="cd_next_chapter">Next chapter</string>
+    <string name="reader_chapter_content">Chapter content</string>
+    <string name="reader_bookmark_saved">Bookmark saved — Ch. %1$d</string>
+    <!-- Nguồn / plugin -->
+    <string name="sources_extensions_tab">Extensions</string>
+    <string name="cd_add_from_url">Add book from URL</string>
+    <string name="cd_add_repo">Add repo</string>
+    <string name="cd_global_search">Global search</string>
+    <string name="action_search">Search</string>
+    <string name="lang_name_zh">Chinese</string>
+    <string name="cat_audio">Audio</string>
+    <string name="cat_other">Other</string>
+    <string name="sources_search_ext_hint">Search extensions…</string>
+    <string name="sources_empty_installed">No sources yet — install from the Extensions tab</string>
+    <string name="sources_url_hint">https://truyenyy.van/truyen/…\n(one URL per line)</string>
+    <string name="sources_global_search_hint">Search novels across sources…</string>
+    <string name="sources_delete_title">Delete source?</string>
+    <string name="sources_delete_confirm">Delete \"%1$s\" from the app. Downloaded books are not affected.</string>
+    <string name="sources_section_upgrade">UPDATES (%1$d)</string>
+    <string name="sources_section_repo">REPOS (%1$d)</string>
+    <string name="sources_no_match">No matching plugin</string>
+    <string name="sources_repo_url_label">Repo URL (plugin.json)</string>
+    <string name="sources_delete_repo">Delete repo</string>
+    <string name="sources_installed_chip">Installed</string>
+    <string name="sources_config">Configure</string>
+    <string name="sources_unpin">Unpin</string>
+    <string name="sources_pin">Pin to top</string>
+    <string name="sources_test_site">Test source</string>
+    <string name="sources_delete_source">Delete source</string>
+    <string name="sources_newer_version">New %1$s (installed %2$s)</string>
+    <string name="sources_install">Install</string>
+    <string name="sources_upgrade">Update</string>
+    <string name="sources_broken_section">UNRESPONSIVE SOURCES (%1$d)</string>
+    <string name="sources_retry">Retry</string>
+    <string name="sources_maybe_dead">Dead source?</string>
+    <string name="sources_config_title">Configure — %1$s</string>
+    <string name="sources_domain_label">Source (domain)</string>
+    <string name="sources_domain_hint">Change the domain when the site moves. The sandbox BASE_URL will use it.</string>
+    <string name="sources_cfg_threads">Download threads (thread_num)</string>
+    <string name="sources_cfg_delay">Delay between requests ms (delay)</string>
+    <string name="sources_cfg_timeout">Request timeout ms (timeout)</string>
+    <string name="sources_cfg_default">Empty = default (%1$d)</string>
+    <string name="plugins_fetch_failed">Failed to fetch plugin list from repo</string>
+    <string name="plugins_installing">Installing %1$s…</string>
+    <string name="plugins_installed">Installed: %1$s</string>
+    <string name="plugins_install_dead_warn">%1$s: source seems dead — the site may be gone</string>
+    <string name="plugins_install_failed">Install failed: %1$s</string>
+    <string name="plugins_install_error">Error: %1$s — %2$s</string>
+    <string name="plugins_uninstalled">Removed: %1$s</string>
+    <string name="plugins_repo_added">Repo added: %1$s</string>
+    <string name="plugins_repo_invalid">Repo invalid or already added: %1$s</string>
+    <string name="plugins_repo_removed">Repo removed</string>
+    <string name="plugins_testing">Testing %1$s…</string>
+    <string name="plugins_test_ok">%1$s — HTTP %2$d ✓ alive</string>
+    <string name="plugins_test_bad">%1$s — HTTP %2$d ✗ issues</string>
+    <string name="plugins_test_unreachable">%1$s — UNREACHABLE: %2$s</string>
+    <string name="plugins_none_to_install">No new plugins to install</string>
+    <string name="plugins_installing_n">Installing %1$d/%2$d: %3$s</string>
+    <string name="plugins_installed_n">Installed %1$d/%2$d plugins</string>
+    <string name="plugins_update_all">Update all (%1$d)</string>
+    <string name="plugins_reinstall_hint">Installed sources lost — %1$d available in catalog, reinstall from the Extensions tab</string>
+    <string name="browse_no_catalog">Source has no browse catalog (missing home.js)</string>
+    <string name="browse_no_novels">Failed to load novels</string>
+    <string name="browse_back_to_menu">Back to menu</string>
+    <string name="browse_load_more">Load more</string>
+    <string name="loading_short">Loading…</string>
+
+    <!-- Thêm sách -->
+    <string name="addbook_title">Add book</string>
+    <string name="addbook_loading_info">Loading info…</string>
+    <string name="addbook_loading_toc">Loading chapter list…</string>
+    <string name="addbook_view_toc">View chapter list</string>
+    <string name="addbook_chapters_title">Chapters (%1$d)</string>
+    <string name="addbook_chapter_empty">Chapter is empty or failed to load</string>
+    <string name="addbook_add_to_library">Add to library</string>
+    <string name="addbook_in_library">In library</string>
+    <string name="addbook_download_full">Download all</string>
+    <string name="addbook_range_hint">Chapters (e.g. 1-50,55)</string>
+    <string name="addbook_multi_url_label">Multiple URLs (one per line) — quick-add to library</string>
+    <string name="addbook_url_label">Novel URL</string>
+    <string name="addbook_fetch_info">Fetch info</string>
+    <string name="addbook_author">Author: %1$s</string>
+    <string name="addbook_chapters_saved_at">%1$d chapters — saved under output/</string>
+    <string name="addbook_n_selected">%1$d selected</string>
+    <string name="addbook_select_all">Select all</string>
+    <string name="addbook_fix_names">Fix names</string>
+    <string name="addbook_apply_n">Apply (%1$d)</string>
+    <string name="addbook_added_n">Added %1$d books to library — download via Download all</string>
+    <string name="addbook_added_partial">Added %1$d/%2$d books — last error: %3$s</string>
+    <string name="addbook_cancelled">Cancelled</string>
+    <string name="addbook_finding_plugin">No matching plugin — searching repository…</string>
+    <string name="addbook_added_to_library">Added to library — open the book and press Download chapters to fetch content</string>
+
+    <!-- Chọn chương (N2) -->
+    <string name="chapter_pick_title">Select chapters</string>
+    <string name="chapter_pick_selected">Selected %1$d/%2$d</string>
+    <string name="chapter_pick_all">All</string>
+    <string name="chapter_pick_none">None</string>
+    <string name="chapter_pick_invert">Invert</string>
+    <string name="chapter_pick_range_hint">Range (e.g. 1-100,205)</string>
+    <string name="chapter_pick_select">Select</string>
+    <string name="pick_empty_toc">Could not load the chapter list — close and retry</string>
+    <string name="pick_filter_all">All</string>
+    <string name="pick_filter_undownloaded">Not downloaded</string>
+    <string name="pick_filter_downloaded">Downloaded</string>
+
+    <!-- Khác -->
+    <string name="cd_cover">cover</string>
+    <!-- Probe P5.0: CI bug accessors Res.string (docs/known-issues-compose-resources.md) -->
+    <string name="ci_res_probe_p50">Probe P5.0</string>
+    <string name="search_page_title">Search</string>
+    <string name="search_no_results">No results</string>
+    <string name="search_results_count">%1$d results</string>
+    <string name="cd_back">Back</string>
+    <string name="book_migrate_source">Change source</string>
+    <string name="book_migrate_title">Change book source</string>
+    <string name="book_migrate_hint">Paste the book URL on another source — chapters with matching names keep downloaded content, the rest re-download from the new source.</string>
+    <string name="book_migrate_search_hint">Novel title to search</string>
+    <string name="book_migrate_progress">%1$s sources replied</string>
+    <string name="book_migrate_manual">Paste URL manually</string>
+    <string name="lib_migrating">Changing source…</string>
+    <string name="lib_migrate_done">Source changed — %1$d/%2$d chapters matched, content kept</string>
+    <string name="lib_migrate_failed">Migration failed: %1$s</string>
+    <string name="err_plugin_no_match">No plugin matches URL: %1$s</string>
+    <string name="err_plugin_missing_hint">Source plugin missing — install it from Sources → Extensions</string>
+    <string name="err_chapters_fetch_failed">Could not fetch chapter list: %1$s</string>
+    <string name="err_chapter_empty">Chapter #%1$d not found</string>
+    <string name="err_cover_changed">Cover updated</string>
+    <string name="err_cover_change_failed">Cover change failed: %1$s</string>
+    <string name="err_range_no_pick">No chapters selected</string>
+    <string name="err_range_overflow">Out of chapter range (1-%1$d)</string>
+    <string name="err_range_invalid">Invalid chapter range: %1$s</string>
+    <string name="err_migrate_no_chapters">New source has no chapter list</string>
+    <string name="cd_change_cover">Change cover</string>
+    <string name="notif_downloading_chapter">Downloading chapters</string>
+</resources>

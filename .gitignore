@@ -32,6 +32,9 @@ build/
 # Generated version properties (contains local paths)
 src/main/resources/version.properties
 
+# AppInfo.VERSION sinh bởi :engine:generateAppInfo từ app.version
+engine/src/commonMain/generated/
+
 # IntelliJ IDEA
 .idea/
 *.iws
@@ -140,3 +143,21 @@ workspace/
 downloads/
 temp/
 /.idea/
+
+# Runtime data dir (legacy bug wrote here via relative path; real dir is ~/.leechtext)
+/tools/plugins/
+.kotlin/
+
+# Xcode
+iosApp/iosApp.xcodeproj/xcuserdata/
+iosApp/iosApp.xcodeproj/project.xcworkspace/
+iosApp/DerivedData/
+.dogfood/
+
+# SonarQube scanner working dir
+.scannerwork/
+
+# Internal AI session notes — không public
+plans/
+.claude/agents/
+.claude/commands/

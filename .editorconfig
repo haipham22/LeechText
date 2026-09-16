@@ -1,0 +1,17 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.kt]
+# ktlint 1.x tắt mặc định — bật lại để dọn import không dùng
+ktlint_standard_no-unused-imports = enabled
+# Compose: @Composable fun đặt tên PascalCase theo convention
+ktlint_standard_function-naming = disabled
+# Codebase dùng KDoc đứng tự do làm doc cho nhóm hàm (section header)
+ktlint_standard_kdoc = disabled
+ktlint_standard_if-else-wrapping = disabled
+ktlint_standard_no-consecutive-comments = disabled

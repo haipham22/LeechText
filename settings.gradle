@@ -2,7 +2,14 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
+        google()
     }
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version '2.3.10'
+    }
+}
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.10.0'
 }
 
 // Configure dependency resolution management
@@ -10,7 +17,14 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenCentral()
+        google()
     }
 }
 
-rootProject.name = 'leechtext-java'
+rootProject.name = 'leechtext'
+
+// Kotlin + Compose Multiplatform rewrite (design: docs/designs/kotlin-compose-rewrite-office-hours.md)
+include ':engine'
+include ':app-shared'
+include ':desktop-app'
+include ':android-app'

@@ -1,95 +1,28 @@
-# Release Workflow Guide
+# Release Workflow — LeechText
 
-## How Releases Work
+> Quy trình release hiện tại là **thủ công** — chưa có CI phát hành theo tag. Bản Java cũ (DMG/DEB/checksums tự động) đã xóa, xem tag `java-legacy`.
 
-The CI/CD pipeline creates releases when you push version tags to GitHub.
+## Release thủ công
 
-## Version Management
+1. **Bump version** — sửa `versionCode` / `versionName` trong `android-app/build.gradle.kts` (desktop jar không gắn version vào tên file).
+2. **Build artifacts**:
 
-1. **Update Version in `build.gradle`**
-   ```gradle
-   version = '1.0.0'  // Change this
-   ```
-
-2. **Commit Version Change**
    ```bash
-   git add build.gradle
-   git commit -m "chore: bump version to 1.0.0"
+   ./gradlew :desktop-app:fatJar -x test     # desktop-app/build/libs/leechtext-desktop.jar
+   ./gradlew :android-app:assembleRelease    # android-app/build/outputs/apk/release/
    ```
 
-3. **Push to Main/Dev**
-   ```bash
-   git push origin main  # or dev
-   ```
+3. **Test trước khi ship**: `./gradlew :engine:jvmTest :app-shared:jvmTest` (CI cũng chạy phần engine).
+4. **Tạo GitHub Release thủ công**: tag → upload `leechtext-desktop.jar` + APK. Commit về `main`.
 
-4. **Create Version Tag**
-   ```bash
-   git tag v1.0.0
-   git push origin v1.0.0
-   ```
+## CI hiện có (không phát hành)
 
-## What Happens Next
+- `build-multi-platform.yml` — push main/PR: fat jar + engine tests trên macOS, upload artifact `leechtext-desktop` (chỉ tải từ trang Actions, không publish).
+- `code-quality.yml`, `documentation.yml` — test + validate docs.
 
-When you push `v1.0.0`:
+## Đã biết thiếu (backlog)
 
-1. **Build Job Runs**
-   - Builds JAR for macOS and Linux
-   - Creates native packages (DMG, DEB)
-   - Uploads artifacts
-
-2. **Release Job Runs**
-   - Downloads all artifacts
-   - Creates checksums (SHA256, MD5)
-   - Creates GitHub release
-   - Uploads packages as release assets
-
-## Release Assets
-
-Each release includes:
-- `LeechText.dmg` (macOS)
-- `LeechText.dmg.sha256`
-- `LeechText.dmg.md5`
-- `leechtext_1.0.0_amd64.deb` (Linux)
-- `leechtext_1.0.0_amd64.deb.sha256`
-- `leechtext_1.0.0_amd64.deb.md5`
-
-## Branch Strategy
-
-- **`main`**: Production releases
-- **`dev`**: Development builds
-
-Both branches can create releases when version tags are pushed.
-
-## Example Release Process
-
-```bash
-# 1. Update version
-vim build.gradle  # Change version to '1.0.0'
-
-# 2. Commit and push
-git add build.gradle
-git commit -m "chore: bump version to 1.0.0"
-git push origin main
-
-# 3. Create release tag
-git tag v1.0.0
-git push origin v1.0.0
-
-# 4. Monitor CI
-# GitHub Actions → Build Multi-Platform → Watch progress
-```
-
-## Pre-release Checklist
-
-- [ ] Version updated in `build.gradle`
-- [ ] All tests passing locally (`make build`)
-- [ ] Changelog updated
-- [ ] Documentation updated
-- [ ] No uncommitted changes
-
-## Post-release
-
-- [ ] Verify release assets on GitHub
-- [ ] Test downloaded packages
-- [ ] Update documentation links
-- [ ] Announce release
+- Workflow trigger theo tag `v*`: build + tạo GitHub Release + checksum tự động.
+- Signing key riêng cho Android release (hiện ký debug key).
+- Native packaging desktop (jpackage → DMG/DEB/exe) — giao thác có chủ đích.
+- Cập nhật `docs/project-changelog.md` mỗi release.

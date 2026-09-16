@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mobile-gateway": {
+      "command": "python3",
+      "args": ["tools/mobile_gateway.py", "--stdio"]
+    }
+  }
+}

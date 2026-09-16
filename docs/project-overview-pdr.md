@@ -1,5 +1,7 @@
 # Project Overview - LeechText
 
+> 📌 **PDR bản Java gốc**, giữ làm lịch sử. Kiến trúc hiện tại: Kotlin Compose Multiplatform — modules `engine` / `app-shared` / `desktop-app` / `android-app` (xem README). Bản Java ở tag `java-legacy`.
+
 ## Product Development Requirements (PDR)
 
 ### Project Identity

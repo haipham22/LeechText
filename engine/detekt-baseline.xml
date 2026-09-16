@@ -1,0 +1,214 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ExpressionBodySyntax:Http.kt$Http$return this</ID>
+    <ID>ExpressionBodySyntax:JsApiSetup.kt$JsApiSetup.&lt;no name provided&gt;$return null</ID>
+    <ID>ExpressionBodySyntax:JsApiSetup.kt$JsApiSetup.&lt;no name provided&gt;.&lt;no name provided&gt;$return null</ID>
+    <ID>LongParameterList:BookDownload.kt$( chapter: Chapter, fetch: suspend (Chapter) -&gt; String?, savePath: String, delayMs: Int, charset: String?, )</ID>
+    <ID>LongParameterList:BookDownload.kt$DownloadSession$( val semaphore: Semaphore, val savePath: String, val delayMs: Int, val charset: String?, val total: Int, val onProgress: (completed: Int, total: Int) -&gt; Unit, )</ID>
+    <ID>LongParameterList:ChapterImages.kt$( text: String, chapterId: String?, rawPath: Path, saveDir: String, )</ID>
+    <ID>LongParameterList:Ebook.kt$Ebook$( private val properties: Properties, private val type: Int, private val tool: String, private val compressLevel: String, private val autoSplit: Boolean, private val includeImg: Boolean, private val settings: AppSettings, private val progressListener: ProgressListener? = null, )</ID>
+    <ID>LongParameterList:Http.kt$Http.Companion$( method: String, url: String, headers: Map&lt;String, String&gt;, body: ByteArray?, bodyContentType: String?, syncCookie: Boolean = true, )</ID>
+    <ID>LongParameterList:Http.kt$Http.Companion$( method: String, url: String, headers: Map&lt;String, String&gt;, body: ByteArray?, bodyContentType: String?, syncCookie: Boolean, )</ID>
+    <ID>LongParameterList:JsApiSetup.kt$JsApiSetup$( ctx: Context, scope: Scriptable, baseUrl: String?, extraScripts: Map&lt;String, String&gt;?, )</ID>
+    <ID>LongParameterList:JsApiSetup.kt$JsApiSetup$( ctx: Context, scope: Scriptable, baseUrl: String?, targetUrl: String?, pluginSource: String?, )</ID>
+    <ID>LongParameterList:JsApiSetup.kt$JsApiSetup$( ctx: Context, scope: Scriptable, baseUrl: String?, targetUrl: String?, pluginSource: String?, pluginConfig: Map&lt;String, String&gt;?, )</ID>
+    <ID>LongParameterList:JsApiSetup.kt$JsApiSetup$( ctx: Context, scope: Scriptable, baseUrl: String?, targetUrl: String?, pluginSource: String?, pluginConfig: Map&lt;String, String&gt;?, extraScripts: Map&lt;String, String&gt;?, )</ID>
+    <ID>LongParameterList:JsApiSetup.kt$JsApiSetup$( cx: Context, scope: Scriptable, fileName: String, content: String, )</ID>
+    <ID>LongParameterList:JsApiSetup.kt$JsApiSetup$( cx: Context, scope: Scriptable, pluginSource: String, fileName: String, )</ID>
+    <ID>LongParameterList:PaginatedResult.kt$PaginatedResult.Companion$( items: List&lt;T&gt;, totalCount: Int, page: Int, pageSize: Int, )</ID>
+    <ID>LongParameterList:PluginManagerTest.kt$PluginManagerTest$( uuid: String, name: String, version: Double, regex: String, priority: Int = 0, source: String? = null, )</ID>
+    <ID>LongParameterList:RhinoContextPool.kt$RhinoContextPool$( private val maxContexts: Int, @Suppress("unused") private val timeoutMs: Int, @Suppress("unused") private val maxMemoryMB: Int, )</ID>
+    <ID>LongParameterList:SettingsRepository.kt$SettingsRepository$( checked: Boolean, value: String, current: String, isDefault: Boolean, )</ID>
+    <ID>LongParameterList:Text.kt$Text$( content: String, chapterId: String, fileExtension: String, combinedContent: StringBuilder, )</ID>
+    <ID>LongParameterList:Text.kt$Text$( private val properties: Properties, type: Int, private val makeToc: Boolean, private val includeCss: Boolean, tach: Int, private val settings: AppSettings, private val progressListener: ProgressListener? = null, )</ID>
+    <ID>LongParameterList:Text.kt$Text$( template: String, value: String?, placeholderTag: String, placeholderKey: String, )</ID>
+    <ID>LongParameterList:ToC.kt$ToC$( id: String, label: String, src: String, playOrder: Int, )</ID>
+    <ID>LongParameterList:ToC.kt$ToC$( id: String, label: String, src: String, playOrder: Int, indent: String, )</ID>
+    <ID>LongParameterList:ZipAppleCodec.kt$ZipAppleCodec$( zsPtr: CPointer&lt;z_stream&gt;, pinIn: Pinned&lt;ByteArray&gt;, inputSize: Int, pinOut: Pinned&lt;ByteArray&gt;, expectedSize: Int, )</ID>
+    <ID>LongParameterList:ZipAppleCodec.kt$ZipAppleCodec.Entry$( val name: String, val method: Int, val crc: Long, val compressedSize: Int, val size: Int, val dosTime: Int, val dosDate: Int, val isDirectory: Boolean, val localOffset: Int = 0, )</ID>
+    <ID>LongParameterList:ZipIo.apple.kt$ZipIo$( zip: Path, dir: Path, rootFolder: String, level: Int, )</ID>
+    <ID>LongParameterList:ZipIo.apple.kt$ZipIo$( zip: Path, file: Path, rootFolder: String, level: Int, )</ID>
+    <ID>LongParameterList:ZipIo.jvm.kt$ZipIo$( zip: Path, dir: Path, rootFolder: String, level: Int, )</ID>
+    <ID>LongParameterList:ZipIo.jvm.kt$ZipIo$( zip: Path, file: Path, rootFolder: String, level: Int, )</ID>
+    <ID>MagicNumber:AppleHttpSmokeTest.kt$AppleHttpSmokeTest$120</ID>
+    <ID>MagicNumber:Browser.kt$Browser$2000</ID>
+    <ID>MagicNumber:Browser.kt$Browser$500</ID>
+    <ID>MagicNumber:Browser.kt$Browser$80</ID>
+    <ID>MagicNumber:Clock.apple.kt$1000</ID>
+    <ID>MagicNumber:Crypto.apple.kt$16</ID>
+    <ID>MagicNumber:Ebook.kt$Ebook$10</ID>
+    <ID>MagicNumber:Ebook.kt$Ebook$100</ID>
+    <ID>MagicNumber:Ebook.kt$Ebook$12</ID>
+    <ID>MagicNumber:Ebook.kt$Ebook$14</ID>
+    <ID>MagicNumber:Ebook.kt$Ebook$1_000L</ID>
+    <ID>MagicNumber:Ebook.kt$Ebook$3</ID>
+    <ID>MagicNumber:Ebook.kt$Ebook$6</ID>
+    <ID>MagicNumber:Ebook.kt$Ebook$75</ID>
+    <ID>MagicNumber:Ebook.kt$Ebook$8</ID>
+    <ID>MagicNumber:Ebook.kt$Ebook$9</ID>
+    <ID>MagicNumber:Exceptions.kt$RepositoryException.Companion$30_000L</ID>
+    <ID>MagicNumber:Exceptions.kt$RepositoryException.Companion$5_000L</ID>
+    <ID>MagicNumber:Exceptions.kt$RepositoryException.Companion$60_000L</ID>
+    <ID>MagicNumber:Html.kt$Html$200</ID>
+    <ID>MagicNumber:Html.kt$Html$399</ID>
+    <ID>MagicNumber:Http.kt$Http$200</ID>
+    <ID>MagicNumber:Http.kt$Http$399</ID>
+    <ID>MagicNumber:Http.kt$Http$500</ID>
+    <ID>MagicNumber:Http.kt$Http.Companion$429</ID>
+    <ID>MagicNumber:Http.kt$Http.Companion$500L</ID>
+    <ID>MagicNumber:Http.kt$Http.Companion$503</ID>
+    <ID>MagicNumber:HttpEngine.apple.kt$1000</ID>
+    <ID>MagicNumber:HttpEngine.apple.kt$120_000</ID>
+    <ID>MagicNumber:HttpEngine.jvm.kt$120_000</ID>
+    <ID>MagicNumber:ImageCodec.android.kt$90</ID>
+    <ID>MagicNumber:JsApiSetup.kt$JsApiSetup$100L</ID>
+    <ID>MagicNumber:JsApiSetup.kt$JsApiSetup$1024</ID>
+    <ID>MagicNumber:JsSandbox.apple.kt$JsSandbox$100L</ID>
+    <ID>MagicNumber:JsSandbox.apple.kt$JsSandbox$1024</ID>
+    <ID>MagicNumber:JsSandbox.jvm.kt$JsSandbox$200</ID>
+    <ID>MagicNumber:JsScriptEngine.kt$JsScriptEngine$200</ID>
+    <ID>MagicNumber:JsValueBridge.jvm.kt$JsValueBridge$16</ID>
+    <ID>MagicNumber:JsValueBridge.jvm.kt$JsValueBridge$32</ID>
+    <ID>MagicNumber:JsValueBridge.jvm.kt$JsValueBridge$4</ID>
+    <ID>MagicNumber:LocalStorage.kt$LocalStorage$4</ID>
+    <ID>MagicNumber:NetworkSecurityValidator.kt$NetworkSecurityValidator$1024</ID>
+    <ID>MagicNumber:PluginManager.kt$PluginManager$5000</ID>
+    <ID>MagicNumber:RegexSecurityValidator.kt$RegexSecurityValidator$10</ID>
+    <ID>MagicNumber:RegexSecurityValidator.kt$RegexSecurityValidator$1000</ID>
+    <ID>MagicNumber:RegexSecurityValidator.kt$RegexSecurityValidator$5</ID>
+    <ID>MagicNumber:RhinoContextPool.kt$RhinoContextPool$1000</ID>
+    <ID>MagicNumber:RhinoContextPool.kt$RhinoContextPool$5</ID>
+    <ID>MagicNumber:Text.kt$3</ID>
+    <ID>MagicNumber:Text.kt$4</ID>
+    <ID>MagicNumber:VBookRepositoryClient.kt$VBookRepositoryClient.CacheEntry.Companion$256L</ID>
+    <ID>MagicNumber:VBookToLeechTextConverter.kt$VBookToLeechTextConverter$10</ID>
+    <ID>MagicNumber:VBookToLeechTextConverter.kt$VBookToLeechTextConverter$10.0</ID>
+    <ID>MagicNumber:VBookToLeechTextConverter.kt$VBookToLeechTextConverter$12</ID>
+    <ID>MagicNumber:VBookToLeechTextConverter.kt$VBookToLeechTextConverter$16</ID>
+    <ID>MagicNumber:VBookToLeechTextConverter.kt$VBookToLeechTextConverter$4</ID>
+    <ID>MagicNumber:VBookToLeechTextConverter.kt$VBookToLeechTextConverter$6</ID>
+    <ID>MagicNumber:VBookToLeechTextConverter.kt$VBookToLeechTextConverter$8</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$0x10L</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$0x81A4</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$0x81ED</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$0xFF</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$0xFFFF</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$0xFFFFFFFFL</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$10</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$12</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$14</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$15</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$16</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$18</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$20</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$22</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$24</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$26</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$28</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$3</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$30</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$32</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$34</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$36</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$38</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$4</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$42</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$46</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$6</ID>
+    <ID>MagicNumber:ZipAppleCodec.kt$ZipAppleCodec$8</ID>
+    <ID>MagicNumber:ZipIo.jvm.kt$ZipIo$9</ID>
+    <ID>MagicNumber:ZipIoAppleTest.kt$ZipIoAppleTest$10</ID>
+    <ID>MagicNumber:ZipIoAppleTest.kt$ZipIoAppleTest$15</ID>
+    <ID>MagicNumber:ZipIoAppleTest.kt$ZipIoAppleTest$7</ID>
+    <ID>MagicNumber:ZipIoAppleTest.kt$ZipIoAppleTest$70</ID>
+    <ID>MagicNumber:ZipIoAppleTest.kt$ZipIoAppleTest$8</ID>
+    <ID>MagicNumber:ZipSecurityValidator.kt$ZipSecurityValidator$1024</ID>
+    <ID>SwallowedException:BookDownload.kt$e: Exception</ID>
+    <ID>SwallowedException:Browser.kt$Browser$e: Exception</ID>
+    <ID>SwallowedException:Engine.jvm.kt$e: ClassNotFoundException</ID>
+    <ID>SwallowedException:Engine.jvm.kt$e: Exception</ID>
+    <ID>SwallowedException:EngineConfig.kt$EngineConfig$e: Exception</ID>
+    <ID>SwallowedException:FileUtils.jvm.kt$e: Exception</ID>
+    <ID>SwallowedException:FileUtils.kt$e: Exception</ID>
+    <ID>SwallowedException:Http.kt$Http$e: Exception</ID>
+    <ID>SwallowedException:ImageCodec.android.kt$e: Exception</ID>
+    <ID>SwallowedException:JSDocument.kt$JSDocument$e: Exception</ID>
+    <ID>SwallowedException:JSElement.kt$JSElement$e: Exception</ID>
+    <ID>SwallowedException:JSElements.kt$JSElements$e: Exception</ID>
+    <ID>SwallowedException:JsSandbox.apple.kt$JsSandbox$e: Exception</ID>
+    <ID>SwallowedException:JsScriptEngine.kt$JsScriptEngine$ex: Exception</ID>
+    <ID>SwallowedException:JsValueBridge.apple.kt$JsValueBridge$e: Exception</ID>
+    <ID>SwallowedException:JsValueBridge.jvm.kt$JsValueBridge$e: Exception</ID>
+    <ID>SwallowedException:Json.kt$Json$e: Exception</ID>
+    <ID>SwallowedException:PluginManager.kt$PluginManager$e: Exception</ID>
+    <ID>SwallowedException:RegexUtils.kt$e: Exception</ID>
+    <ID>SwallowedException:Regexp.kt$Regexp$e: Exception</ID>
+    <ID>SwallowedException:RepositoryManager.kt$RepositoryManager$e: Exception</ID>
+    <ID>SwallowedException:RhinoContextPool.kt$RhinoContextPool$e: Exception</ID>
+    <ID>SwallowedException:RhinoContextPool.kt$RhinoContextPool$e: RuntimeException</ID>
+    <ID>SwallowedException:RhinoContextPool.kt$RhinoContextPool$ex: Exception</ID>
+    <ID>SwallowedException:SettingsRepository.kt$SettingsRepository$e: Exception</ID>
+    <ID>SwallowedException:Text.kt$Text$e: Exception</ID>
+    <ID>SwallowedException:Text.kt$Text$err: IndexOutOfBoundsException</ID>
+    <ID>SwallowedException:UrlUtils.jvm.kt$e: IllegalArgumentException</ID>
+    <ID>SwallowedException:VBookPluginService.kt$VBookPluginService$e: Exception</ID>
+    <ID>SwallowedException:VBookRepositoryClient.kt$VBookRepositoryClient$e: CacheCapacityException</ID>
+    <ID>SwallowedException:VBookToLeechTextConverter.kt$VBookToLeechTextConverter$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:AbstractLoader.kt$AbstractLoader$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:BookDownload.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:BookFetch.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:BrowseLoader.kt$BrowseLoader$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Browser.kt$Browser$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ChapterImages.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Ebook.kt$Ebook$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Engine.jvm.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:EngineConfig.kt$EngineConfig$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:FileUtils.jvm.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:FileUtils.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:History.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Html.kt$Html$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Http.kt$Http$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:HttpEngine.apple.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:HttpEngine.jvm.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ImageCodec.android.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ImageCodec.jvm.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JSDocument.kt$JSDocument$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JSElement.kt$JSElement$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JSElements.kt$JSElements$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JsApiSetup.kt$JsApiSetup$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JsSandbox.apple.kt$JsSandbox$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JsSandbox.jvm.kt$JsSandbox$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JsScriptEngine.kt$JsScriptEngine$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JsScriptEngine.kt$JsScriptEngine$ex: Exception</ID>
+    <ID>TooGenericExceptionCaught:JsValueBridge.apple.kt$JsValueBridge$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JsValueBridge.jvm.kt$JsValueBridge$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Json.kt$Json$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ListLoader.kt$ListLoader$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:LocalStorage.kt$LocalStorage$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:PageLoader.kt$PageLoader$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:PlatformIO.jvm.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:PluginManager.kt$PluginManager$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:PluginPersistence.kt$PluginPersistence$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:PluginUpdate.kt$PluginUpdate$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:PluginZipExtractor.kt$PluginZipExtractor$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:RegexSecurityValidator.kt$RegexSecurityValidator$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:RegexUtils.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Regexp.kt$Regexp$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:RepositoryManager.kt$RepositoryManager$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:RhinoContextPool.kt$RhinoContextPool$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:RhinoContextPool.kt$RhinoContextPool$e: RuntimeException</ID>
+    <ID>TooGenericExceptionCaught:RhinoContextPool.kt$RhinoContextPool$ex: Exception</ID>
+    <ID>TooGenericExceptionCaught:SettingsRepository.kt$SettingsRepository$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Text.kt$Text$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Text.kt$Text$err: IndexOutOfBoundsException</ID>
+    <ID>TooGenericExceptionCaught:VBookPluginService.kt$VBookPluginService$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:VBookRepositoryClient.kt$VBookRepositoryClient$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:VBookRepositoryClient.kt$VBookRepositoryClient$retry: Exception</ID>
+    <ID>TooGenericExceptionCaught:VBookToLeechTextConverter.kt$VBookToLeechTextConverter$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ZipIo.apple.kt$ZipIo$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ZipIo.jvm.kt$ZipIo$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ZipSecurityValidator.kt$ZipSecurityValidator$e: Exception</ID>
+  </CurrentIssues>
+</SmellBaseline>

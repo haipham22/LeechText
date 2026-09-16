@@ -1,0 +1,101 @@
+# Static analysis Kotlin cho KMP/Compose — chạy `./gradlew detekt`.
+# Chỉ khai override; phần còn lại dùng default của detekt (buildUponDefaultConfig).
+# Formatting không nằm ở đây — đó là việc của ktlint/spotless.
+build:
+  maxIssues: 0 # fail khi có issue mới (không nằm trong baseline)
+
+complexity:
+  LongParameterList:
+    active: true
+    # Hàm thường tối đa 4 tham số; constructor (Component) tối đa 3
+    functionThreshold: 4
+    constructorThreshold: 3
+    # Bỏ qua tham số có default + data class (chứa dữ liệu thuần)
+    ignoreDefaultParameters: true
+    ignoreDataClasses: true
+    # Loại trừ tầng UI Compose — slot/callback nhiều param là bình thường
+    ignoreAnnotated:
+      - "androidx.compose.runtime.Composable"
+  LongMethod:
+    threshold: 120 # composable screen dài thoải mái, vẫn chặn hàm khủng
+  TooManyFunctions:
+    active: true
+    # composable private theo từng màn hình không tính — chỉ soi API công khai
+    ignorePrivate: true
+  LargeClass:
+    threshold: 800
+  CyclomaticComplexMethod:
+    threshold: 20
+  NestedBlockDepth:
+    active: true
+    threshold: 4 # default 3 — walker parse HTML/TOC cần lồng hợp lý
+  ComplexCondition:
+    threshold: 5
+
+naming:
+  FunctionNaming:
+    active: true
+    # @Composable PascalCase là convention Compose — chỉ soi hàm thường
+    ignoreAnnotated:
+      - "androidx.compose.runtime.Composable"
+  TopLevelPropertyNaming:
+    active: true
+
+style:
+  MagicNumber:
+    active: true
+    # dp/sp/weight trong composable là ngôn ngữ UI — miễn hàm @Composable
+    ignoreAnnotated:
+      - "androidx.compose.runtime.Composable"
+    ignorePropertyDeclaration: true
+    ignoreLocalVariableDeclaration: true
+  MaxLineLength:
+    maxLineLength: 160 # ktlint function-signature hay gộp expr về 1 dòng 140-155 — để ktlint giữ 140, detekt tha phần flow
+  ReturnCount:
+    active: true
+    excludeGuardClauses: true # early-return guard là idiom UI
+    max: 3 # guard đã exclude; 3 return vẫn đọc thoải mái, chặn từ 4 trở lên
+  LoopWithTooManyJumpStatements:
+    active: true
+    maxJumpCount: 2 # vòng parse plugin đi được 2 continue theo loại token
+  ThrowsCount:
+    active: true
+  # Chặn hàm trung gian vô nghĩa: body chỉ return 1 expression → dùng expression body
+  ExpressionBodySyntax:
+    active: true
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview', 'Composable']
+  UnusedPrivateProperty:
+    ignoreAnnotated: ['Preview']
+
+exceptions:
+  SwallowedException:
+    active: true
+  TooGenericExceptionCaught:
+    active: true
+
+# Compose Multiplatform rules — io.nlopez.compose.rules:detekt
+Compose:
+  CompositionLocalAllowlist:
+    active: true # CompositionLocal phải nằm trong allowlist (app-wide: AppTheme)
+  ComposableAnnotationNaming:
+    active: true
+  ComposableNaming:
+    active: true
+  ModifierMissing:
+    active: true # composable nhận Modifier? UI dùng lại được
+  ModifierWithoutDefault:
+    active: true
+  ModifierReused:
+    active: true
+  MultipartClickable:
+    active: true # clickable chồng nhau → click sót
+  ContentEmitterReturningValues:
+    active: true # composable phát UI thì không return giá trị — tách hàm logic ra
+  MultipleEmitters:
+    active: true # helper composable nên bọc trong 1 layout node duy nhất
+  # ViewModel* không áp dụng — dự án dùng Decompose (ComponentContext + state hoisting)
+  ViewModelForwarding:
+    active: false
+  ViewModelInjection:
+    active: false

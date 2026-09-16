@@ -1,215 +1,137 @@
-name: Build Multi-Platform
+name: Build Desktop
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [main]
+    tags: ['v*']
   pull_request:
-    branches: [ main, dev ]
-  workflow_dispatch:
+  # Auto Release push tag bằng GITHUB_TOKEN → không fire "push tag" event.
+  # workflow_run là ngoại lệ duy nhất được trigger sau workflow khác (cùng repo).
+  workflow_run:
+    workflows: ['Auto Release']
+    types: [completed]
+  workflow_dispatch: # trigger tay khi cần (vd tag tạo trước workflow này)
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Release job cần tạo release — GITHUB_TOKEN mặc định read-only
+permissions:
+  contents: write
+
+# Không dùng artifacts trung gian — quota artifact đầy 1 lần (7.7GB, 260903).
+# Release job tự build lại jar+deb rồi upload THẲNG vào release (không tính quota).
+# Đổi đổi: build 2 lần khi release — runner phút rẻ hơn головache quota.
 jobs:
-  build:
-    strategy:
-      matrix:
-        os:
-          - macos-latest
-          - windows-latest
-          - ubuntu-latest
-        include:
-          - os: macos-latest
-            platform: mac
-            arch: universal
-          - os: windows-latest
-            platform: windows
-            arch: x64
-          - os: ubuntu-latest
-            platform: linux
-            arch: x64
-
-    runs-on: ${{ matrix.os }}
-
+  # Lint + test — gate: fail thì jar/native/release không chạy (owner 260906)
+  test:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
+          distribution: temurin
           java-version: '17'
-          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v6
 
-      - name: Install Make on Windows
-        if: runner.os == 'Windows'
-        uses: msys2/setup-msys2@v2
+      - name: Lint (ktlint + detekt)
+        run: ./gradlew spotlessCheck detekt
+
+      - name: Test engine + app-shared
+        run: ./gradlew :engine:jvmTest :app-shared:jvmTest
+
+  # Fat jar cross-platform — chỉ chạy sau khi test xanh
+  jar:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
-          install: make
-          update: true
-          msystem: MINGW64
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
 
-      - name: Verify tools
-        shell: bash
+      - name: Build fat jar
+        run: ./gradlew :desktop-app:fatJar -x test
+
+      - name: Smoke test — jar khởi động không crash
         run: |
-          echo "Java version:"
-          java -version
-          echo "Make version:"
-          make --version || echo "Make not found"
-          echo "jpackage check:"
-          jpackage --version || echo "jpackage not found"
+          # GUI jar: sống qua 15s mà không exit non-zero = launch được (124 = timeout, ok).
+          # Runner headless → cần Xvfb, không là HeadlessException ngay getDefaultScreenDevice.
+          # -k 5: SIGKILL sau 5s — Compose giữ non-daemon thread, TERM không đủ.
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb > /dev/null
+          # 124 = chết vì TERM đúng hạn; 137 = sống qua TERM, phải SIGKILL (Compose 1.12
+          # giữ thread non-daemon) — cả hai đều là "launch được, sống tới khi bị giết"
+          xvfb-run -a timeout -k 5 15 java -jar desktop-app/build/libs/leechtext-desktop-*.jar || rc=$?
+          test ${rc:-0} -eq 124 -o ${rc:-0} -eq 137
+          ls -lh desktop-app/build/libs/
 
-      - name: Build JAR with Make
-        run: make build
-        shell: bash
-
-      - name: Create native package
-        shell: bash
-        run: |
-          if [ "${{ runner.os }}" == "macOS" ]; then
-            make package-mac
-          elif [ "${{ runner.os }}" == "Windows" ]; then
-            make package-windows
-          else
-            make package-linux
-          fi
-
-      - name: Check package directory
-        shell: bash
-        run: |
-          echo "Package directory contents:"
-          ls -la build/jpackage/ || echo "Directory does not exist"
-
-      - name: Upload native packages
-        uses: actions/upload-artifact@v4
+  # jpackage native installer — mỗi OS build trên runner của nó.
+  # mac/windows off mặc định (owner 260903: cần khi nào bật khi đó) — bỏ comment 2 entry để bật lại.
+  # Không upload artifact — release job build lại (tránh quota).
+  native:
+    needs: jar
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: leechtext-linux-deb
+          # - os: macos-latest
+          #   artifact: leechtext-macos-dmg
+          # - os: windows-latest
+          #   artifact: leechtext-windows-msi
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
-          name: leechtext-native-${{ matrix.platform }}
-          path: build/jpackage/
-          retention-days: 30
-          if-no-files-found: warn
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Build native installer (jpackage) — smoke, không lưu artifact
+        run: ./gradlew :desktop-app:packageReleaseDistributionForCurrentOS
 
   release:
-    needs: build
+    # push tag trực tiếp (github.ref = tag) HOẶC chạy từ Auto Release (workflow_run —
+    # tag v$app.version vừa được tạo trên head sha này)
+    if: >
+      startsWith(github.ref, 'refs/tags/v') ||
+      github.event_name == 'workflow_run'
+    needs: [jar, native]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-
-      - name: Get version from gradle.properties
-        id: version
-        run: |
-          VERSION=$(grep "^app.version" gradle.properties | cut -d'=' -f2 | tr -d ' ')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Check if tag exists
-        id: check_tag
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          if git rev-parse "refs/tags/v$VERSION" >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "Tag v$VERSION already exists, skipping release creation"
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "Tag v$VERSION does not exist, will create release"
-          fi
-
-      - name: Create and push tag
-        if: steps.check_tag.outputs.exists == 'false'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v$VERSION" -m "Release $VERSION"
-          git push origin "v$VERSION"
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v8
+      - uses: actions/setup-java@v6
         with:
-          path: artifacts
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
 
-      - name: Create checksums
+      # workflow_run: ref là main — đọc tag v$app.version vừa tạo để release đúng chỗ
+      - name: Resolve tag
+        if: github.event_name == 'workflow_run'
+        id: tag
+        run: echo "name=v$(grep '^app.version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Build jar + deb (upload thẳng release, không qua artifact)
         run: |
-          cd artifacts
-          for dir in */; do
-            cd "$dir"
-            for file in *.*; do
-              if [ -f "$file" ]; then
-                sha256sum "$file" > "$file.sha256"
-                md5sum "$file" > "$file.md5"
-              fi
-            done
-            cd ..
-          done
+          ./gradlew :desktop-app:fatJar -x test
+          ./gradlew :desktop-app:packageReleaseDistributionForCurrentOS
+          ls -lh desktop-app/build/libs/ desktop-app/build/compose/binaries/main-release/deb/
 
-      - name: Generate release notes
-        if: steps.check_tag.outputs.exists == 'false'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-
-          # Categorize commits since last tag
-          FEATURES=$(git log ${PREV_TAG}..HEAD --pretty=format:"%s" | grep -iE "^feat" | head -10)
-          FIXES=$(git log ${PREV_TAG}..HEAD --pretty=format:"%s" | grep -iE "^fix" | head -10)
-          OTHER=$(git log ${PREV_TAG}..HEAD --pretty=format:"%s" | grep -vEi "^(feat|fix|chore|docs|test|refactor|build|ci)" | head -5)
-
-          {
-            echo "## 🚀 LeechText $VERSION"
-            echo ""
-            if [ -n "$FEATURES" ]; then
-              echo "### ✨ Features"
-              echo "$FEATURES" | sed 's/^/- /'
-              echo ""
-            fi
-            if [ -n "$FIXES" ]; then
-              echo "### 🐛 Bug Fixes"
-              echo "$FIXES" | sed 's/^/- /'
-              echo ""
-            fi
-            if [ -n "$OTHER" ]; then
-              echo "### 🔧 Other Changes"
-              echo "$OTHER" | sed 's/^/- /'
-              echo ""
-            fi
-            if [ -z "$FEATURES" ] && [ -z "$FIXES" ] && [ -z "$OTHER" ]; then
-              echo "### 📝 Changes"
-              git log ${PREV_TAG}..HEAD --pretty=format:"- %s (%h)" | head -20
-              echo ""
-            fi
-            echo "---"
-            echo ""
-            echo "### 📦 Installation"
-            echo ""
-            echo "**macOS (Universal):**"
-            echo "- Download \`LeechText.dmg\`"
-            echo "- Open and drag to Applications folder"
-            echo ""
-            echo "**Linux (Debian/Ubuntu):**"
-            echo "- Download \`leechtext_${VERSION}_amd64.deb\`"
-            echo "- Install: \`sudo apt install ./leechtext_${VERSION}_amd64.deb\`"
-            echo ""
-            echo "**Windows (x64):**"
-            echo "- Download \`LeechText-setup.exe\`"
-            echo "- Run installer and follow prompts"
-          } > release_notes.md
-
-      - name: Create GitHub Release
-        if: steps.check_tag.outputs.exists == 'false'
-        uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v3
         with:
-          tag_name: "v${{ steps.version.outputs.version }}"
-          name: "LeechText ${{ steps.version.outputs.version }}"
-          body_path: release_notes.md
-          draft: false
-          prerelease: false
-          files: artifacts/**/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload dev build artifacts
-        if: steps.check_tag.outputs.exists == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: leechtext-dev-${{ steps.version.outputs.version }}-${{ github.run_number }}
-          path: artifacts/**/*
-          retention-days: 7
+          tag_name: ${{ github.event_name == 'workflow_run' && steps.tag.outputs.name || github.ref_name }}
+          # Notes tự sinh kiểu open-source: full commit list từ tag trước + link So sánh
+          generate_release_notes: true
+          files: |
+            desktop-app/build/libs/leechtext-desktop-*.jar
+            desktop-app/build/compose/binaries/main-release/deb/*.deb
+            desktop-app/build/compose/binaries/main-release/dmg/*.dmg
+            desktop-app/build/compose/binaries/main-release/msi/*.msi

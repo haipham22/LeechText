@@ -1,0 +1,32 @@
+name: Auto Release
+
+# Đổi app.version trong gradle.properties + push main → tự tag v$VERSION
+# → trigger build-multi-platform.yml (on push tags v*) → release kèm artifacts.
+# Chỉ maintainer tag tay khi muốn release ngoài quy trình version bump.
+
+on:
+  push:
+    branches: [main]
+    paths: ['gradle.properties']
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Read app.version + create tag nếu chưa có
+        run: |
+          VERSION="v$(grep '^app.version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')"
+          if git rev-parse "refs/tags/$VERSION" >/dev/null 2>&1 \
+             || git ls-remote --tags origin "$VERSION" | grep -q "$VERSION"; then
+            echo "Tag $VERSION đã tồn tại — bỏ qua"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$VERSION"
+          git push origin "$VERSION"

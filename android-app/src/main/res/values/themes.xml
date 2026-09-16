@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Splash Teal Archivist: nền Paper Canvas, icon sách teal, exit mượt vào app theme -->
+    <style name="Theme.LeechText.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_bg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="windowSplashScreenAnimationDuration">400</item>
+        <item name="postSplashScreenTheme">@android:style/Theme.Material.Light.NoActionBar</item>
+    </style>
+
+    <color name="splash_bg">#F7FAF8</color>
+    <color name="splash_teal">#006A63</color>
+</resources>

@@ -1,5 +1,7 @@
 # Native App Working Directory Fix
 
+> 📌 **Ghi chép thời Java** (pre-rewrite). Đã được thay bằng `EnginePaths` trong `:engine` — data dir hiện tại là `~/.leechtext/` (desktop) hoặc files dir (Android). Bản Java ở tag `java-legacy`.
+
 ## Problem
 
 The `ensureWorkingDirectory()` function in `VBookPluginService` failed when running in native applications (jpackage bundles) because it used relative paths that resolved to unwritable locations.

@@ -1,761 +1,187 @@
-# System Architecture - LeechText
+# System Architecture — LeechText
 
-## Architectural Overview
+Kiến trúc hiện tại: **Kotlin + Compose Multiplatform** (desktop + Android). Bản Java Swing cũ ở tag `java-legacy`.
 
-LeechText follows a **layered architecture** with clear separation of concerns, designed around a plugin-based extensibility model.
+## Tổng quan
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         Presentation Layer                     │
-│              (Swing UI with Material Design Components)        │
-├─────────────────────────────────────────────────────────────────┤
-│  MainUI  │  DownloadUI  │  SettingUI  │  PluginUI            │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                          Action Layer                          │
-│              (Business Logic & Orchestration)                  │
-├─────────────────────────────────────────────────────────────────┤
-│  Download  │  Export  │  Config  │  History  │  Log           │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                       Content Retrieval Layer                  │
-│              (HTTP, Parsing, Dual Plugin Execution)           │
-├─────────────────────────────────────────────────────────────────┤
-│  PageGetter  │  ChapExecute  │  ListExecute  │  PluginManager  │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                          Data Layer                            │
-│                  (Models, Entities, Settings)                  │
-├─────────────────────────────────────────────────────────────────┤
-│  Chapter  │  Pager  │  Properties  │  Settings  │  Repository │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                        Utility Layer                           │
-│              (File I/O, HTTP, Text Processing, etc.)           │
-├─────────────────────────────────────────────────────────────────┤
-│  FileUtils  │  Http  │  TextUtils  │  ZipUtils  │  Graphics  │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-## Core Components
-
-### 1. Presentation Layer
-
-**Responsibility**: User interaction and display
-
-#### Main UI Components
-- **MainUI**: Primary application window hosting all panels
-- **DownloadUI**: Download queue and progress tracking
-- **SettingUI**: Application configuration interface
-- **InfoUI**: Book/chapter information display
-- **RepositoryUI**: Plugin repository management
-- **LoginUI**: Authentication dialogs
-
-#### Material Design Components
-Custom UI library providing:
-- `JMPanel`, `JMTextField`, `JMDialog`, `JMTable`
-- `JMProgressBar`, `JMCheckBox`
-- `SelectBox`, `JMPopupMenu`, `JMMenuItem`
-- `DropShadowBorder` for depth effects
-
-#### Animation System
-- **Animation**: Base animation controller
-- **RippleEffect**: Material ripple feedback
-- **Timing Framework**: Keyframe-based animations
-
-### 2. Action Layer
-
-**Responsibility**: Business logic orchestration
-
-#### Download Manager
-```java
-Download implements ChangeListener
-├── States: DOWNLOADING, PAUSE, COMPLETED, CHECKING, CANCEL, ERROR
-├── Actions: start(), pause(), resume(), cancel()
-└── Notifies: DownloadListener callbacks
-```
-
-#### Export Handlers
-- **Ebook.java**: EPUB generation with proper structure
-- **Text.java**: Plain text export with formatting
-- **ToC.java**: Table of Contents generation
-
-#### Configuration Management
-- **Config.java**: Application-wide settings
-- **History.java**: Download history persistence
-- **Log.java**: Application logging
-
-### 3. Content Retrieval Layer
-
-**Responsibility**: HTTP communication and content extraction
-
-#### Plugin System Architecture
+5 module Gradle (`settings.gradle`), tách rõ business logic khỏi UI:
 
 ```
-PluginManager (Singleton)
-├── Plugin Discovery: Scan tools/plugins directory
-├── Plugin Loading: Parse .plugin JSON files
-├── Plugin Matching: Regex URL matching
-└── Plugin Execution: Lua script execution
-
-PluginEntity
-├── name: Plugin name
-├── regex: URL pattern
-├── chap: Chapter extraction script (Lua)
-├── toc: Table of contents script (Lua)
-└── detail: Detail page script (Lua)
+┌──────────────────────────────────────────────────────────────┐
+│  desktop-app            │  android-app                       │
+│  (Compose Desktop,      │  (MainActivity, foreground service)│
+│   Main.kt 1280x800)     │                                    │
+├──────────────────────────────────────────────────────────────┤
+│  app-shared — UI Compose dùng chung                          │
+│  commonMain (screens, components, theme)                     │
+│  jvmMain (ViewModels/state desktop) │ androidMain (glue)     │
+├──────────────────────────────────────────────────────────────┤
+│  engine — business logic thuần, không Compose                │
+│  plugin system (Rhino sandbox) │ download │ export │ settings│
+├──────────────────────────────────────────────────────────────┤
+│  baselineprofile (Android startup profile)                   │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-#### Content Execution
-- **PageExecute**: Page content execution
-- **ChapExecute**: Chapter content extraction
-- **ListExecute**: Chapter list extraction
-- **InfoExecute**: Metadata/info retrieval
-- **InfoExecute**: Book information extraction
+Package gốc: `dev.haipham22.leechtext`. Kotlin 2.1.21, Compose Multiplatform 1.8.1, Gradle 8.14.5, JDK 17.
 
-#### HTTP Layer
-- **PageGetter**: Base HTTP client
-- **LoginGetter**: Authenticated requests
-- **HttpClient5**: Underlying HTTP library
+Data dir (`util/EnginePaths.kt`): desktop `~/.leechtext/`, Android files dir của app — chứa `output/` (sách), `tools/plugins/` (plugin), `tools/setting.json`, `tools/repository.json`.
 
-### 4. JavaScript Integration (vBook Compatibility)
+## 1. UI Layer (`app-shared`)
 
-**Purpose**: Extensible content extraction via JavaScript with vBook plugin compatibility
+**Screens** (`app-shared/src/jvmMain/.../ui/`): `SliceApp` (khung chính + rail/bottom bar), `LibraryScreen`, `AddBookScreen`, `BookDetailScreen`, `SourceBrowseScreen`, `HistoryScreen`, `SettingsScreen` (+ `SettingsRows/Sections/Extras`), `PluginScreen`, `ChapterReader`, `ExportBookDialog`.
 
-#### JavaScript Engine Architecture
+**Components dùng chung** (`commonMain/.../ui/components/`): `AppRail`, `AppBottomBar`, `BookCoverTile`, `DownloadQueuePanel`, `Theme`.
 
-```
-JsScriptEngine (Rhino)
-├── Core Rhino integration
-├── Script execution context
-├── Direct method exposure (no ProxyObject needed)
-└── Value conversion system
+**State**: `BookPipeline` (orchestrate add/fetch/download), `DownloadQueueState` (queue đa sách: enqueue/cancel/retry/clearFinished/pump, phát StateFlow cho UI), `Strings` (i18n vi/en), `CoverImage`.
 
-JavaScript API (Available to Scripts)
-├── Html: HTML parsing and selection (vBook-compatible)
-├── Http: HTTP requests with method chaining
-├── Json: JSON parsing and serialization
-├── JSList: Array-like operations for vBook compatibility
-├── Core: UUID, timestamp utilities
-├── Regexp: Regular expression operations
-├── Text: Text manipulation utilities
-└── Response: success() / error() wrapper for vBook compatibility
-```
+**Android cụ thể** (`androidMain`): `DownloadService` — foreground service + notification tiến trình download (sống qua doze).
 
-#### JavaScript Loaders
-- **DetailLoader**: Load detail page information with vBook API setup
-- **ListLoader**: Load table of contents
-- **TextLoader**: Load chapter text content
-- **GenLoader**: Load paginated lists (novels, search results) with cursor/token pagination
+## 2. Business Layer (`engine`)
 
-#### Context Management
+### Download — `get/`
 
-```
-Execution Context Flow
-┌─────────────────────────────┐
-│  Plugin Execution Context   │
-├─────────────────────────────┤
-│  - Rhino Context            │
-│  - API Bindings (Html, Http)│
-│  - vBook API Compatibility │
-│  - Value Conversion        │
-└─────────────────────────────┘
-```
+- **BookDownload**: hàm suspend, tải song song chương bằng coroutines + `Semaphore` theo `AppSettings.maxConn` (map từ `Settings.num_conn` legacy). Resume: chương đã có file → skip, chỉ tải thiếu; trạng thái resume ghi ở `raw/<id>.txt`. Kết quả: `DownloadSummary(total, resumed, ok, empty, error)`.
+- **BookFetch**: fetch metadata + TOC; `mergeFetchedChapters` khớp URL giữ id cũ (truyện đang ra → chỉ tải chương mới).
+- **ChapterImages** (tải ảnh chương ảnh), **ChapterName**, **ResolvePluginSetting**.
 
-#### Direct Method Exposure
+### Export — `action/export/`
 
-Rhino automatically exposes public Java methods to JavaScript without requiring ProxyObject wrappers. Method chaining works naturally:
+`Ebook.kt` (EPUB: cover, TOC, ảnh, nén tùy chọn, chia quyển — qua Calibre/KindleGen nếu có hoặc engine tự chế), `Text.kt` (TXT), `ToC.kt` (mục lục NCX/OPF), `ProgressListener`.
+
+### Lõi khác
+
+`EngineConfig` (settings cached), `EngineLog` (log), `EngineDispatchers` (coroutine dispatchers, `MAX_PARALLELISM = 5`, sized theo Rhino context pool), `action/History.kt` (lịch sử download), `util/SettingsRepository`.
+
+## 3. Plugin System
+
+### PluginManager (`plugin/PluginManager.kt`, Kotlin `object`)
+
+- Discovery: scan `<dataDir>/tools/plugins/` cho file `*.plugin` (JSON)
+- Match: `get(url)` — so khớp `regex` của plugin với URL
+- Auto-install: `VBookPluginService.findAndInstallByUrl(url)` (gọi từ `BookPipeline`) — dò plugin khớp trong repository vBook và cài
+
+### PluginEntity (`entities/PluginEntity.kt`)
+
+Manifest JSON (gson `@SerializedName`): `uuid, name, version, url, regex, chap, toc, page, gen, search, home, genre, tab, detail, extra_scripts, config, config_spec, priority, tag, language, icon, source, author, describe, group, data` — các field script (`chap` → `chapGetter`, `toc` → `tocGetter`, `detail` → `detailGetter`, `gen` → `genGetter`...) là **JavaScript**, chạy trên Rhino. Không còn Lua.
+
+Entities khác: `BookEntity`, `ChapterEntity`, `RepositoryEntity`.
+
+### vBook repository (`plugin/vbook/`)
+
+`VBookPluginService` (kho plugin theo ngôn ngữ, có cache), `VBookRepositoryClient`, `VBookToLeechTextConverter` (convert plugin vBook → PluginEntity), `PluginZipExtractor`. Hỗ trợ thêm/xóa repo qua `plugin/RepositoryManager.kt` (persist `tools/repository.json`).
+
+## 4. JS Engine & Sandbox
+
+### JsScriptEngine (`plugin/js/api/JsScriptEngine.kt`, Rhino 1.7.15)
+
+- Rhino context pool: `RhinoContextPool` / `RhinoPooledContext` (tái sử dụng context, giới hạn song song)
+- Expose method trực tiếp (không ProxyObject), method chaining kiểu vBook
+- Value conversion hai chiều Java ↔ JS
+
+### Sandbox (`plugin/js/sandbox/JsSandbox.kt`)
+
+Mọi script plugin **bắt buộc** chạy qua JsSandbox: whitelist class/API prefix, chặn truy cập filesystem tùy ý.
+
+### Validators (`plugin/security/`)
+
+- **NetworkSecurityValidator**: HTTPS + localhost + `file://`, giới hạn 50MB, content-type allowlist
+- **RegexSecurityValidator**: chống ReDoS (kiểm tra regex của plugin)
+- **ZipSecurityValidator**: scan archive (zip-slip, nội dung độc)
+- **SecurityConstants**: cấu hình whitelist
+
+### JS API cho plugin (`plugin/js/api/`)
+
+`Html` (parse/select, `JSDocument`/`JSElement`/`JSElements`, chaining kiểu jQuery), `Http` (GET/POST/... trên okhttp, response `html()/json()/string()/bytes()`), `Json`, `JSList`, `Regexp`, `Text`, `Response`, `Browser` + `Engine` (newBrowser — Playwright headless Chromium, desktop-only), `LocalStorage`, `UserAgent`, `Console` (`console.log()`, loader).
 
 ```javascript
-// Method chaining pattern (JavaScript-style)
-var doc = html.parse(htmlString);
+// pattern plugin vBook
+var doc = Html.parse(htmlString);
 var title = doc.select('h1.title').text();
+return Response.success(data);        // {code: 0, data}
+return Response.success(data, data2); // + data2 (pagination token)
 ```
 
-#### Value Conversion System
+Response cũ dạng `{data, data2}` không có `code` vẫn được hỗ trợ (backward compat). Utility Kotlin: `Response.isSuccess/getData/getData2/getErrorMessage` (`plugin/js/loader/Response.kt`).
 
-- **Java to JavaScript**: Automatic conversion of primitive types, objects, and arrays
-- **JavaScript to Java**: Conversion of objects, arrays, and primitives across language boundaries
-- **Null handling**: Proper null value handling and error propagation
-- **Type safety**: Type checking and conversion between Java and JavaScript types
+### Loaders (`plugin/js/loader/`)
 
-#### Plugin Loading Flow
+`AbstractLoader<T>` với `load(url)`; `LoaderType` = LIST / DETAIL / TEXT / PAGE:
 
-```
-Plugin Loading Process
-┌─────────────────────────────┐
-│  Plugin Discovery           │
-├─────────────────────────────┤
-│  - Scan tools/plugins       │
-│  - Parse .plugin JSON files │
-│  - Match URL patterns      │
-└─────────────────────────────┘
-          ↓
-┌─────────────────────────────┐
-│  Context Initialization     │
-├─────────────────────────────┤
-│  - Create Rhino Context    │
-│  - Setup vBook API         │
-│  - Bind API objects        │
-└─────────────────────────────┘
-          ↓
-┌─────────────────────────────┐
-│  Script Execution          │
-├─────────────────────────────┤
-│  - Parse JavaScript code   │
-│  - Execute with context    │
-│  - Handle API calls        │
-└─────────────────────────────┘
-          ↓
-┌─────────────────────────────┐
-│  Result Processing         │
-├─────────────────────────────┤
-│  - Convert to Java objects │
-│  - Populate models        │
-│  - Return to application  │
-└─────────────────────────────┘
-```
+- **DetailLoader** → `BookEntity` (metadata)
+- **ListLoader** → danh sách chương (TOC)
+- **TextLoader** → nội dung chương (String)
+- **PageLoader** → dò tất cả page URL (phân trang TOC)
+- **BrowseLoader** → catalog nguồn (home/genre/search/tab, script `home`/`genre`/`gen`/`search`)
 
-#### vBook API Compatibility
+### Phân trang (`plugin/api/PaginatedResult.kt`)
 
-The JavaScript API is designed to be compatible with existing vBook plugins:
+Plugin trả `Response.success(items, nextPage)` → Kotlin nhận `PaginatedResult<T>`: `items, totalCount, page, pageSize, totalPages, hasMore`, factory `PaginatedResult.of(...)` / `empty()`, `getNextPage(): Int` (page+1 hoặc -1), `getPreviousPage()`. Không có builder.
 
-- **API Mapping**: Methods map directly to vBook equivalents
-- **Method Chaining**: Supports vBook's method chaining pattern
-- **Error Handling**: Returns null on errors instead of throwing exceptions
-- **Context Management**: Explicit context requirement for proper Value creation
+## 5. Data Layer (`models/` + persistence)
 
-#### Performance Considerations
+Data class Kotlin (gson):
 
-- **Connection Pooling**: Reuse HTTP connections for multiple requests
-- **Memory Management**: Proper resource cleanup and context management
-- **Script Execution**: Optimized Rhino execution with context pooling
-- **Value Conversion**: Efficient type conversion between Java and JavaScript
+- **Chapter**: `url, partName, chapName, id, completed, error, empty, imageChapter, purchase`
+- **Properties**: `chapList, pageList, url, charset, forum` + `name, author, cover, savePath, size, introduce, ongoing, urlList, addGt`
+- **Pager**, **Post**, **Settings** (preferences legacy, `num_conn`, trash rules), **Repository**, **Trash**; runtime settings qua `util/SettingsRepository` → `AppSettings` (gồm `maxConn`)
 
-#### Security Features
+Persist: `properties.json` mỗi sách trong `output/`, `setting.json` + `repository.json` trong `tools/` — format tương thích bản Java cũ (FormatCompatTest).
 
-- **Sandboxed Execution**: Limited access to system resources
-- **Input Validation**: URL and content validation before processing
-- **Error Isolation**: Isolated error handling for each plugin execution
-- **Resource Limits**: Configurable execution time and memory limits
+## 6. Utility Layer (`util/`)
 
-#### Extension Points
-
-- **New JavaScript APIs**: Add custom API classes (public methods auto-exposed to JavaScript)
-- **Plugin Development**: Create new plugins with JavaScript extraction scripts
-- **API Enhancement**: Extend existing APIs with additional functionality
-- **Integration**: Connect JavaScript plugins with existing Lua-based plugins
-
-#### Migration Path
-
-For developers migrating from vBook:
-
-1. **Update API Calls**: Replace vBook API calls with LeechText equivalents
-2. **Context Handling**: Add context parameters to API constructors
-3. **Method Chaining**: Adapt to LeechText's method chaining pattern
-4. **Error Handling**: Implement proper error handling for null returns
-5. **Testing**: Update tests for new API behavior
-
-#### JavaScript API Classes
-
-##### Html API
-- HTML parsing, selection, and manipulation
-- XPath support via JAXP with W3C DOM conversion
-- Method chaining for jQuery-like syntax
-- Element manipulation and cleaning
-
-##### Http API
-- HTTP request capabilities with method chaining
-- Support for GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS
-- Form encoding and query parameter handling
-- Response parsing (HTML, JSON, text, bytes)
-
-##### Json API
-- JSON parsing and serialization
-- Path-based value extraction
-- Type conversion between JavaScript and Java
-- Pretty printing and validation
-
-##### JSList API
-- Array-like functionality for plugin development
-- Native JavaScript array operations
-- Map and forEach methods for transformation
-- Conversion to/from Java lists
-
-##### Consumer Interface
-- Functional interface for callback operations
-- Integration with map and forEach methods
-- JavaScript-style function handling
-
-#### JavaScript Plugin Development Standards
-
-```javascript
-// Recommended plugin structure
-function extractData(html, context) {
-    // Initialize APIs with context
-    const htmlApi = new Html(context);
-    const httpApi = new Http(context);
-
-    try {
-        // Parse HTML
-        const doc = htmlApi.parse(html);
-
-        // Extract data using method chaining
-        const title = doc.select('h1.title').text();
-        const chapters = doc.select('.chapter-list').map(function(chapter) {
-            return {
-                title: chapter.select('h3').text(),
-                url: chapter.select('a').attr('href')
-            };
-        });
-
-        return { title, chapters };
-
-    } catch (e) {
-        Log.add('Extraction failed: ' + e.message);
-        return null;
-    }
-}
-```
-
-#### Testing JavaScript Plugins
-
-```javascript
-// Unit test for JavaScript plugin
-function testPlugin() {
-    const context = getContext(); // Get execution context
-    const htmlApi = new Html(context);
-
-    // Test HTML parsing
-    const testHtml = '<html><body><h1>Test</h1><p>Hello</p></body></html>';
-    const doc = htmlApi.parse(testHtml);
-    assertEquals('Test', doc.select('h1').text());
-
-    // Test HTTP requests (mocked)
-    const mockResponse = http.get('https://test.com').string();
-    assertEquals('Mock response', mockResponse);
-}
-```
-
-#### JavaScript Plugin Examples
-
-- **Chapter List Extraction**: Extract chapter lists from novel websites
-- **Content Extraction**: Extract chapter content with image processing
-- **API Authentication**: Handle login and session management
-- **Form Submission**: Submit forms and handle responses
-- **JSON Processing**: Extract and process API data
-
-#### JavaScript Plugin Deployment
-
-1. Create JavaScript plugin file with `.js` extension
-2. Place in `tools/plugins/` directory
-3. Define plugin configuration in `.plugin` JSON file
-4. Test with LeechText's plugin browser
-5. Deploy to production environment
-
-#### JavaScript Plugin Configuration
-
-```json
-{
-  "name": "Example JavaScript Plugin",
-  "version": "1.0",
-  "regex": "example\\.com",
-  "chap": "chapter extraction script",
-  "toc": "table of contents script",
-  "detail": "detail page script",
-  "javascript": true
-}
-```
-
-#### JavaScript Plugin Execution
-
-```
-Plugin Execution Flow
-┌─────────────────────────────┐
-│  Plugin Discovery           │
-├─────────────────────────────┤
-│  - Scan tools/plugins       │
-│  - Match URL patterns      │
-│  - Load JavaScript files   │
-└─────────────────────────────┘
-          ↓
-┌─────────────────────────────┐
-│  Context Setup             │
-├─────────────────────────────┤
-│  - Create Rhino Context    │
-│  - Bind vBook APIs        │
-│  - Initialize plugin       │
-└─────────────────────────────┘
-          ↓
-┌─────────────────────────────┐
-│  Script Execution          │
-├─────────────────────────────┤
-│  - Parse JavaScript code   │
-│  - Execute with context    │
-│  - Call API methods       │
-└─────────────────────────────┘
-          ↓
-┌─────────────────────────────┐
-│  Result Processing         │
-├─────────────────────────────┤
-│  - Convert to Java objects │
-│  - Populate models        │
-│  - Return to application  │
-└─────────────────────────────┘
-```
-
-#### JavaScript Plugin Benefits
-
-- **vBook Compatibility**: Seamless migration from existing vBook plugins
-- **Modern JavaScript**: Leverage modern JavaScript features and patterns
-- **Performance**: Optimized execution with Rhino context pooling
-- **Extensibility**: Easy to extend and customize
-- **Maintainability**: Clear separation of concerns and proper error handling
-- **Pagination Support**: Built-in cursor/token pagination for infinite scrolling content
-
-## Pagination Feature (NEW)
-
-### Overview
-
-LeechText now supports pagination for JavaScript plugins using the `gen` loader type. This enables extraction of paginated content like novel chapters, search results, and multi-page lists.
-
-### Key Components
-
-#### GenLoader
-- **Purpose**: Handles paginated content extraction
-- **Usage**: `Response.success(data, next)` pattern for returning both items and next page token
-- **Type**: `LoaderType.GEN`
-- **Script**: Uses `genGetter` script from PluginEntity
-
-#### PaginationResult
-- **Generic Model**: `PaginationResult<T>` holds items list and next page metadata
-- **Builder Pattern**: Easy construction with `PaginationResult.builder()`
-- **Empty Result**: `PaginationResult.empty()` for no content
-- **Pagination Metadata**: `hasNext()` and `getNextPage()` methods
-
-#### Response Overloads
-- **Single Argument**: `Response.success(data)` - returns items only
-- **Two Arguments**: `Response.success(data, next)` - returns items with pagination token
-
-### Pagination Flow
-
-```
-JavaScript Plugin Execution (GenLoader)
-┌─────────────────────────────────┐
-│  Execute Pagination Script      │
-├─────────────────────────────────┤
-│  - Call Response.success(data)  │
-│  - Or Response.success(data, next)│
-└─────────────────────────────────┘
-          ↓
-┌─────────────────────────────────┐
-│  GenLoader Processes Result     │
-├─────────────────────────────────┤
-│  - Convert to PaginationResult  │
-│  - Extract items and next page  │
-└─────────────────────────────────┘
-          ↓
-┌─────────────────────────────────┐
-│  Application Uses Result       │
-├─────────────────────────────────┤
-│  - Iterate through pages       │
-│  - Load next page when hasNext()│
-│  - Process items list         │
-└─────────────────────────────────┘
-```
-
-### JavaScript Plugin Implementation
-
-```javascript
-// Example pagination plugin
-function execute(url, page) {
-    // Make HTTP request for current page
-    const response = http.get(url + (page ? '?page=' + page : ''));
-    const html = response.string();
-
-    // Parse HTML and extract items
-    const items = html.parse(html)
-        .select('.chapter-list li')
-        .map(function(chapter) {
-            return {
-                title: chapter.select('a').text(),
-                url: chapter.select('a').attr('href')
-            };
-        });
-
-    // Get next page link or token
-    const nextPage = html.parse(html)
-        .select('.pagination .next')
-        .attr('href');
-
-    // Return both items and next page
-    return Response.success(items, nextPage);
-}
-```
-
-### Plugin Configuration
-
-```json
-{
-  "name": "Example Pagination Plugin",
-  "version": "1.0",
-  "regex": "example\\.com",
-  "gen": "pagination script",
-  "javascript": true
-}
-```
-
-### Usage Patterns
-
-#### Basic Pagination
-```javascript
-// Single page load
-const result = loader.load(url, null);
-const items = result.getItems();
-const hasNext = result.hasNext();
-
-// Load next page
-if (hasNext) {
-    const nextPage = result.getNextPage();
-    const nextResult = loader.load(url, nextPage);
-    // Process nextResult.getItems()
-}
-```
-
-#### Batch Processing
-```javascript
-// Collect all pages
-let allItems = [];
-let currentPage = null;
-let result = loader.load(url, currentPage);
-
-while (result.hasNext()) {
-    allItems.addAll(result.getItems());
-    currentPage = result.getNextPage();
-    result = loader.load(url, currentPage);
-}
-
-allItems.addAll(result.getItems()); // Add final page
-```
-
-### Benefits
-
-- **Seamless Integration**: Works with existing vBook plugin patterns
-- **Type Safety**: Generic `PaginationResult<T>` for type-safe item processing
-- **Error Handling**: Graceful handling of empty results and errors
-- **Performance**: Efficient pagination with minimal overhead
-- **Flexibility**: Supports various pagination schemes (URL-based, token-based, cursor-based)
-
-### 5. Data Layer
-
-**Purpose**: Data structures and persistence
-
-#### Core Models
-```java
-Chapter {
-    String url;
-    String partName;
-    String chapName;
-    String id;
-    boolean completed;
-    boolean error;
-    boolean empty;
-    boolean imageChapter;
-    boolean purchase;
-}
-
-Pager {
-    // Pagination information
-}
-
-Properties {
-    List<Chapter> chapList;
-    List<Pager> pageList;
-    String url;
-    String charset;
-    boolean isForum;
-    // Download configuration
-}
-```
-
-#### Settings & Configuration
-- **Settings**: Application preferences
-- **Repository**: Plugin repository configuration
-- **Trash**: Deleted items management
-
-### 6. Utility Layer
-
-**Purpose**: Cross-cutting utilities
-
-#### File Operations
-- **FileUtils**: File I/O operations with WebP conversion support
-- **ZipUtils**: ZIP/EPUB creation
-- **AppUtils**: Application-level utilities
-
-#### Text Processing
-- **TextUtils**: Text manipulation
-- **StringUtils**: String utilities
-- **SyntaxUtils**: Syntax highlighting
-
-#### Graphics & UI
-- **GraphicsUtils**: Graphics operations (824 LOC)
-- **ColorUtils**: Color manipulation
-- **FontUtils**: Font handling
-- **ImageLabel**: Image display with WebP conversion
-
-#### Image Utilities (NEW)
-- **ImageConverter**: WebP to JPEG conversion utility
-- **HtmlSanitizer**: HTML sanitization for EPUB validation
-
-#### HTTP & Network
-- **Http**: HTTP client wrapper
-- **CookiesUtils**: Cookie management
-
-#### Other Utilities
-- **RegexUtils**: Regular expression helpers
-- **Base64**: Encoding/decoding
-- **TypeUtils**: Type conversions
-- **SafePropertySetter**: Safe property setting
+`FileUtils`, `ZipUtils` (ZIP/EPUB), `SyntaxUtils`, `RegexUtils`, `HtmlSanitizer` (`sanitizeHtml()`/`isValidHtml()` — top-level functions), `CookiesUtils` (cookie theo host), `TypeUtils`, `SSLUtils`, `EnginePaths`, `SettingsRepository`.
 
 ## Data Flow
 
-### Download Flow
+### Download
 
 ```
-User Action (Add URL)
-    ↓
-RepositoryUI/DownloadUI
-    ↓
-Download.start()
-    ↓
-PluginManager.get(url) → Match Plugin
-    ↓
-ListExecute → Get Chapter List
-    ↓
-ChapExecute (Multi-threaded) → Download Chapters
-    ↓
-DownloadListener.updateDownload() → Progress Updates
-    ↓
-Export Handler → Generate Output
-    ↓
-File Saved
+AddBookScreen (URL / multi-URL)
+  ↓ DownloadQueueState.enqueue(urls)
+BookPipeline → PluginManager.get(url) (regex match, auto-install nếu thiếu)
+  ↓ BookFetch: DetailLoader + ListLoader → metadata + TOC (mergeFetchedChapters giữ id cũ)
+BookDownload (coroutines + Semaphore maxConn): TextLoader từng chương, resume skip chương có sẵn
+  ↓ DownloadQueueState (StateFlow) → DownloadQueuePanel / notification (Android)
+Export (Ebook/Text/ToC) → output/
 ```
 
-### Plugin Execution Flow
+### Plugin execution
 
 ```
-URL Input
-    ↓
-PluginManager.get(url) → Regex Match
-    ↓
-Load PluginEntity
-    ↓
-Execute Lua Script
-    ↓
-Lua API Calls (Http, Html, Text)
-    ↓
-Return Parsed Data
-    ↓
-Populate Models (Chapter, Pager, etc.)
-    ↓
-Update UI
+URL → PluginManager.get(url) → PluginEntity
+  → JsSandbox: Rhino context (pool) + bind JS APIs (Html, Http, Json, Response...)
+  → chạy script (detail/toc/chap/gen...) → NativeObject/NativeArray
+  → convert về Kotlin (BookEntity, List<BookEntity>, String, PaginatedResult)
 ```
 
-## Threading Model
+## Threading
 
-### UI Thread (Event Dispatch Thread)
-- All Swing UI updates
-- Event listener callbacks
-- Animation rendering
-
-### Worker Threads
-- Download operations (configurable thread pool)
-- Plugin execution
-- File I/O operations
-- Export generation
-
-### Thread Coordination
-```java
-// Example: Download threading
-public void startDownload() {
-    status = DOWNLOADING;
-    next = next + MAX_CONN - 1;
-    update();
-    for (int i = 0; i < MAX_CONN; i++) {
-        if (properties.isForum())
-            forum(downloaded + i);  // Spawn thread
-        else
-            web(downloaded + i);    // Spawn thread
-    }
-}
-```
+- UI: Compose main dispatcher
+- Engine: coroutines qua `EngineDispatchers` (parallelism ≤ 5, khớp Rhino context pool); download fan-out chương bằng `Semaphore(settings.maxConn)`
+- Không còn Swing EDT / thread pool thủ công
 
 ## Extension Points
 
-### Adding New Export Format
-1. Create new export class in `action/export/`
-2. Implement export logic
-3. Add UI option in Export dialogs
-4. Register with Export handlers
+- **Export format mới**: thêm class trong `engine/.../action/export/`, nối UI vào `ExportBookDialog`
+- **Plugin mới**: file `.plugin` JSON + script JS, đặt vào `tools/plugins/` (hoặc cài từ repository trong app)
+- **JS API mới**: class trong `plugin/js/api/`, expose qua JsApiSetup, khai báo whitelist trong SecurityConstants nếu cần
 
-### Adding New Plugin
-1. Create `.plugin` JSON file
-2. Write Lua extraction scripts
-3. Place in `tools/plugins/` directory
-4. Plugin auto-discovery on startup
+## Security
 
-### Adding New Lua API
-1. Create class in `plugin/lua/api/`
-2. Implement functionality
-3. Expose to Lua via LuaScriptEngine
-4. Update plugin documentation
+- Toàn bộ script plugin chạy trong JsSandbox (class/API whitelist)
+- Network: HTTPS-only + localhost, giới hạn kích thước, content-type allowlist
+- Regex plugin được kiểm ReDoS trước khi dùng; archive plugin được scan trước khi giải nén
+- Cookies lưu theo host cho site cần đăng nhập
 
-## Security Considerations
+## Performance
 
-### Input Validation
-- URL validation before processing
-- Plugin regex validation
-- File path sanitization
+- Download song song theo `maxConn`, resume chỉ tải thiếu
+- Rhino context pool tái sử dụng context giữa các lần chạy script
+- Cache: plugin repository (VBookPluginService), settings lazy-load (EngineConfig), history persist
 
-### Sandboxing
-- Lua scripts run in LuaJ sandbox
-- Limited Lua API exposure
-- No direct filesystem access from Lua
+## Xem thêm
 
-### JavaScript Sandboxing (NEW)
-- Rhino JavaScript engine with limited context
-- JsSandbox security manager for resource isolation
-- API access validation through class whitelisting
-- Resource limits for script execution
-
-### Plugin Security (NEW)
-- NetworkSecurityValidator: HTTPS validation and content-type checking
-- RegexSecurityValidator: Plugin pattern validation
-- ZipSecurityValidator: Archive scanning for malicious content
-- SecurityConstants: Security configuration parameters
-
-### Network Security
-- Cookie management for authenticated sites
-- HTTPS support
-- Cloudflare bypass (careful implementation)
-
-## Performance Optimizations
-
-### Concurrent Downloads
-- Configurable thread pool (MAX_CONN setting)
-- Parallel chapter downloading
-- Efficient connection reuse
-
-### Memory Management
-- Stream-based content processing
-- Lazy loading of large content
-- Proper resource cleanup
-
-### Caching
-- Plugin repository caching
-- Download history persistence
-- Settings lazy loading
+- `docs/feature-parity-checklist.md` — gate rewrite + trạng thái từng feature
+- `docs/designs/kotlin-compose-rewrite-office-hours.md` — design doc rewrite
+- `docs/deployment-guide.md`, `RELEASE-WORKFLOW.md` — build & release

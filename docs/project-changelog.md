@@ -1,6 +1,15 @@
 # Project Changelog
 
-This document tracks all significant changes, features, and fixes in the LeechText Java project.
+This document tracks all significant changes, features, and fixes in the LeechText project.
+
+## [2026-08] — Kotlin Compose Multiplatform rewrite
+
+### Changed
+- **REWRITE**: Toàn bộ app viết lại bằng Kotlin + Compose Multiplatform — modules `engine` (plugin system Rhino sandbox, download, export), `app-shared` (UI Compose dùng chung), `desktop-app`, `android-app`. Chạy chung codebase Desktop (macOS/Windows/Linux) + Android.
+- Engine giữ nguyên khuôn khổ plugin vBook JS (Rhino + JsSandbox + security validators); GenLoader thời Java thay bằng `BrowseLoader` + `PaginatedResult` trong `plugin/api/`.
+
+### Removed
+- Bản Java Swing gốc (package `dark.leech.text`) — xóa khỏi working tree, giữ ở tag `java-legacy`.
 
 ## [Unreleased]
 

@@ -1,5 +1,7 @@
 # Project Roadmap - LeechText
 
+> 📌 **Lộ trình thời Java** (pre-rewrite), phần lớn đã lỗi thời. Trạng thái hiện tại: rewrite Kotlin Compose Multiplatform đã ship, P3 Android đã chạy; P4 xong (kotlinx.serialization swap, ksoup gate PASS, wasm CUT — QA per-tab screenshot desktop) theo `docs/designs/kotlin-compose-rewrite-office-hours.md`. Bản Java ở tag `java-legacy`.
+
 ## Current Status
 
 **Version**: 1.0.5

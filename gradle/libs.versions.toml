@@ -1,0 +1,25 @@
+# Version catalog — thay accessors deprecated của Compose Gradle plugin
+# (compose.runtime, compose.material3... deprecated từ CMP 1.12: "Specify dependency directly")
+[versions]
+compose = "1.12.0"
+composeMaterial3 = "1.9.0"
+# Pinned 1.7.3 theo upstream — không nhận update, migrate Material Symbols khi cần
+composeIconsExtended = "1.7.3"
+decompose = "3.3.0"
+essenty = "2.5.0"
+koin = "4.1.0"
+
+[libraries]
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
+compose-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "composeIconsExtended" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
+# desktop skiko native: dùng compose.desktop.currentOs trong build script (tự chọn theo OS host)
+# alias cũ pin desktop-jvm-macos-arm64 làm Linux nạp nhầm skiko native macOS
+compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "compose" }
+decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+decompose-extensions-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+essenty-lifecycle-coroutines = { module = "com.arkivanov.essenty:lifecycle-coroutines", version.ref = "essenty" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }

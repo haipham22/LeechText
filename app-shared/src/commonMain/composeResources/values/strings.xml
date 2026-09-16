@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tab / nav -->
+    <string name="tab_library">Thư viện</string>
+    <string name="tab_updates">Tải xuống</string>
+    <string name="tab_history">Lịch sử</string>
+    <string name="tab_sources">Nguồn</string>
+    <string name="tab_more">Khác</string>
+    <string name="settings_title">Cài đặt</string>
+
+    <!-- Hành động dùng chung -->
+    <string name="action_close">Đóng</string>
+    <string name="action_cancel">Hủy</string>
+    <string name="action_save">Lưu</string>
+    <string name="action_delete">Xóa</string>
+    <string name="action_add">Thêm</string>
+    <string name="action_download">Tải</string>
+    <string name="action_read">Đọc</string>
+    <string name="action_retry">Thử lại</string>
+    <string name="action_back">Quay lại</string>
+    <string name="action_edit">Sửa</string>
+
+    <!-- Lịch sử -->
+    <string name="history_title">Lịch sử</string>
+    <string name="history_empty">Chưa có lịch sử đọc</string>
+    <string name="history_empty_hint">Mở một truyện từ Thư viện để bắt đầu</string>
+    <string name="time_just_now">vừa đọc</string>
+    <string name="time_minutes_ago">%1$d phút trước</string>
+    <string name="time_hours_ago">%1$d giờ trước</string>
+    <string name="time_days_ago">%1$d ngày trước</string>
+
+    <!-- Chung -->
+    <string name="chapter_default_name">Chương %1$d</string>
+    <string name="chapters_count">%1$d chương</string>
+    <string name="error_prefix">Lỗi: %1$s</string>
+
+    <!-- Cài đặt: section -->
+    <string name="settings_section_connection">Kết nối</string>
+    <string name="settings_section_storage">Lưu trữ</string>
+    <string name="settings_section_reader">Đọc truyện</string>
+    <string name="settings_section_syntax">Cấu trúc lưu</string>
+    <string name="settings_section_tools">Công cụ</string>
+    <string name="settings_section_trash">Lọc rác</string>
+    <string name="settings_section_privacy">Quyền riêng tư</string>
+    <string name="settings_section_language">Ngôn ngữ &amp; Giao diện</string>
+    <string name="settings_theme_title">Giao diện</string>
+    <string name="theme_system">Theo hệ thống</string>
+    <string name="theme_light">Sáng</string>
+    <string name="theme_dark">Tối</string>
+    <string name="settings_reset">Khôi phục mặc định</string>
+    <string name="settings_language_field">Ngôn ngữ</string>
+    <string name="settings_language_restart">Khởi động lại app để áp dụng ngôn ngữ mới</string>
+
+    <!-- Cài đặt: hub summary -->
+    <string name="summary_connection">%1$d kết nối · %2$d s</string>
+    <string name="summary_syntax_on">%1$d/4 bật</string>
+    <string name="summary_tools_configured">%1$d/2 cấu hình</string>
+    <string name="summary_trash_rules">%1$d rule</string>
+    <string name="summary_on">Đang bật</string>
+    <string name="summary_off">Đang tắt</string>
+    <string name="lang_name_vi">Tiếng Việt</string>
+    <string name="lang_name_en">English</string>
+
+    <!-- Cài đặt: kết nối -->
+    <string name="conn_max_title">Số kết nối tối đa</string>
+    <string name="conn_max_caption">tải song song mỗi sách</string>
+    <string name="conn_retry_title">Kết nối lại khi lỗi</string>
+    <string name="conn_retry_caption">số lần retry mỗi chương</string>
+    <string name="conn_timeout_title">Timeout</string>
+    <string name="conn_timeout_caption">chờ phản hồi site tối đa %1$d giây</string>
+    <string name="conn_delay_title">Delay giữa chương</string>
+    <string name="conn_delay_caption">ms nghỉ tránh dội site</string>
+    <string name="conn_ua_title">User Agent</string>
+    <string name="conn_ua_caption">header UA khi fetch site</string>
+    <string name="conn_note">Cookies tự đồng bộ theo site. Proxy chưa hỗ trợ.</string>
+
+    <!-- Cài đặt: lưu trữ -->
+    <string name="storage_workdir_title">Thư mục làm việc</string>
+    <string name="storage_workdir_caption">sách lưu tại output/</string>
+    <string name="storage_pick">Chọn…</string>
+    <string name="storage_pick_dialog_title">Chọn thư mục lưu trữ</string>
+
+    <!-- Cài đặt: cấu trúc lưu -->
+    <string name="syntax_dropcaps_desc">Cấu trúc DropCaps chương khi lưu</string>
+    <string name="syntax_html_desc">Cấu trúc HTML khi lưu</string>
+    <string name="syntax_txt_desc">Cấu trúc TXT khi lưu</string>
+    <string name="syntax_css_desc">Stylesheet cho EPUB (data/stylesheet.css)</string>
+    <string name="syntax_template_label">Syntax template</string>
+
+    <!-- Cài đặt: quyền riêng tư -->
+    <string name="privacy_crash_title">Giám sát &amp; gửi lỗi</string>
+    <string name="privacy_crash_caption">Gửi crash về Sentry để debug. Mặc định tắt — bật để đồng ý chia sẻ.</string>
+    <string name="privacy_debuglog_title">Log debug</string>
+    <string name="privacy_debuglog_caption">Log chi tiết mọi bước (download/TOC/plugin) ra console + logcat. Mặc định tắt.</string>
+
+    <!-- Cài đặt: công cụ -->
+    <string name="tools_not_configured">chưa cấu hình</string>
+    <string name="tools_abs_path">Đường dẫn tuyệt đối</string>
+
+    <!-- Cài đặt: lọc rác -->
+    <string name="trash_hint">Rule regex thay thế text khi xuất (src → to). Tắt switch để vô hiệu rule.</string>
+    <string name="trash_delete_rule">Xóa rule</string>
+    <string name="trash_rule_title">Rule #%1$d</string>
+    <string name="trash_to_label">to (thay bằng)</string>
+    <string name="trash_add_rule">Thêm rule</string>
+    <string name="trash_empty_hint">Chưa có rule — bấm Thêm rule</string>
+    <string name="trash_rules_title">Rules lọc rác (%1$d)</string>
+    <string name="trash_replace_with">thay bằng (trống = xóa)</string>
+
+    <!-- Kiểm tra cập nhật (N4) -->
+    <string name="update_check_row">Kiểm tra bản cập nhật</string>
+    <string name="update_version_summary">phiên bản %1$s</string>
+    <string name="update_checking">Đang kiểm tra…</string>
+    <string name="update_check_failed">Không kiểm tra được — thử lại sau</string>
+    <string name="update_up_to_date">Bạn đang dùng bản mới nhất (%1$s)</string>
+    <string name="update_available_title">Bản cập nhật mới</string>
+    <string name="update_view_release">Xem bản release</string>
+
+    <!-- Hàng đợi tải -->
+    <string name="queue_panel_title">Hàng đợi</string>
+    <string name="queue_clear_finished">Dọn mục xong</string>
+    <string name="queue_empty">Không có mục nào</string>
+    <string name="queue_section_active">ĐANG TẢI (%1$d)</string>
+    <string name="queue_section_done">VỪA XONG</string>
+    <string name="queue_section_failed">LỖI (%1$d)</string>
+    <string name="queue_status_waiting">Chờ</string>
+    <string name="queue_status_downloading">Đang tải</string>
+    <string name="queue_status_paused">Tạm dừng</string>
+    <string name="queue_status_cancelled">Đã hủy</string>
+    <string name="queue_status_done">Xong — %1$d mới, %2$d lỗi</string>
+    <string name="action_pause">Tạm dừng</string>
+    <string name="action_resume">Tiếp tục</string>
+    <string name="cd_dismiss">Bỏ</string>
+    <string name="cd_done">Xong</string>
+    <string name="cd_open_library">Vào thư viện</string>
+    <!-- Thư viện -->
+    <string name="lib_reading_badge">Đang đọc %1$d/%2$d</string>
+    <string name="library_items_count">%1$d mục</string>
+    <string name="library_empty_title">Thư viện trống</string>
+    <string name="library_empty_hint">Thêm sách từ tab Nguồn (dán URL) hoặc dán URL truyện</string>
+    <string name="library_search_hint">Tìm trong thư viện…</string>
+    <string name="library_search_empty">Không có kết quả cho “%1$s”</string>
+    <string name="cd_refresh">Làm mới</string>
+    <string name="cd_search_library">Tìm trong thư viện</string>
+    <string name="cd_close_search">Đóng tìm kiếm</string>
+    <string name="cd_sort">Sắp xếp</string>
+    <string name="sort_added">Mới thêm</string>
+    <string name="sort_read">Mới đọc</string>
+    <string name="sort_name">Tên A-Z</string>
+    <string name="chapter_list_failed">Không lấy được danh sách chương</string>
+
+    <!-- Thư viện: message state -->
+    <string name="lib_checking_new">Đang kiểm tra chương mới…</string>
+    <string name="lib_no_new_chapters">Không có chương mới (%1$d chương)</string>
+    <string name="lib_new_chapters_done">+%1$d chương mới — %2$d tải, %3$d đã có, %4$d lỗi</string>
+    <string name="lib_new_chapters_found">Phát hiện %1$d chương mới (tổng %2$d) — bấm Tải chương để tải</string>
+    <string name="lib_exporting_txt">Đang xuất TXT…</string>
+    <string name="lib_export_txt_done">Đã xuất TXT — %1$s</string>
+    <string name="lib_export_not_found">Lỗi: không tìm thấy file xuất trong out/</string>
+    <string name="lib_export_txt_failed">Lỗi export TXT: %1$s</string>
+    <string name="lib_export_epub_start">Bắt đầu xuất EPUB…</string>
+    <string name="lib_export_epub_done">Đã xuất EPUB — %1$s</string>
+    <string name="lib_export_epub_failed">Lỗi export EPUB: %1$s</string>
+    <string name="export_error_empty">EPUB rỗng sau khi nén (%1$s bytes) — kiểm tra đã tải chương chưa</string>
+    <string name="sources_error_encrypted">Plugin mã hóa — engine không hỗ trợ decrypt</string>
+    <string name="sources_error_plugin">Thao tác plugin thất bại — thử lại hoặc cài lại plugin</string>
+    <string name="sources_error_registry">Không đọc được repo plugin — kiểm tra URL repo</string>
+    <string name="sources_error_plugin_format">Plugin sai định dạng hoặc thiếu trường bắt buộc</string>
+    <string name="sources_error_network">Lỗi mạng — kiểm tra kết nối rồi thử lại</string>
+    <string name="sources_error_rate_limited">Repo giới hạn tần suất — thử lại sau khoảng 1 phút</string>
+    <string name="sources_error_service_unavailable">Repo tạm thời không khả dụng — thử lại sau khoảng 30 giây</string>
+    <string name="sources_error_not_found">Không tìm thấy tài nguyên trên repo</string>
+    <string name="sources_error_security">Đã chặn vì lý do bảo mật (URL/ZIP/regex không an toàn)</string>
+    <string name="lib_retry_none_failed">Không có chương lỗi — tải phần thiếu (nếu có)</string>
+    <string name="lib_retrying_failed">Đang tải lại %1$d chương lỗi…</string>
+    <string name="lib_retry_done">Tải lại xong: %1$d mới, %2$d đã có, %3$d còn lỗi</string>
+    <string name="lib_downloading_images">Đang tải ảnh chương…</string>
+    <string name="lib_images_done">Đã tải %1$d ảnh — %2$s</string>
+    <string name="lib_images_failed">Lỗi tải ảnh: %1$s</string>
+    <string name="lib_chapter_not_downloaded">Chương chưa tải — nội dung trống</string>
+    <string name="reader_download_this_chapter">Tải chương này</string>
+    <string name="reader_font">Font chữ</string>
+    <string name="reader_font_caption">Nhấn để đổi: Mặc định → Serif → Sans → Mono</string>
+    <string name="reader_font_default">Mặc định</string>
+    <string name="reader_font_size">Cỡ chữ</string>
+    <string name="reader_bg">Màu nền</string>
+    <string name="reader_fg">Màu chữ</string>
+    <string name="reader_fg_auto">Mặc định</string>
+    <string name="reader_fg_black">Đen</string>
+    <string name="reader_fg_sepia">Nâu giấy</string>
+    <string name="reader_fg_gray">Xám</string>
+    <string name="reader_fg_green">Xanh lá</string>
+    <string name="reader_fg_white">Trắng</string>
+    <string name="reader_fg_yellow">Vàng</string>
+    <string name="reader_add_font">Thêm font…</string>
+    <string name="reader_bg_light">Sáng</string>
+    <string name="reader_bg_sepia">Giấy</string>
+    <string name="reader_bg_dark">Tối</string>
+    <string name="reader_display">Hiển thị</string>
+    <string name="reader_line_height">Chiều cao dòng</string>
+    <string name="reader_auto_scroll">Tự động cuộn</string>
+    <string name="reader_auto_scroll_speed">Tốc độ cuộn</string>
+    <string name="reader_mode">Chế độ đọc</string>
+    <string name="reader_mode_vertical">Cuộn dọc</string>
+    <string name="reader_mode_paged">Theo trang</string>
+    <string name="reader_fullscreen">Toàn màn hình</string>
+    <string name="lib_loading_toc">Đang tải danh sách chương…</string>
+    <string name="lib_toc_failed">Lỗi tải danh sách chương: %1$s</string>
+    <string name="lib_downloading_n">Đang tải %1$d chương…</string>
+    <string name="lib_download_done">Tải xong: %1$d mới, %2$d đã có, %3$d lỗi</string>
+    <string name="lib_download_failed">Lỗi tải: %1$s</string>
+    <string name="lib_redownloaded">Đã tải lại: %1$s</string>
+    <string name="lib_redownload_failed">Lỗi tải lại: %1$s</string>
+    <string name="lib_chapter_saved">Đã lưu: %1$s</string>
+    <string name="lib_names_saved">Đã lưu tên %1$d chương</string>
+    <string name="lib_deleted">Đã xóa: %1$s</string>
+    <string name="lib_delete_failed">Lỗi xóa: %1$s</string>
+
+    <!-- Chi tiết sách -->
+    <string name="cd_more">Thêm</string>
+    <string name="book_download_chapters">Tải chương đọc offline</string>
+    <string name="book_check_new">Kiểm tra chương mới</string>
+    <string name="book_export">Xuất ebook…</string>
+    <string name="book_download_images">Tải ảnh chương</string>
+    <string name="book_edit_names">Sửa tên chương…</string>
+    <string name="book_share_export">Chia sẻ file xuất</string>
+    <string name="book_remove_from_library">Xóa khỏi thư viện</string>
+    <string name="book_delete_title">Xóa khỏi thư viện?</string>
+    <string name="book_delete_confirm">Xóa \"%1$s\" và toàn bộ chương đã tải. Không thể hoàn tác.</string>
+    <string name="book_ongoing">Đang ra</string>
+    <string name="book_completed">Hoàn thành</string>
+    <string name="book_chapter_list">Chương</string>
+    <string name="book_search_chapters">Tìm chương</string>
+    <string name="book_resume_download">Tiếp tục tải (còn %1$d chương)</string>
+    <string name="read_resume">Đọc tiếp — Ch. %1$d</string>
+    <string name="cd_bookmarked">Đã bookmark</string>
+
+    <!-- Xuất sách -->
+    <string name="export_title">Xuất sách</string>
+    <string name="export_no_chapters">⚠ Chưa có chương nào được tải — bấm Tải tất cả trước khi xuất</string>
+    <string name="export_open_folder">Mở thư mục chứa file</string>
+    <string name="export_done_open_q">Xuất xong. Mở thư mục chứa file?</string>
+    <string name="export_format">Định dạng</string>
+    <string name="export_location">Nơi lưu</string>
+    <string name="export_action">Xuất</string>
+    <string name="export_epub_options">Tùy chọn EPUB</string>
+    <string name="export_include_images">Kèm ảnh</string>
+    <string name="export_split">Tách quyển</string>
+    <string name="export_compress_level">Mức nén</string>
+    <string name="cd_pick_location">Chọn nơi lưu</string>
+    <string name="export_pick_dialog_title">Chọn nơi lưu file xuất</string>
+    <string name="export_edit_names_title">Sửa tên chương (%1$d)</string>
+    <string name="names_strip_numbers">Bỏ số đầu</string>
+    <string name="names_optimize">Tối ưu</string>
+
+    <!-- Reader -->
+    <string name="cd_redownload_chapter">Tải lại chương</string>
+    <string name="cd_add_filter_rule">Thêm rule lọc rác</string>
+    <string name="cd_view">Xem</string>
+    <string name="cd_edit_chapter">Sửa chương</string>
+    <string name="cd_remove_bookmark">Bỏ bookmark</string>
+    <string name="cd_add_bookmark">Bookmark chương</string>
+    <string name="cd_prev_chapter">Chương trước</string>
+    <string name="cd_next_chapter">Chương sau</string>
+    <string name="reader_chapter_content">Nội dung chương</string>
+    <string name="reader_bookmark_saved">Đã lưu dấu trang — Ch. %1$d</string>
+    <!-- Nguồn / plugin -->
+    <string name="sources_extensions_tab">Phần mở rộng</string>
+    <string name="cd_add_from_url">Thêm sách từ URL</string>
+    <string name="cd_add_repo">Thêm repo</string>
+    <string name="cd_global_search">Tìm toàn cầu</string>
+    <string name="action_search">Tìm</string>
+    <string name="lang_name_zh">Tiếng Trung</string>
+    <string name="cat_audio">Audio</string>
+    <string name="cat_other">Khác</string>
+    <string name="sources_search_ext_hint">Tìm extension…</string>
+    <string name="sources_empty_installed">Chưa có nguồn nào — cài từ tab Phần mở rộng</string>
+    <string name="sources_url_hint">https://truyenyy.van/truyện/…\n(mỗi dòng 1 URL)</string>
+    <string name="sources_global_search_hint">Tìm truyện mọi nguồn…</string>
+    <string name="sources_delete_title">Xóa nguồn?</string>
+    <string name="sources_delete_confirm">Xóa \"%1$s\" khỏi app. Sách đã tải không bị ảnh hưởng.</string>
+    <string name="sources_section_upgrade">NÂNG CẤP (%1$d)</string>
+    <string name="sources_section_repo">KHO REPO (%1$d)</string>
+    <string name="sources_no_match">Không có plugin khớp</string>
+    <string name="sources_repo_url_label">URL repo plugin.json</string>
+    <string name="sources_delete_repo">Xóa repo</string>
+    <string name="sources_installed_chip">Đã cài</string>
+    <string name="sources_config">Cấu hình</string>
+    <string name="sources_unpin">Bỏ ghim</string>
+    <string name="sources_pin">Ghim lên đầu</string>
+    <string name="sources_test_site">Kiểm tra nguồn</string>
+    <string name="sources_delete_source">Xóa nguồn</string>
+    <string name="sources_newer_version">Bản mới %1$s (đã cài %2$s)</string>
+    <string name="sources_install">Cài</string>
+    <string name="sources_upgrade">Nâng cấp</string>
+    <string name="sources_broken_section">NGUỒN KHÔNG PHẢN HỒI (%1$d)</string>
+    <string name="sources_retry">Thử lại</string>
+    <string name="sources_maybe_dead">Nguồn chết?</string>
+    <string name="sources_config_title">Cấu hình — %1$s</string>
+    <string name="sources_domain_label">Nguồn (domain)</string>
+    <string name="sources_domain_hint">Đổi domain khi site chuyển hướng. BASE_URL sandbox sẽ dùng domain này.</string>
+    <string name="sources_cfg_threads">Số luồng tải (thread_num)</string>
+    <string name="sources_cfg_delay">Delay giữa request ms (delay)</string>
+    <string name="sources_cfg_timeout">Timeout request ms (timeout)</string>
+    <string name="sources_cfg_default">Rỗng = mặc định (%1$d)</string>
+    <string name="plugins_fetch_failed">Không lấy được danh sách plugin từ repo</string>
+    <string name="plugins_installing">Đang cài %1$s…</string>
+    <string name="plugins_installed">Đã cài: %1$s</string>
+    <string name="plugins_install_dead_warn">%1$s: nguồn có vẻ không hoạt động — site có thể đã đóng</string>
+    <string name="plugins_install_failed">Cài thất bại: %1$s</string>
+    <string name="plugins_install_error">Lỗi: %1$s — %2$s</string>
+    <string name="plugins_uninstalled">Đã xóa: %1$s</string>
+    <string name="plugins_repo_added">Đã thêm repo: %1$s</string>
+    <string name="plugins_repo_invalid">Repo không hợp lệ hoặc đã có: %1$s</string>
+    <string name="plugins_repo_removed">Đã xóa repo</string>
+    <string name="plugins_testing">Đang kiểm tra %1$s…</string>
+    <string name="plugins_test_ok">%1$s — HTTP %2$d ✓ sống</string>
+    <string name="plugins_test_bad">%1$s — HTTP %2$d ✗ có vấn đề</string>
+    <string name="plugins_test_unreachable">%1$s — KHÔNG truy cập được: %2$s</string>
+    <string name="plugins_none_to_install">Không có plugin mới để cài</string>
+    <string name="plugins_installing_n">Đang cài %1$d/%2$d: %3$s</string>
+    <string name="plugins_installed_n">Đã cài %1$d/%2$d plugin</string>
+    <string name="plugins_update_all">Cập nhật tất cả (%1$d)</string>
+    <string name="plugins_reinstall_hint">Mất nguồn đã cài — kho còn %1$d nguồn, cài lại ở tab Phần mở rộng</string>
+    <string name="browse_no_catalog">Nguồn không có catalog browse (thiếu home.js)</string>
+    <string name="browse_no_novels">Không lấy được danh sách truyện</string>
+    <string name="browse_back_to_menu">Về menu</string>
+    <string name="browse_load_more">Tải thêm</string>
+    <string name="loading_short">Đang tải…</string>
+
+    <!-- Thêm sách -->
+    <string name="addbook_title">Thêm sách</string>
+    <string name="addbook_loading_info">Đang tải thông tin…</string>
+    <string name="addbook_loading_toc">Đang tải danh sách…</string>
+    <string name="addbook_view_toc">Xem danh sách chương</string>
+    <string name="addbook_chapters_title">Chương (%1$d)</string>
+    <string name="addbook_chapter_empty">Chương trống hoặc không tải được</string>
+    <string name="addbook_add_to_library">Thêm vào thư viện</string>
+    <string name="addbook_in_library">Đã trong thư viện</string>
+    <string name="addbook_download_full">Tải full</string>
+    <string name="addbook_range_hint">Chương (vd 1-50,55)</string>
+    <string name="addbook_multi_url_label">Nhiều URL (mỗi dòng 1 URL) — thêm nhanh vào thư viện</string>
+    <string name="addbook_url_label">URL truyện</string>
+    <string name="addbook_fetch_info">Tải thông tin</string>
+    <string name="addbook_author">Tác giả: %1$s</string>
+    <string name="addbook_chapters_saved_at">%1$d chương — lưu tại output/</string>
+    <string name="addbook_n_selected">%1$d đã chọn</string>
+    <string name="addbook_select_all">Chọn tất cả</string>
+    <string name="addbook_fix_names">Sửa tên</string>
+    <string name="addbook_apply_n">Áp dụng (%1$d)</string>
+    <string name="addbook_added_n">Đã thêm %1$d sách vào thư viện — tải khi bấm Tải tất cả</string>
+    <string name="addbook_added_partial">Thêm %1$d/%2$d sách — lỗi cuối: %3$s</string>
+    <string name="addbook_cancelled">Đã hủy</string>
+    <string name="addbook_finding_plugin">Chưa có plugin khớp — đang dò repository…</string>
+    <string name="addbook_added_to_library">Đã thêm vào thư viện — mở sách rồi bấm Tải chương để tải nội dung</string>
+
+    <!-- Chọn chương (N2) -->
+    <string name="chapter_pick_title">Chọn chương</string>
+    <string name="chapter_pick_selected">Đã chọn %1$d/%2$d</string>
+    <string name="chapter_pick_all">Tất cả</string>
+    <string name="chapter_pick_none">Bỏ hết</string>
+    <string name="chapter_pick_invert">Đảo</string>
+    <string name="chapter_pick_range_hint">Range (vd 1-100,205)</string>
+    <string name="chapter_pick_select">Chọn</string>
+    <string name="pick_empty_toc">Không tải được danh sách chương — đóng rồi thử lại</string>
+    <string name="pick_filter_all">Tất cả</string>
+    <string name="pick_filter_undownloaded">Chưa tải</string>
+    <string name="pick_filter_downloaded">Đã tải</string>
+
+    <!-- Khác -->
+    <string name="cd_cover">cover</string>
+    <!-- Probe P5.0: CI bug accessors Res.string (docs/known-issues-compose-resources.md) -->
+    <string name="ci_res_probe_p50">Probe P5.0</string>
+    <string name="search_page_title">Tìm kiếm</string>
+    <string name="search_no_results">Không có kết quả</string>
+    <string name="search_results_count">%1$d kết quả</string>
+    <string name="cd_back">Quay lại</string>
+    <string name="book_migrate_source">Đổi nguồn</string>
+    <string name="book_migrate_title">Đổi nguồn truyện</string>
+    <string name="book_migrate_hint">Dán URL truyện ở nguồn khác — chương trùng tên giữ nguyên nội dung đã tải, phần còn lại tải lại từ nguồn mới.</string>
+    <string name="book_migrate_search_hint">Tên truyện cần tìm</string>
+    <string name="book_migrate_progress">%1$s nguồn đã trả lời</string>
+    <string name="book_migrate_manual">Dán URL thủ công</string>
+    <string name="lib_migrating">Đang đổi nguồn…</string>
+    <string name="lib_migrate_done">Đã đổi nguồn — %1$d/%2$d chương khớp giữ nguyên nội dung</string>
+    <string name="lib_migrate_failed">Đổi nguồn thất bại: %1$s</string>
+    <string name="err_plugin_no_match">Không có plugin khớp URL: %1$s</string>
+    <string name="err_plugin_missing_hint">Thiếu plugin cho nguồn này — cài từ tab Nguồn → Phần mở rộng</string>
+    <string name="err_chapters_fetch_failed">Không lấy được danh sách chương: %1$s</string>
+    <string name="err_chapter_empty">Không có chương #%1$d</string>
+    <string name="err_cover_changed">Đã thay ảnh bìa</string>
+    <string name="err_cover_change_failed">Thay ảnh bìa lỗi: %1$s</string>
+    <string name="err_range_no_pick">Chưa chọn chương nào</string>
+    <string name="err_range_overflow">Vượt số chương (1-%1$d)</string>
+    <string name="err_range_invalid">Lỗi tạo danh sách chương: %1$s</string>
+    <string name="err_migrate_no_chapters">Nguồn mới không có danh sách chương</string>
+    <string name="cd_change_cover">Đổi ảnh bìa</string>
+    <string name="notif_downloading_chapter">Đang tải chương</string>
+</resources>
