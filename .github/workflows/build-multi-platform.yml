@@ -191,7 +191,7 @@ jobs:
           # Tag có hậu tố (v2.0.1-rc1) → GitHub prerelease, không chiếm chỗ Latest
           echo "prerelease=$([[ "$name" == *-* ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with:
           pattern: '!*tests*'
           merge-multiple: true
