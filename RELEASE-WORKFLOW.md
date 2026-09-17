@@ -1,28 +1,34 @@
 # Release Workflow — LeechText
 
-> Quy trình release hiện tại là **thủ công** — chưa có CI phát hành theo tag. Bản Java cũ (DMG/DEB/checksums tự động) đã xóa, xem tag `java-legacy`.
+> Hoàn toàn tự động theo tag. Bản Java cũ (release thủ công) xem tag `java-legacy`.
 
-## Release thủ công
+## Mô hình branch
 
-1. **Bump version** — sửa `versionCode` / `versionName` trong `android-app/build.gradle.kts` (desktop jar không gắn version vào tên file).
-2. **Build artifacts**:
+| Branch | Vai trò | Version format | Release |
+|---|---|---|---|
+| `dev` (default) | development, beta | `x.y.z-rcN` / `x.y.z-betaN` | GitHub **prerelease** |
+| `main` | ổn định | `x.y.z` | GitHub release **Latest** |
 
-   ```bash
-   ./gradlew :desktop-app:fatJar -x test     # desktop-app/build/libs/leechtext-desktop.jar
-   ./gradlew :android-app:assembleRelease    # android-app/build/outputs/apk/release/
-   ```
+## Quy trình
 
-3. **Test trước khi ship**: `./gradlew :engine:jvmTest :app-shared:jvmTest` (CI cũng chạy phần engine).
-4. **Tạo GitHub Release thủ công**: tag → upload `leechtext-desktop.jar` + APK. Commit về `main`.
+1. **Dev**: merge/bump `app.version=2.0.1-rc1` trong `gradle.properties` → push `dev`
+2. **Auto Release** (tự): đọc `app.version` → tag `v2.0.1-rc1` (nếu chưa có)
+   - Guard: `main` chỉ tag bản **không hậu tố**; `dev` chỉ tag bản **có hậu tố** — bump sai branch sẽ bị skip với log giải thích
+3. **Build Desktop** (tự, qua `workflow_run`): test → jar / apk / ipa / deb / dmg / msi → GitHub Release
+   - Tag có `-` → `prerelease: true` (không chiếm chỗ Latest); bản final → Latest
+4. **Ship final**: merge `dev` → `main` + bump `app.version=2.0.1` (bỏ hậu tố) → push `main` → release Latest
 
-## CI hiện có (không phát hành)
+## Artifacts mỗi release
 
-- `build-multi-platform.yml` — push main/PR: fat jar + engine tests trên macOS, upload artifact `leechtext-desktop` (chỉ tải từ trang Actions, không publish).
-- `code-quality.yml`, `documentation.yml` — test + validate docs.
+`jar` (desktop chạy mọi OS, Java 17+) · `deb` / `dmg` / `msi` (installer, packageVersion tự tách hậu tố rc) · `apk` (Android, ký debug-key) · `ipa` (iOS unsigned, tự ký qua Sideloadly/AltStore)
+
+## CI khác
+
+- `code-quality.yml` — lint (ktlint + detekt) + unit tests, chạy trên push `main`/`dev` + PR
+- `documentation.yml` — validate docs khi đổi `docs/**` / `README.md`
 
 ## Đã biết thiếu (backlog)
 
-- Workflow trigger theo tag `v*`: build + tạo GitHub Release + checksum tự động.
-- Signing key riêng cho Android release (hiện ký debug key).
-- Native packaging desktop (jpackage → DMG/DEB/exe) — giao thác có chủ đích.
-- Cập nhật `docs/project-changelog.md` mỗi release.
+- Signing key riêng cho Android release (hiện ký debug key — mỗi build key khác nhau, cài bản mới phải gỡ bản cũ)
+- iOS signed IPA / TestFlight (cần Apple Developer account)
+- Xem thêm `TODOS.md` (slim fat jar: Playwright driver-bundle 193MB + icons-extended 36MB)

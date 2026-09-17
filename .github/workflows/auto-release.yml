@@ -1,12 +1,12 @@
 name: Auto Release
 
-# Đổi app.version trong gradle.properties + push main → tự tag v$VERSION
-# → trigger build-multi-platform.yml (on push tags v*) → release kèm artifacts.
-# Chỉ maintainer tag tay khi muốn release ngoài quy trình version bump.
+# Quy ước branch: dev = beta/rc (x.y.z-rcN), main = release final (x.y.z).
+# Đổi app.version trong gradle.properties + push → tự tag v$VERSION (nếu chưa có)
+# → workflow_run build-multi-platform.yml → release kèm artifacts (rc → prerelease).
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
     paths: ['gradle.properties']
 
 permissions:
@@ -21,6 +21,15 @@ jobs:
       - name: Read app.version + create tag nếu chưa có
         run: |
           VERSION="v$(grep '^app.version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')"
+          # Guard nhánh sai: main chỉ bản final, dev chỉ bản rc/beta
+          if [ "${GITHUB_REF_NAME}" = "main" ] && [[ "${VERSION}" == *-* ]]; then
+            echo "Skip: main chỉ tag bản final (không hậu tố) — '${VERSION}' thuộc dev"
+            exit 0
+          fi
+          if [ "${GITHUB_REF_NAME}" = "dev" ] && [[ "${VERSION}" != *-* ]]; then
+            echo "Skip: dev chỉ tag bản rc/beta (có hậu tố '-') — '${VERSION}' thuộc main"
+            exit 0
+          fi
           if git rev-parse "refs/tags/$VERSION" >/dev/null 2>&1 \
              || git ls-remote --tags origin "$VERSION" | grep -q "$VERSION"; then
             echo "Tag $VERSION đã tồn tại — bỏ qua"

@@ -181,11 +181,15 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # workflow_run: ref là main — đọc tag v$app.version vừa tạo để release đúng chỗ
+      # workflow_run: ref là default branch — đọc tag v$app.version vừa tạo để release đúng chỗ
       - name: Resolve tag
         if: github.event_name == 'workflow_run'
         id: tag
-        run: echo "name=v$(grep '^app.version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
+        run: |
+          name="v$(grep '^app.version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          # Tag có hậu tố (v2.0.1-rc1) → GitHub prerelease, không chiếm chỗ Latest
+          echo "prerelease=$([[ "$name" == *-* ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
 
       - uses: actions/download-artifact@v5
         with:
@@ -196,6 +200,8 @@ jobs:
       - uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.event_name == 'workflow_run' && steps.tag.outputs.name || github.ref_name }}
+          # rc/beta → prerelease; bản final (không hậu tố) → release Latest
+          prerelease: ${{ github.event_name == 'workflow_run' && steps.tag.outputs.prerelease == 'true' || contains(github.ref_name, '-') }}
           # Notes tự sinh kiểu open-source: full commit list từ tag trước + link So sánh
           generate_release_notes: true
           files: release-assets/**

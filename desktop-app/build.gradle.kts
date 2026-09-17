@@ -35,7 +35,9 @@ compose.desktop {
                 TargetFormat.Deb, // Linux
             )
             packageName = "leechtext" // deb bắt buộc lowercase
-            packageVersion = project.property("app.version").toString() // nguồn duy nhất: gradle.properties
+            // deb/msi chỉ nhận version số — tách hậu tố rc/beta (2.0.1-rc1 → 2.0.1);
+            // jar/APK vẫn giữ full version qua app.version
+            packageVersion = project.property("app.version").toString().substringBefore('-') // nguồn duy nhất: gradle.properties
             vendor = "haipham22"
             description = "LeechText — tải truyện từ nguồn plugin vBook"
             macOS { iconFile.set(rootProject.file("desktop-app/src/main/resources/icons/leechtext.icns")) }
