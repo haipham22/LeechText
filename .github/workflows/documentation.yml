@@ -96,7 +96,7 @@ jobs:
           EOF
 
       - name: Upload documentation
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v6
         with:
           name: documentation
           path: docs/
