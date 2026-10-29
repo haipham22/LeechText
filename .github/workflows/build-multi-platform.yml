@@ -67,7 +67,7 @@ jobs:
           test ${rc:-0} -eq 124 -o ${rc:-0} -eq 137
           ls -lh desktop-app/build/libs/
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: desktop-jar
           path: desktop-app/build/libs/leechtext-desktop-*.jar
@@ -92,7 +92,7 @@ jobs:
           cp android-app/build/outputs/apk/release/android-app-release.apk \
             "android-app/build/outputs/apk/release/leechtext-android-${VERSION}.apk"
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: android-apk
           path: android-app/build/outputs/apk/release/leechtext-android-*.apk
@@ -128,7 +128,7 @@ jobs:
           VERSION="$(grep '^app.version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')"
           mv iosApp/build/leechtext-ios.ipa "leechtext-ios-${VERSION}.ipa"
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: ios-ipa
           path: leechtext-ios-*.ipa
@@ -161,7 +161,7 @@ jobs:
       - name: Build native installer (jpackage)
         run: ./gradlew :desktop-app:packageReleaseDistributionForCurrentOS
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: native-${{ matrix.artifact }}
           path: |
